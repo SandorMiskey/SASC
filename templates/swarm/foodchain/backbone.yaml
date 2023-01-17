@@ -1,0 +1,261 @@
+#
+# Copyright TE-FOOD International Corp., All Rights Reserved.
+#
+
+version: '3'
+
+#volumes:
+#    peer1.backbone.${NETWORK}.foodchain.te-food.com:
+#    peer2.backbone.${NETWORK}.foodchain.te-food.com:
+#    peer3.backbone.${NETWORK}.foodchain.te-food.com:
+#    peer4.backbone.${NETWORK}.foodchain.te-food.com:
+#    peer5.backbone.${NETWORK}.foodchain.te-food.com:
+#    peer6.backbone.${NETWORK}.foodchain.te-food.com:
+
+networks:
+    swarmnet:
+        external:
+            name: ${NETWORK}
+
+services:
+    
+    peer1:
+        image: hyperledger/fabric-peer:$IMAGE_TAG
+        hostname: peer1.backbone.${NETWORK}.foodchain.te-food.com
+        networks:
+            swarmnet:
+                aliases:
+                    - peer1.backbone.${NETWORK}.foodchain.te-food.com
+        volumes:
+            - /var/run/:/host/var/run/
+            - ${CRYPTO}/peerOrganizations/backbone.${NETWORK}.foodchain.te-food.com/peers/peer1.backbone.${NETWORK}.foodchain.te-food.com/msp:/etc/hyperledger/fabric/msp
+            - ${CRYPTO}/peerOrganizations/backbone.${NETWORK}.foodchain.te-food.com/peers/peer1.backbone.${NETWORK}.foodchain.te-food.com/tls:/etc/hyperledger/fabric/tls
+            - ${DATA}/backbone/peer1:/var/hyperledger/production
+        environment:
+            - CORE_PEER_ID=peer1.backbone.${NETWORK}.foodchain.te-food.com
+            - CORE_PEER_ADDRESS=peer1.backbone.${NETWORK}.foodchain.te-food.com:7051
+            - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.backbone.${NETWORK}.foodchain.te-food.com:7051
+            - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.backbone.${NETWORK}.foodchain.te-food.com:7051
+            - CORE_PEER_LOCALMSPID=BackboneMSP
+            - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+            - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=${NETWORK}
+            - CORE_LOGGING_LEVEL=INFO
+            #- CORE_LOGGING_LEVEL=DEBUG
+            - CORE_PEER_TLS_ENABLED=true
+            - CORE_PEER_GOSSIP_USELEADERELECTION=true
+            - CORE_PEER_GOSSIP_ORGLEADER=false
+            - CORE_PEER_PROFILE_ENABLED=true
+            - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+            - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+            - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+        working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+        command: peer node start
+        deploy:                                                                                                                                                                                                
+            replicas: 1
+            placement:
+                constraints: [node.hostname == $SWARM_MANAGER]
+            restart_policy:
+                condition: any 
+                delay: 5s
+                max_attempts: 5
+
+    peer2:
+        image: hyperledger/fabric-peer:$IMAGE_TAG
+        hostname: peer2.backbone.${NETWORK}.foodchain.te-food.com
+        networks:
+            swarmnet:
+                aliases:
+                    - peer2.backbone.${NETWORK}.foodchain.te-food.com
+        volumes:
+            - /var/run/:/host/var/run/
+            - ${CRYPTO}/peerOrganizations/backbone.${NETWORK}.foodchain.te-food.com/peers/peer2.backbone.${NETWORK}.foodchain.te-food.com/msp:/etc/hyperledger/fabric/msp
+            - ${CRYPTO}/peerOrganizations/backbone.${NETWORK}.foodchain.te-food.com/peers/peer2.backbone.${NETWORK}.foodchain.te-food.com/tls:/etc/hyperledger/fabric/tls
+            - ${DATA}/backbone/peer2:/var/hyperledger/production
+        environment:
+            - CORE_PEER_ID=peer2.backbone.${NETWORK}.foodchain.te-food.com
+            - CORE_PEER_ADDRESS=peer2.backbone.${NETWORK}.foodchain.te-food.com:7051
+            - CORE_PEER_GOSSIP_BOOTSTRAP=peer2.backbone.${NETWORK}.foodchain.te-food.com:7051
+            - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer2.backbone.${NETWORK}.foodchain.te-food.com:7051
+            - CORE_PEER_LOCALMSPID=BackboneMSP
+            - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+            - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=${NETWORK}
+            - CORE_LOGGING_LEVEL=INFO
+            #- CORE_LOGGING_LEVEL=DEBUG
+            - CORE_PEER_TLS_ENABLED=true
+            - CORE_PEER_GOSSIP_USELEADERELECTION=true
+            - CORE_PEER_GOSSIP_ORGLEADER=false
+            - CORE_PEER_PROFILE_ENABLED=true
+            - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+            - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+            - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+        working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+        command: peer node start
+        deploy:                     
+            replicas: 1
+            placement:
+                constraints: [node.hostname == mainnet-worker-vn]
+            restart_policy:
+                condition: any 
+                delay: 30s
+                #max_attempts: 50
+
+    peer3:
+        image: hyperledger/fabric-peer:$IMAGE_TAG
+        hostname: peer3.backbone.${NETWORK}.foodchain.te-food.com
+        networks:
+            swarmnet:
+                aliases:
+                    - peer3.backbone.${NETWORK}.foodchain.te-food.com
+        volumes:
+            - /var/run/:/host/var/run/
+            - ${CRYPTO}/peerOrganizations/backbone.${NETWORK}.foodchain.te-food.com/peers/peer3.backbone.${NETWORK}.foodchain.te-food.com/msp:/etc/hyperledger/fabric/msp
+            - ${CRYPTO}/peerOrganizations/backbone.${NETWORK}.foodchain.te-food.com/peers/peer3.backbone.${NETWORK}.foodchain.te-food.com/tls:/etc/hyperledger/fabric/tls
+            - ${DATA}/backbone/peer3:/var/hyperledger/production
+        environment:
+            - CORE_PEER_ID=peer3.backbone.${NETWORK}.foodchain.te-food.com
+            - CORE_PEER_ADDRESS=peer3.backbone.${NETWORK}.foodchain.te-food.com:7051
+            - CORE_PEER_GOSSIP_BOOTSTRAP=peer3.backbone.${NETWORK}.foodchain.te-food.com:7051
+            - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer3.backbone.${NETWORK}.foodchain.te-food.com:7051
+            - CORE_PEER_LOCALMSPID=BackboneMSP
+            - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+            - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=${NETWORK}
+            - CORE_LOGGING_LEVEL=INFO
+            #- CORE_LOGGING_LEVEL=DEBUG
+            - CORE_PEER_TLS_ENABLED=true
+            - CORE_PEER_GOSSIP_USELEADERELECTION=true
+            - CORE_PEER_GOSSIP_ORGLEADER=false
+            - CORE_PEER_PROFILE_ENABLED=true
+            - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+            - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+            - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+        working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+        command: peer node start
+        deploy:                     
+            replicas: 0
+            placement:
+                constraints: [node.hostname == $SWARM_MANAGER]
+            restart_policy:
+                condition: any 
+                delay: 5s
+                max_attempts: 5
+
+    peer4:
+        image: hyperledger/fabric-peer:$IMAGE_TAG
+        hostname: peer4.backbone.${NETWORK}.foodchain.te-food.com
+        networks:
+            swarmnet:
+                aliases:
+                    - peer4.backbone.${NETWORK}.foodchain.te-food.com
+        volumes:
+            - /var/run/:/host/var/run/
+            - ${CRYPTO}/peerOrganizations/backbone.${NETWORK}.foodchain.te-food.com/peers/peer4.backbone.${NETWORK}.foodchain.te-food.com/msp:/etc/hyperledger/fabric/msp
+            - ${CRYPTO}/peerOrganizations/backbone.${NETWORK}.foodchain.te-food.com/peers/peer4.backbone.${NETWORK}.foodchain.te-food.com/tls:/etc/hyperledger/fabric/tls
+            - ${DATA}/backbone/peer4:/var/hyperledger/production
+        environment:
+            - CORE_PEER_ID=peer4.backbone.${NETWORK}.foodchain.te-food.com
+            - CORE_PEER_ADDRESS=peer4.backbone.${NETWORK}.foodchain.te-food.com:7051
+            - CORE_PEER_GOSSIP_BOOTSTRAP=peer4.backbone.${NETWORK}.foodchain.te-food.com:7051
+            - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer4.backbone.${NETWORK}.foodchain.te-food.com:7051
+            - CORE_PEER_LOCALMSPID=BackboneMSP
+            - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+            - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=${NETWORK}
+            - CORE_LOGGING_LEVEL=INFO
+            #- CORE_LOGGING_LEVEL=DEBUG
+            - CORE_PEER_TLS_ENABLED=true
+            - CORE_PEER_GOSSIP_USELEADERELECTION=true
+            - CORE_PEER_GOSSIP_ORGLEADER=false
+            - CORE_PEER_PROFILE_ENABLED=true
+            - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+            - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+            - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+        working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+        command: peer node start
+        deploy:                     
+            replicas: 0
+            placement:
+                constraints: [node.hostname == $SWARM_MANAGER]
+            restart_policy:
+                condition: any 
+                delay: 5s
+                max_attempts: 5
+
+    peer5:
+        image: hyperledger/fabric-peer:$IMAGE_TAG
+        hostname: peer5.backbone.${NETWORK}.foodchain.te-food.com
+        networks:
+            swarmnet:
+                aliases:
+                    - peer5.backbone.${NETWORK}.foodchain.te-food.com
+        volumes:
+            - /var/run/:/host/var/run/
+            - ${CRYPTO}/peerOrganizations/backbone.${NETWORK}.foodchain.te-food.com/peers/peer5.backbone.${NETWORK}.foodchain.te-food.com/msp:/etc/hyperledger/fabric/msp
+            - ${CRYPTO}/peerOrganizations/backbone.${NETWORK}.foodchain.te-food.com/peers/peer5.backbone.${NETWORK}.foodchain.te-food.com/tls:/etc/hyperledger/fabric/tls
+            - ${DATA}/backbone/peer5:/var/hyperledger/production
+        environment:
+            - CORE_PEER_ID=peer5.backbone.${NETWORK}.foodchain.te-food.com
+            - CORE_PEER_ADDRESS=peer5.backbone.${NETWORK}.foodchain.te-food.com:7051
+            - CORE_PEER_GOSSIP_BOOTSTRAP=peer5.backbone.${NETWORK}.foodchain.te-food.com:7051
+            - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer5.backbone.${NETWORK}.foodchain.te-food.com:7051
+            - CORE_PEER_LOCALMSPID=BackboneMSP
+            - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+            - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=${NETWORK}
+            - CORE_LOGGING_LEVEL=INFO
+            #- CORE_LOGGING_LEVEL=DEBUG
+            - CORE_PEER_TLS_ENABLED=true
+            - CORE_PEER_GOSSIP_USELEADERELECTION=true
+            - CORE_PEER_GOSSIP_ORGLEADER=false
+            - CORE_PEER_PROFILE_ENABLED=true
+            - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+            - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+            - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+        working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+        command: peer node start
+        deploy:                     
+            replicas: 0
+            placement:
+                constraints: [node.hostname == $SWARM_MANAGER]
+            restart_policy:
+                condition: any 
+                delay: 5s
+                max_attempts: 5
+
+    peer6:
+        image: hyperledger/fabric-peer:$IMAGE_TAG
+        hostname: peer6.backbone.${NETWORK}.foodchain.te-food.com
+        networks:
+            swarmnet:
+                aliases:
+                    - peer6.backbone.${NETWORK}.foodchain.te-food.com
+        volumes:
+            - /var/run/:/host/var/run/
+            - ${CRYPTO}/peerOrganizations/backbone.${NETWORK}.foodchain.te-food.com/peers/peer6.backbone.${NETWORK}.foodchain.te-food.com/msp:/etc/hyperledger/fabric/msp
+            - ${CRYPTO}/peerOrganizations/backbone.${NETWORK}.foodchain.te-food.com/peers/peer6.backbone.${NETWORK}.foodchain.te-food.com/tls:/etc/hyperledger/fabric/tls
+            - ${DATA}/backbone/peer6:/var/hyperledger/production
+        environment:
+            - CORE_PEER_ID=peer6.backbone.${NETWORK}.foodchain.te-food.com
+            - CORE_PEER_ADDRESS=peer6.backbone.${NETWORK}.foodchain.te-food.com:7051
+            - CORE_PEER_GOSSIP_BOOTSTRAP=peer6.backbone.${NETWORK}.foodchain.te-food.com:7051
+            - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer6.backbone.${NETWORK}.foodchain.te-food.com:7051
+            - CORE_PEER_LOCALMSPID=BackboneMSP
+            - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+            - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=${NETWORK}
+            - CORE_LOGGING_LEVEL=INFO
+            #- CORE_LOGGING_LEVEL=DEBUG
+            - CORE_PEER_TLS_ENABLED=true
+            - CORE_PEER_GOSSIP_USELEADERELECTION=true
+            - CORE_PEER_GOSSIP_ORGLEADER=false
+            - CORE_PEER_PROFILE_ENABLED=true
+            - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+            - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+            - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+        working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+        command: peer node start
+        deploy:                     
+            replicas: 0
+            placement:
+                constraints: [node.hostname == $SWARM_MANAGER]
+            restart_policy:
+                condition: any 
+                delay: 5s
+                max_attempts: 5
+

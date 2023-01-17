@@ -1,0 +1,183 @@
+#
+# Copyright TE-FOOD International Corp., All Rights Reserved.
+#
+
+version: '3'
+
+networks:
+    swarmnet:
+        external:
+            name: $NETWORK
+
+services:
+    
+    #
+    # cli
+    #
+
+    cli:
+        image: hyperledger/fabric-tools:$IMAGE_TAG
+        tty: true
+        #stdin_open: true
+        networks:
+            swarmnet:
+                aliases:
+                    - cli
+        environment:
+            - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=${NETWORK}
+            - GOPATH=/opt/gopath
+            - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+            #- CORE_LOGGING_LEVEL=DEBUG
+            - CORE_LOGGING_LEVEL=INFO
+            - CORE_PEER_ID=cli
+            - CORE_PEER_ADDRESS=peer1.backbone.${NETWORK}.${DOMAIN}:7051
+            - CORE_PEER_LOCALMSPID=BackboneMSP
+            - CORE_PEER_TLS_ENABLED=true
+            - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/backbone.${NETWORK}.${DOMAIN}/peers/peer1.backbone.${NETWORK}.${DOMAIN}/tls/server.crt
+            - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/backbone.${NETWORK}.${DOMAIN}/peers/peer1.backbone.${NETWORK}.${DOMAIN}/tls/server.key
+            - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/backbone.${NETWORK}.${DOMAIN}/peers/peer1.backbone.${NETWORK}.${DOMAIN}/tls/ca.crt
+            - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/backbone.${NETWORK}.${DOMAIN}/users/Admin@backbone.${NETWORK}.${DOMAIN}/msp
+        working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+        volumes:
+            - /var/run/:/host/var/run/
+            - ${CHAINCODE}:/opt/gopath/src/github.com/chaincode
+            - ${CRYPTO}:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+            - ${SCRIPTS}:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
+            - ${ARTIFACTS}:/opt/gopath/src/github.com/hyperledger/fabric/peer/artifacts
+        command: /bin/bash
+        deploy:
+            replicas: 0
+            placement:
+                constraints: [ node.hostname == $SWARM_MANAGER ]
+            restart_policy:
+                condition: any 
+                delay: 5s
+
+    #
+    # api 
+    #
+    api:
+        image: hyperledger/fabric-tools:$IMAGE_TAG
+        tty: true
+        #stdin_open: true
+        environment:
+            - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=${NETWORK}
+            - GOPATH=/opt/gopath
+            - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+            #- CORE_LOGGING_LEVEL=DEBUG
+            - CORE_LOGGING_LEVEL=INFO
+            - CORE_PEER_ID=api
+            - CORE_PEER_ADDRESS=peer1.backbone.${NETWORK}.${DOMAIN}:7051
+            - CORE_PEER_LOCALMSPID=BackboneMSP
+            - CORE_PEER_TLS_ENABLED=true
+            - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/backbone.${NETWORK}.${DOMAIN}/peers/peer1.backbone.${NETWORK}.${DOMAIN}/tls/server.crt
+            - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/backbone.${NETWORK}.${DOMAIN}/peers/peer1.backbone.${NETWORK}.${DOMAIN}/tls/server.key
+            - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/backbone.${NETWORK}.${DOMAIN}/peers/peer1.backbone.${NETWORK}.${DOMAIN}/tls/ca.crt
+            - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/backbone.${NETWORK}.${DOMAIN}/users/Admin@backbone.${NETWORK}.${DOMAIN}/msp
+        working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+        volumes:
+            - /var/run/:/host/var/run/
+            - ${CHAINCODE}:/opt/gopath/src/github.com/chaincode
+            - ${CRYPTO}:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+            - ${SCRIPTS}:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
+            - ${ARTIFACTS}:/opt/gopath/src/github.com/hyperledger/fabric/peer/artifacts
+            - ${API}:/opt/gopath/src/github.com/hyperledger/fabric/peer/api/
+        command: /opt/gopath/src/github.com/hyperledger/fabric/peer/api/bin/main
+        networks:
+            swarmnet:
+                aliases:
+                    - api
+                    - api.${NETWORK}.${DOMAIN}
+        ports:
+            - 8000:8000
+        deploy:                                                                                                                                                                                                
+            replicas: 1
+            placement:
+                constraints: [ node.hostname == $SWARM_MANAGER ]
+
+    #
+    # busybox
+    #
+
+    busybox:
+        image: busybox
+        volumes:
+            - ${SCRIPTS}:/mnt/scripts/
+        networks:
+            swarmnet:
+                aliases:
+                    - busybox
+        command: top
+        deploy:
+            replicas: 0
+            placement:
+                constraints: [ node.hostname == $SWARM_MANAGER ]
+
+    #
+    # explorer
+    #
+
+    explorer:
+        image: hyperledger/explorer:$EXP_TAG
+        environment:
+            - EXPLORER_APP_PATH=/opt/explorer 
+            - DATABASE_HOST=${DB_HOST}
+            - DATABASE_DATABASE=${DB_NAME}
+            - DATABASE_USERNAME=${DB_USER}
+            - DATABASE_PASSWD=${DB_PSWD}
+        volumes:
+            - ${CONFIG}/explorer/explorerconfig.json:/opt/explorer/app/explorerconfig.json
+            - ${CONFIG}/explorer/config.json:/opt/explorer/app/platform/fabric/config.json
+            - ${CONFIG}/explorer/te-food.svg:/opt/explorer/client/build/static/media/Explorer_Logo.ed510af4.svg
+            - ${CRYPTO}:/tmp/crypto
+        networks:
+            swarmnet:
+                aliases:
+                    - explorer
+                    - explorer.${NETWORK}.${DOMAIN}
+        ports:
+            - 8080:8080
+        deploy:
+            replicas: 1
+            placement:
+                constraints: [ node.hostname == $SWARM_MANAGER ]
+
+    #
+    # visualizer
+    #
+
+    visualizer:
+        image: dockersamples/visualizer
+        volumes:
+            - ${SCRIPTS}:/mnt/scripts/
+            - /var/run/docker.sock:/var/run/docker.sock
+        networks:
+            swarmnet:
+                aliases:
+                    - visualizer
+                    - visualizer.${NETWORK}.${DOMAIN}
+        ports:
+                - 8888:8080
+        deploy:
+            replicas: 0
+            placement:
+                constraints: [ node.hostname == $SWARM_MANAGER ]
+
+    #
+    # netshoot
+    #
+
+    netshoot:
+        image: nicolaka/netshoot
+        volumes:
+            - ${SCRIPTS}:/mnt/scripts/
+        networks:
+            swarmnet:
+                aliases:
+                    - netshoot
+        command: top
+        deploy:
+            replicas: 0
+            placement:
+                constraints: [ node.hostname == $SWARM_MANAGER ]
+
