@@ -54,10 +54,6 @@ _WipePersistent() {
 	TExVerify $? $err
 	err=$( mkdir "$SCxData" )
 	TExVerify $? $err
-	# err=$( mkdir "$SCxConf" )
-	# TExVerify $? $err
-	# err=$( mkdir "$SCxCrypto" )
-	# TExVerify $? $err
 }
 
 TExYN "wipe persistent data?" _WipePersistent

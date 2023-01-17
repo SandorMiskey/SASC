@@ -16,15 +16,15 @@ Organizations:
 
     # SampleOrg defines an MSP using the sampleconfig.  It should never be used
     # in production but may be used as a template for other definitions
-    # - &${SCxOrgOrdererName}Org
-    - &${SCxOrgOrdererName}
+    # - &${SCxOrderer1Name}Org
+    - &${SCxOrderer1Name}
         # DefaultOrg defines the organization which is used in the sampleconfig
         # of the fabric.git development environment
-        # Name: ${SCxOrgOrdererName}Org
-        Name: ${SCxOrgOrdererName}
+        # Name: ${SCxOrderer1Name}Org
+        Name: ${SCxOrderer1Name}
 
         # ID to load the MSP definition as
-        ID: ${SCxOrgOrdererName}MSP
+        ID: ${SCxOrderer1Name}MSP
 
         # MSPDir is the filesystem path which contains the MSP configuration
         MSPDir: ${SCxCrypto}/ordererOrganizations/${SCxDomain}/msp
@@ -35,16 +35,16 @@ Organizations:
         Policies:
             Readers:
                 Type: Signature
-                Rule: "OR('${SCxOrgOrdererName}MSP.member')"
+                Rule: "OR('${SCxOrderer1Name}MSP.member')"
             Writers:
                 Type: Signature
-                Rule: "OR('${SCxOrgOrdererName}MSP.member')"
+                Rule: "OR('${SCxOrderer1Name}MSP.member')"
             Admins:
                 Type: Signature
-                Rule: "OR('${SCxOrgOrdererName}MSP.admin')"
+                Rule: "OR('${SCxOrderer1Name}MSP.admin')"
 
         OrdererEndpoints:
-            - ${SCxOrgOrdererName}.${SCxDomain}:7050
+            - ${SCxOrderer1Name}.${SCxDomain}:7050
 
     - &${SCxOrg1Name}
         # DefaultOrg defines the organization which is used in the sampleconfig
@@ -307,7 +307,7 @@ Profiles:
         Orderer:
             <<: *OrdererDefaults
             Organizations:
-                - *${SCxOrgOrdererName}
+                - *${SCxOrderer1Name}
             Capabilities: *OrdererCapabilities
         Application:
             <<: *ApplicationDefaults
