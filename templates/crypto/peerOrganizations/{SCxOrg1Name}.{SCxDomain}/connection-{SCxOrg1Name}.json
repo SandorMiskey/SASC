@@ -1,0 +1,49 @@
+{
+    "name": "${SCxNetwork}-${SCxOrg1Name}",
+    "version": "1.0.0",
+    "client": {
+        "organization": "${SCxOrg1Name}",
+        "connection": {
+            "timeout": {
+                "peer": {
+                    "endorser": "300"
+                }
+            }
+        }
+    },
+    "organizations": {
+        "${SCxOrg1Name}": {
+            "mspid": "${SCxOrg1Name}MSP",
+            "peers": [
+                "peer0.${SCxOrg1Name}.${SCxDomain}"
+            ],
+            "certificateAuthorities": [
+                "ca.${SCxOrg1Name}.${SCxDomain}"
+            ]
+        }
+    },
+    "peers": {
+        "peer0.${SCxOrg1Name}.${SCxDomain}": {
+            "url": "grpcs://localhost:${SCxOrg1P0Port}",
+            "tlsCACerts": {
+                "pem": "${SCxOrg1PeerPEM}"
+            },
+            "grpcOptions": {
+                "ssl-target-name-override": "peer0.${SCxOrg1Name}.${SCxDomain}",
+                "hostnameOverride": "peer0.${SCxOrg1Name}.${SCxDomain}"
+            }
+        }
+    },
+    "certificateAuthorities": {
+        "ca.${SCxOrg1Name}.${SCxDomain}": {
+            "url": "https://localhost:${SCxOrg1CAPort}",
+            "caName": "ca-${SCxOrg1Name}",
+            "tlsCACerts": {
+                "pem": ["${SCxOrg1CAPEM}"]
+            },
+            "httpOptions": {
+                "verify": false
+            }
+        }
+    }
+}

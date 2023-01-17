@@ -1,0 +1,1357 @@
+Return-Path: <greg.kronson@sgits.co.za>
+Delivered-To: sandor.miskey@erba.hu
+Received: from mail.erba.hu (localhost [127.0.0.1])
+	by mail.erba.hu (Postfix) with ESMTP id A4B9E7D715
+	for <sandor.miskey@erba.hu>; Wed,  9 Nov 2022 08:47:53 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at mail.erba.hu
+Authentication-Results: mail.erba.hu (amavisd-new); dkim=pass (1024-bit key)
+	header.d=sgits.co.za
+Received: from mail.erba.hu ([127.0.0.1])
+	by mail.erba.hu (mail.erba.hu [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id QVOwcmz-hnK2 for <sandor.miskey@erba.hu>;
+	Wed,  9 Nov 2022 08:47:52 +0100 (CET)
+X-Original-Helo: za-smtp-delivery-66.mimecast.co.za (iRedMail: http://www.iredmail.org/)
+Received: from za-smtp-delivery-66.mimecast.co.za (za-smtp-delivery-66.mimecast.co.za [41.74.201.66])
+	by mail.erba.hu (Postfix) with ESMTPS id 59D4C7D6C3
+	for <sandor.miskey@te-food.com>; Wed,  9 Nov 2022 08:47:51 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sgits.co.za;
+	s=mimecast20210628; t=1667980061;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mw1dqQ3j2Mx7DII4+MzMQX1rcjIjveH1tIEtYQX4ITc=;
+	b=HI0q7G4GtXLOhr4eji3wp+jUl6xIWWZmLrTzjfyjHfK2LANKrMPQJh0fR6HVQgAUuzM/7W
+	5zVA3RU+Pu2I4c+6713ee8FTC9anSiddpJLQNTTY3B6U7KWLnlh8JASBJgw+SNWwxrzg3Z
+	x/HS9Xsm6UbosRzSpbzQ5C/K4/kU11A=
+Received: from EUR03-VI1-obe.outbound.protection.outlook.com
+ (mail-vi1eur03lp2112.outbound.protection.outlook.com [104.47.30.112]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ za-mta-5-graudOgOPl6ajT3xqWcAPg-1; Wed, 09 Nov 2022 09:47:35 +0200
+X-MC-Unique: graudOgOPl6ajT3xqWcAPg-1
+Received: from DU2P251CA0002.EURP251.PROD.OUTLOOK.COM (2603:10a6:10:230::11)
+ by AS8PR01MB7398.eurprd01.prod.exchangelabs.com (2603:10a6:20b:25c::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5791.27; Wed, 9 Nov
+ 2022 07:47:31 +0000
+Received: from DB5EUR02FT007.eop-EUR02.prod.protection.outlook.com
+ (2603:10a6:10:230:cafe::fe) by DU2P251CA0002.outlook.office365.com
+ (2603:10a6:10:230::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5791.21 via Frontend
+ Transport; Wed, 9 Nov 2022 07:47:31 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 104.209.35.28)
+ smtp.mailfrom=sgits.co.za; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=quarantine header.from=sgits.co.za
+Received: from us2.smtp.exclaimer.net (104.209.35.28) by
+ DB5EUR02FT007.mail.protection.outlook.com (10.13.58.222) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.5813.12 via Frontend Transport; Wed, 9 Nov 2022 07:47:30 +0000
+Received: from EUR04-VI1-obe.outbound.protection.outlook.com (104.47.14.50)
+	 by us2.smtp.exclaimer.net (104.209.35.28) with Exclaimer Signature Manager
+	 ESMTP Proxy us2.smtp.exclaimer.net (tlsversion=TLS12,
+	 tlscipher=TLS_ECDHE_WITH_AES256_SHA384); Wed, 9 Nov 2022 07:47:31 +0000
+X-ExclaimerHostedSignatures-MessageProcessed: true
+X-ExclaimerProxyLatency: 20862328
+X-ExclaimerImprintLatency: 2619689
+X-ExclaimerImprintAction: f70929b18fd74bbc97181c66cfed490d
+Received: from AM5PR0101MB2484.eurprd01.prod.exchangelabs.com
+ (2603:10a6:203:32::14) by VI1PR01MB6253.eurprd01.prod.exchangelabs.com
+ (2603:10a6:800:159::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5791.27; Wed, 9 Nov
+ 2022 07:47:22 +0000
+Received: from AM5PR0101MB2484.eurprd01.prod.exchangelabs.com
+ ([fe80::8da6:74a:d706:8c7a]) by
+ AM5PR0101MB2484.eurprd01.prod.exchangelabs.com ([fe80::8da6:74a:d706:8c7a%8])
+ with mapi id 15.20.5791.027; Wed, 9 Nov 2022 07:47:22 +0000
+From: Greg Kronson <greg.kronson@sgits.co.za>
+To: Erik Arokszallasi <erik.arokszallasi@te-food.com>, Adrian Lewis
+	<adrian.lewis@supergrp.com>, Sandor Miskey <sandor.miskey@te-food.com>
+Subject: RE: Student card
+Thread-Topic: Student card
+Thread-Index: AQHY8qBfrmtMNFjzWkmbUFAbsiELra405ObQgAAjtgqAATEREA==
+Date: Wed, 9 Nov 2022 07:47:22 +0000
+Message-ID: <AM5PR0101MB248415C2C59DD65364D148CEC43E9@AM5PR0101MB2484.eurprd01.prod.exchangelabs.com>
+References: <81f93d6a-b96e-4ac2-98ee-207437a96642@te-food.com>
+ <AM5PR0101MB24841E1A7347189CD19D0B73C43F9@AM5PR0101MB2484.eurprd01.prod.exchangelabs.com>
+ <16b95ec1a96f2.bef627c5b0672@te-food.com>
+In-Reply-To: <16b95ec1a96f2.bef627c5b0672@te-food.com>
+Accept-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=sgits.co.za
+x-ms-traffictypediagnostic: AM5PR0101MB2484:EE_|VI1PR01MB6253:EE_|DB5EUR02FT007:EE_|AS8PR01MB7398:EE_
+X-MS-Office365-Filtering-Correlation-Id: 64c20f80-1aad-4fe2-5ab2-08dac226a841
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted: BCL:0
+X-Microsoft-Antispam-Message-Info-Original: 3lIF1/9dmUFmxdj2YHuqsQrHWzHdKRKrY/l8M3W+M7HWLIjMfdVYslxUI1352AcBxMIzfFUv8166If0xGfo3LeybYLIOVG/VCIlsrblE9Xl0uQI/+WQXFjp7WVxy9ItUTcvB5fQyRggZieCC7uO3wi2ayA8J56zM8y0Mf77vQ1BYcu5I/4xrtu3VgDnE2OhgpMvwe/ZsBRLo7ED9h9QTaSM6f5uuoheECqI3qtJLffAWx1FnBp8cy+GpQ4BqTgs2e5d3u8wtH+4Arr7a37xPHWCbifSKc2jmejQmCQjJ+pQVuddslwrqDabGXuxxj+2mN6fEau50NoaHqqZfVbEI7H6UWSwxTZfdXQSJZgPAOMMA/wQQkvP4w6B6PF+8Gpm4gmRkKEodb25LHx4aJvLviioLVO5yhC9nPBJG5sQJMl2KHU3Hwx4QPOd93+EqPDRsR8ScGtaQ+hZCcdLJZg2UN1GJR3lkZuMGzgx+taDOoyK5E9fA3lVzMbbVH3mA0Ea6GAy72tCQKY9xTBCvk33uQE781D04BPT3gPsw17GFZIrRy6IqEiBXBXZEcv50WL6pflh8RZ9Qa9KuUK5NeAbfXt7QrkmWSA0ofkgKJeLR2n+M5/4KRk8zW4AUv3DCp7mWUTyy6TVXExxCOD4T0kvsyMdaRKu8wleMgbUL/FttQr4ZKmVlTl/yQ08pK4ugoy1mZ9viayRykf5njWE1baIMmfm0afMQH1CZePg8urpQ+SdKauOlJwSw87GxBFmJuiR0RRfYemXyPQHpZUofquLU0aF1Hs8nXktbI4u0gh7d1SbR+EbgMnGphWdzigP7/WXpOcuYYMFFxTG642038fM5ng==
+X-Forefront-Antispam-Report-Untrusted: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM5PR0101MB2484.eurprd01.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(396003)(376002)(366004)(136003)(39860400002)(346002)(451199015)(66899015)(86362001)(33656002)(38070700005)(3480700007)(166002)(5660300002)(2906002)(44832011)(26005)(53546011)(7696005)(83380400001)(9686003)(6506007)(38100700002)(122000001)(186003)(66574015)(52536014)(64756008)(66556008)(66476007)(316002)(66946007)(76116006)(66446008)(450100002)(8936002)(966005)(55016003)(110136005)(478600001)(71200400001)(8676002)(41300700001)(7116003);DIR:OUT;SFP:1102
+MIME-Version: 1.0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR01MB6253
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped: DB5EUR02FT007.eop-EUR02.prod.protection.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs: 194c50e5-bb03-4f4c-bdd5-08dac226a32d
+X-Microsoft-Antispam: BCL:0
+X-Microsoft-Antispam-Message-Info: fSc3aZhtg9377pK4+X0E8qoJ5MIbtq+UbrVrCZRVvJTTzAFCqSVZcoTaYMibBSPXZ9Ez5aXGZx4aetHSd73Uir5yBWUNUY5N9CAmrNo2zYzuFzjO6+tAiADbKOOhjCBvqsSb6/jPwUAHNCxtmshjDhFgMuy/3K+8Ht6gDtUgmkP9+1KZ7uvJQIrsQ0jVh7DJdSYG1Gg9gQDxWtzegIGTOgcS6/nckLarZPUbVDLbq1IrUF4ttOlRhGyGH4rt9iVOixmlOdDOJQ9ReHNZQgwjDurs1ep2sNgDnqT+tTW0fvG+810wNu4wYgfM54Ai4ev3QDhvI3JL/5rvoiC1CiKQ+mLvUv6k2woQ1hjNaT4OtckxPGmSABuM6o/8QZyXBpB2VDPx33RWtWhbHhIgz2zEhDPeCRd9+H1ih7HZKRFt/yuG4/8ZhSXd6K5QrBMg2SBiqRumia5XXeldaw5pTscq730XSb/eYO3mTtTeIjvf736nFdKTYV3s2CHHlgkg/gAT8zN/8JB7IpzE3e9kApapDu2QDjHzheSqwNao7n8MWZblCcEHwps/+QuB0JWs9F3tTDhqBJhR0tDs8Q6/QFa/QF9J4z8PYrBmbEwdTNHJRJ1qcsp8iIqHsBt3WmiAYwagGxDW1dN2MD4Bc6LfCEH85f9cnv9MIjc9aEgrPeWVFnk+7dxE7/PBlOwiXmj78AkNrkkK78Wc122bx4dYfxtizvCURzGdNKWrPUSmkkg1VVtkWF+A299Ume/sVDSSPDxVy840OyiSWDtn7aw8cid6ghT0quj6zAlgXFQG9ARjXGmt2gQXi1CLbr89Xvm4pz7/3x90OTeFRTAqgjXzL+EGew==
+X-Forefront-Antispam-Report: CIP:104.209.35.28;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:us2.smtp.exclaimer.net;PTR:us2.smtp.exclaimer.net;CAT:NONE;SFS:(13230022)(4636009)(346002)(376002)(136003)(39860400002)(396003)(451199015)(36840700001)(46966006)(40470700004)(5660300002)(52536014)(356005)(8936002)(41300700001)(7596003)(70586007)(70206006)(7636003)(7116003)(7066003)(478600001)(33656002)(44832011)(86362001)(2906002)(40460700003)(55016003)(40480700001)(83380400001)(47076005)(66574015)(7696005)(336012)(33964004)(6506007)(53546011)(450100002)(9686003)(26005)(966005)(110136005)(82740400003)(166002)(316002)(8676002)(3480700007)(66899015)(186003)(36860700001)(82310400005);DIR:OUT;SFP:1102
+X-OriginatorOrg: sgits.co.za
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Nov 2022 07:47:30.2967
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 64c20f80-1aad-4fe2-5ab2-08dac226a841
+X-MS-Exchange-CrossTenant-Id: 09303c02-4439-4938-bd09-eaa25f92bc41
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=09303c02-4439-4938-bd09-eaa25f92bc41;Ip=[104.209.35.28];Helo=[us2.smtp.exclaimer.net]
+X-MS-Exchange-CrossTenant-AuthSource: DB5EUR02FT007.eop-EUR02.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR01MB7398
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: sgits.co.za
+Content-Type: multipart/related;
+	boundary="----_=_NextPart_3c57cf3b-b1b4-4595-b543-304a4cb69e2e"
+
+This is a multi-part message in MIME format.
+------_=_NextPart_3c57cf3b-b1b4-4595-b543-304a4cb69e2e
+Content-Language: en-US
+Content-Type: multipart/alternative;
+	boundary="_000_AM5PR0101MB248415C2C59DD65364D148CEC43E9AM5PR0101MB2484_"
+
+--_000_AM5PR0101MB248415C2C59DD65364D148CEC43E9AM5PR0101MB2484_
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+Hi Erik
+Can you raise an invoice for us, then we  can provide you with a PO
+
+
+Greg Kronson | Chief Digital Officer
++27115234218+27115234911+27825794853greg.kronson@sgits.co.za
+Group Information Technology Services, 27 Impala Road Chislehurston, Sandto=
+n, Gauteng
+Log a call to SGIT via WhatsApp  +27 60 949 6765
+Supply Chain
+|Fleet Solutions
+|Dealerships
+-Visit supergroup.co.za
+Please consider the environment before printing this email - This email is =
+subject to the following disclaimer
+From: Erik Arokszallasi <erik.arokszallasi@te-food.com>
+Sent: Tuesday, 08 November 2022 15:35
+To: Greg Kronson <greg.kronson@sgits.co.za>; Adrian Lewis <adrian.lewis@sup=
+ergrp.com>; Sandor Miskey <sandor.miskey@te-food.com>
+Subject: RE: Student card
+
+
+[EXTERNAL EMAIL think before you click]
+
+________________________________
+Hi, yes we can go down.
+Can you send a very short order by email=C3=AD?
+Thank you
+
+BlueMail<https://bluemail.me> for Desktop let=C3=B6lt=C3=A9se
+
+Greg Kronson wrote:
+
+Hi Erik
+
+Can we bottom the Dev cost to Euro 10,000.00  once off
+We will happily pay the hosting fees until POC is done
+If we need additional support hours, lets cost that Adhoc as and when we ne=
+ed it during POC
+
+Once we have signed customer on board, we can look at monthly cost included=
+ going forward
+
+Greg Kronson=E2=80=8B
+ |
+Chief Digital Officer
+[X]
+[X]
++27115234218<tel:+27115234218>
+[X]
++27115234911<fax:+27115234911>
+[X]
++27825794853<tel:+27825794853>
+[X]
+greg.kronson@sgits.co.za<mailto:greg.kronson@sgits.co.za>
+[X]
+Group Information Technology Services
+,
+27 Impala Road Chislehurston
+,
+Sandton
+,
+Gauteng
+[X]
+[X]
+Log a call to SGIT via WhatsApp  +27 60 949 6765<https://wa.me/27609496765>
+Supply Chain<http://www.supergroup.co.za/supply-chain/>
+|
+Fleet Solutions<http://www.supergroup.co.za/fleet-solutions/>
+|
+Dealerships<http://www.supergroup.co.za/dealerships/>
+=E2=80=91
+Visit supergroup.co.za<http://www.supergroup.co.za/>
+[X]
+Please consider the environment before printing this email - This email is =
+subject to the following disclaimer<http://www.supergroup.co.za/email-discl=
+aimer/>
+From: Erik Arokszallasi <erik.arokszallasi@te-food.com<mailto:erik.arokszal=
+lasi@te-food.com>>
+Sent: Monday, 07 November 2022 13:59
+To: Adrian Lewis <adrian.lewis@supergrp.com<mailto:adrian.lewis@supergrp.co=
+m>>; Greg Kronson <greg.kronson@sgits.co.za<mailto:greg.kronson@sgits.co.za=
+>>; Sandor Miskey <sandor.miskey@te-food.com<mailto:sandor.miskey@te-food.c=
+om>>
+Subject: Student card
+
+
+[EXTERNAL EMAIL think before you click]
+
+________________________________
+Dear All,
+Do you have any news regarding to the project?
+Thank you
+=C3=81roksz=C3=A1ll=C3=A1si Erik
+CEO
+TE-FOOD INTERNATIONAL
+Mobile: +36 30 3747569
+Skype: erik.arokszallasi
+Telegram: http://www.t.me/arokszallasi<http://www.t.me/arokszallasi>
+
+--_000_AM5PR0101MB248415C2C59DD65364D148CEC43E9AM5PR0101MB2484_
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<html xmlns:v=3D"urn:schemas-microsoft-com:vml" xmlns:o=3D"urn:schemas-micr=
+osoft-com:office:office" xmlns:w=3D"urn:schemas-microsoft-com:office:word" =
+xmlns:m=3D"http://schemas.microsoft.com/office/2004/12/omml" xmlns=3D"http:=
+//www.w3.org/TR/REC-html40">
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dutf-8">
+<meta name=3D"Generator" content=3D"Microsoft Word 15 (filtered medium)">
+<!--[if !mso]><style>v\:* {behavior:url(#default#VML);}
+o\:* {behavior:url(#default#VML);}
+w\:* {behavior:url(#default#VML);}
+.shape {behavior:url(#default#VML);}
+</style><![endif]--><style><!--
+/* Font Definitions */
+@font-face
+=09{font-family:Helvetica;
+=09panose-1:2 11 6 4 2 2 2 2 2 4;}
+@font-face
+=09{font-family:"Cambria Math";
+=09panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+=09{font-family:Calibri;
+=09panose-1:2 15 5 2 2 2 4 3 2 4;}
+@font-face
+=09{font-family:remialcxesans;}
+/* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+=09{margin:0cm;
+=09font-size:11.0pt;
+=09font-family:"Calibri",sans-serif;}
+a:link, span.MsoHyperlink
+=09{mso-style-priority:99;
+=09color:blue;
+=09text-decoration:underline;}
+span.EmailStyle22
+=09{mso-style-type:personal-reply;
+=09font-family:"Calibri",sans-serif;
+=09color:windowtext;}
+.MsoChpDefault
+=09{mso-style-type:export-only;
+=09font-size:10.0pt;}
+@page WordSection1
+=09{size:612.0pt 792.0pt;
+=09margin:72.0pt 72.0pt 72.0pt 72.0pt;}
+div.WordSection1
+=09{page:WordSection1;}
+--></style><!--[if gte mso 9]><xml>
+<o:shapedefaults v:ext=3D"edit" spidmax=3D"1026" />
+</xml><![endif]--><!--[if gte mso 9]><xml>
+<o:shapelayout v:ext=3D"edit">
+<o:idmap v:ext=3D"edit" data=3D"1" />
+</o:shapelayout></xml><![endif]-->
+</head>
+<body lang=3D"EN-GB" link=3D"blue" vlink=3D"purple" style=3D"word-wrap:brea=
+k-word">
+<div class=3D"WordSection1">
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Hi Erik<o=
+:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Can you r=
+aise an invoice for us, then we &nbsp;can provide you with a PO
+<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
+p;</o:p></span></p>
+<div>
+<div dir=3D"ltr" style=3D"mso-line-height-rule:exactly;-webkit-text-size-ad=
+just:100%;font-size:1px;direction:ltr;"><table cellpadding=3D"0" cellspacin=
+g=3D"0" border=3D"0" style=3D"width:100%;font-size:1px;"><tr style=3D"font-=
+size:0;"><td align=3D"left" style=3D"vertical-align:top;"><table cellpaddin=
+g=3D"0" cellspacing=3D"0" border=3D"0" style=3D"font-size:0;"><tr style=3D"=
+font-size:0;"><td align=3D"left" style=3D"padding:35px 0 0;vertical-align:t=
+op;"><table cellpadding=3D"0" cellspacing=3D"0" border=3D"0" style=3D"font-=
+size:0;"><tr style=3D"font-size:0;"><td align=3D"left" style=3D"vertical-al=
+ign:top;"><table cellpadding=3D"0" cellspacing=3D"0" border=3D"0" style=3D"=
+font-size:0;color:#626566;font-style:normal;font-weight:400;white-space:now=
+rap;"><tr style=3D"font-size:14.67px;"><td align=3D"left" style=3D"vertical=
+-align:top;font-family:Calibri,Arial,sans-serif;font-weight:700;">Greg&nbsp=
+;Kronson<span style=3D"font-family:remialcxesans;font-size:1px;color:#FFFFF=
+F;line-height:1px;">&#8203;</span></td><td align=3D"left" style=3D"vertical=
+-align:top;font-family:Calibri,Arial,sans-serif;">&nbsp;|&nbsp;</td><td ali=
+gn=3D"left" style=3D"vertical-align:top;font-family:Calibri,Arial,sans-seri=
+f;">Chief&nbsp;Digital&nbsp;Officer</td></tr></table></td></tr></table></td=
+></tr></table></td></tr><tr style=3D"font-size:0;"><td align=3D"left" style=
+=3D"vertical-align:top;"><table cellpadding=3D"0" cellspacing=3D"0" border=
+=3D"0" style=3D"font-size:0;line-height:normal;"><tr style=3D"font-size:0;"=
+><td align=3D"left" style=3D"padding:15px 0;vertical-align:top;"><img src=
+=3D"cid:image419946.png@F16FE847.B6844614" border=3D"0" alt=3D"" style=3D"f=
+ont-size:0;" /></td></tr></table></td></tr><tr style=3D"font-size:0;"><td a=
+lign=3D"left" style=3D"vertical-align:top;"><table cellpadding=3D"0" cellsp=
+acing=3D"0" border=3D"0" style=3D"font-size:0;"><tr style=3D"font-size:0;">=
+<td align=3D"left" style=3D"padding:0;vertical-align:top;line-height:normal=
+;"><img src=3D"cid:image135345.png@C28D56F5.4C6DD444" border=3D"0" alt=3D""=
+ style=3D"font-size:0;" /></td><td align=3D"left" style=3D"padding:0;vertic=
+al-align:top;"><table cellpadding=3D"0" cellspacing=3D"0" border=3D"0" styl=
+e=3D"font-size:0;color:#626566;font-style:normal;font-weight:400;white-spac=
+e:nowrap;"><tr style=3D"font-size:14.67px;"><td align=3D"left" style=3D"pad=
+ding:0 30px 0 0;vertical-align:top;font-family:Calibri,Arial,sans-serif;"><=
+a href=3D"tel:+27115234218" target=3D"_blank" id=3D"LPlnk689713" style=3D"t=
+ext-decoration:none;color:#626566;"><strong style=3D"font-weight:400;">+271=
+15234218</strong></a></td></tr></table></td><td align=3D"left" style=3D"pad=
+ding:0;vertical-align:top;"><table cellpadding=3D"0" cellspacing=3D"0" bord=
+er=3D"0" style=3D"font-size:0;line-height:normal;"><tr style=3D"font-size:0=
+;"><td align=3D"left" style=3D"padding:0 0 0 10px;vertical-align:top;"><img=
+ src=3D"cid:image752665.png@3893318B.DC0BFE01" border=3D"0" alt=3D"" style=
+=3D"font-size:0;" /></td></tr></table></td><td align=3D"left" style=3D"padd=
+ing:0;vertical-align:top;"><table cellpadding=3D"0" cellspacing=3D"0" borde=
+r=3D"0" style=3D"font-size:0;color:#626566;font-style:normal;font-weight:40=
+0;white-space:nowrap;"><tr style=3D"font-size:14.67px;"><td align=3D"left" =
+style=3D"padding:0 30px 0 0;vertical-align:top;font-family:Calibri,Arial,sa=
+ns-serif;"><a href=3D"fax:+27115234911" target=3D"_blank" id=3D"LPlnk689713=
+" style=3D"text-decoration:none;color:#626566;"><strong style=3D"font-weigh=
+t:400;">+27115234911</strong></a></td></tr></table></td><td align=3D"left" =
+style=3D"padding:0;vertical-align:top;"><table cellpadding=3D"0" cellspacin=
+g=3D"0" border=3D"0" style=3D"font-size:0;line-height:normal;"><tr style=3D=
+"font-size:0;"><td align=3D"left" style=3D"padding:0 0 0 10px;vertical-alig=
+n:top;"><img src=3D"cid:image944511.png@E5A55CD2.5524BB77" border=3D"0" alt=
+=3D"" style=3D"font-size:0;" /></td></tr></table></td><td align=3D"left" st=
+yle=3D"padding:0;vertical-align:top;"><table cellpadding=3D"0" cellspacing=
+=3D"0" border=3D"0" style=3D"font-size:0;color:#626566;font-style:normal;fo=
+nt-weight:400;white-space:nowrap;"><tr style=3D"font-size:14.67px;"><td ali=
+gn=3D"left" style=3D"padding:0 30px 0 0;vertical-align:top;font-family:Cali=
+bri,Arial,sans-serif;"><a href=3D"tel:+27825794853" target=3D"_blank" id=3D=
+"LPlnk689713" style=3D"text-decoration:none;color:#626566;"><strong style=
+=3D"font-weight:400;">+27825794853</strong></a></td></tr></table></td><td a=
+lign=3D"left" style=3D"padding:0;vertical-align:top;line-height:normal;"><i=
+mg src=3D"cid:image776912.png@C1F420F6.B2134D1D" border=3D"0" alt=3D"" styl=
+e=3D"font-size:0;" /></td><td align=3D"left" style=3D"padding:0;vertical-al=
+ign:top;"><table cellpadding=3D"0" cellspacing=3D"0" border=3D"0" style=3D"=
+font-size:0;color:#626566;font-style:normal;font-weight:400;white-space:now=
+rap;"><tr style=3D"font-size:14.67px;"><td align=3D"left" style=3D"padding:=
+0 30px 0 0;vertical-align:top;font-family:Calibri,Arial,sans-serif;"><a hre=
+f=3D"mailto:greg.kronson@sgits.co.za" target=3D"_blank" id=3D"LPlnk689713" =
+style=3D"text-decoration:none;color:#626566;"><strong style=3D"font-weight:=
+400;">greg.kronson@sgits.co.za</strong></a></td></tr></table></td></tr></ta=
+ble></td></tr><tr style=3D"font-size:0;"><td align=3D"left" style=3D"vertic=
+al-align:top;"><table cellpadding=3D"0" cellspacing=3D"0" border=3D"0" styl=
+e=3D"font-size:0;"><tr style=3D"font-size:0;"><td align=3D"left" style=3D"p=
+adding:10px 0 0;vertical-align:top;"><table cellpadding=3D"0" cellspacing=
+=3D"0" border=3D"0" style=3D"font-size:0;"><tr style=3D"font-size:0;"><td a=
+lign=3D"left" style=3D"padding:0 0 5px;vertical-align:top;"><table cellpadd=
+ing=3D"0" cellspacing=3D"0" border=3D"0" style=3D"font-size:0;line-height:n=
+ormal;"><tr style=3D"font-size:0;"><td align=3D"left" style=3D"vertical-ali=
+gn:top;"><img src=3D"cid:image034861.png@EB85AAA9.307905A8" height=3D"60" b=
+order=3D"0" alt=3D"" style=3D"height:60px;min-height:60px;max-height:60px;f=
+ont-size:0;" /></td></tr><tr style=3D"font-size:0;"><td align=3D"left" styl=
+e=3D"vertical-align:top;"><table cellpadding=3D"0" cellspacing=3D"0" border=
+=3D"0" style=3D"font-size:0;color:#626566;font-style:normal;font-weight:400=
+;white-space:nowrap;"><tr style=3D"font-size:12px;"><td align=3D"left" styl=
+e=3D"vertical-align:top;font-family:Calibri,Arial,sans-serif;">Group&nbsp;I=
+nformation&nbsp;Technology&nbsp;Services</td><td align=3D"left" style=3D"ve=
+rtical-align:top;font-family:Calibri,Arial,sans-serif;">,&nbsp;</td><td ali=
+gn=3D"left" style=3D"vertical-align:top;font-family:Calibri,Arial,sans-seri=
+f;">27&nbsp;Impala&nbsp;Road&nbsp;Chislehurston</td><td align=3D"left" styl=
+e=3D"vertical-align:top;font-family:Calibri,Arial,sans-serif;">,&nbsp;</td>=
+<td align=3D"left" style=3D"vertical-align:top;font-family:Calibri,Arial,sa=
+ns-serif;">Sandton</td><td align=3D"left" style=3D"vertical-align:top;font-=
+family:Calibri,Arial,sans-serif;">,&nbsp;</td><td align=3D"left" style=3D"v=
+ertical-align:top;font-family:Calibri,Arial,sans-serif;">Gauteng</td></tr><=
+/table></td></tr></table></td><td align=3D"left" style=3D"padding:0 0 5px;v=
+ertical-align:top;"><table cellpadding=3D"0" cellspacing=3D"0" border=3D"0"=
+ style=3D"font-size:0;line-height:normal;"><tr style=3D"font-size:0;"><td a=
+lign=3D"left" style=3D"padding:0 0 0 45px;vertical-align:top;"><img src=3D"=
+cid:image123767.png@2E82224B.B7CCBFA3" border=3D"0" alt=3D"" style=3D"font-=
+size:0;" /></td></tr></table></td></tr><tr style=3D"font-size:0;"><td colsp=
+an=3D"2" align=3D"left" style=3D"padding:0;vertical-align:top;"><table cell=
+padding=3D"0" cellspacing=3D"0" border=3D"0" style=3D"font-size:0;line-heig=
+ht:normal;"><tr style=3D"font-size:0;"><td align=3D"left" style=3D"vertical=
+-align:top;"><img src=3D"cid:image109966.png@029AD82D.73DF5417" border=3D"0=
+" alt=3D"" style=3D"font-size:0;" /></td><td align=3D"left" style=3D"vertic=
+al-align:top;"><table cellpadding=3D"0" cellspacing=3D"0" border=3D"0" styl=
+e=3D"font-size:0;color:#626566;font-style:normal;font-weight:400;white-spac=
+e:nowrap;"><tr style=3D"font-size:13.33px;"><td align=3D"left" style=3D"pad=
+ding:5px 0 0;vertical-align:top;font-family:Arial,sans-serif;"><a href=3D"h=
+ttps://wa.me/27609496765" target=3D"_blank" id=3D"LPlnk689713" style=3D"tex=
+t-decoration:none;color:#626566;"><strong style=3D"font-weight:400;">Log&nb=
+sp;a&nbsp;call&nbsp;to&nbsp;SGIT&nbsp;via&nbsp;WhatsApp&nbsp;&nbsp;+27&nbsp=
+;60&nbsp;949&nbsp;6765</strong></a><br /></td></tr></table></td></tr></tabl=
+e></td></tr><tr style=3D"font-size:0;"><td colspan=3D"2" align=3D"left" sty=
+le=3D"padding:0;vertical-align:top;"><table cellpadding=3D"0" cellspacing=
+=3D"0" border=3D"0" style=3D"font-size:0;"><tr style=3D"font-size:0;"><td a=
+lign=3D"left" style=3D"padding:15px 0 0 10px;vertical-align:top;"><table ce=
+llpadding=3D"0" cellspacing=3D"0" border=3D"0" style=3D"font-size:0;color:#=
+333333;font-style:normal;font-weight:400;white-space:nowrap;"><tr style=3D"=
+font-size:12px;"><td align=3D"left" style=3D"vertical-align:top;font-family=
+:Arial,sans-serif;"><a href=3D"http://www.supergroup.co.za/supply-chain/" t=
+arget=3D"_blank" id=3D"LPlnk689713" style=3D"text-decoration:none;color:#33=
+3333;"><strong style=3D"font-weight:400;">Supply&nbsp;Chain</strong></a><br=
+ /></td><td align=3D"left" style=3D"vertical-align:top;font-size:14.67px;co=
+lor:#626566;font-family:Calibri,Arial,sans-serif;">|</td><td align=3D"left"=
+ style=3D"vertical-align:top;font-family:Arial,sans-serif;"><a href=3D"http=
+://www.supergroup.co.za/fleet-solutions/" target=3D"_blank" id=3D"LPlnk6897=
+13" style=3D"text-decoration:none;color:#333333;"><strong style=3D"font-wei=
+ght:400;">Fleet&nbsp;Solutions</strong></a><br /></td><td align=3D"left" st=
+yle=3D"vertical-align:top;font-size:14.67px;color:#626566;font-family:Calib=
+ri,Arial,sans-serif;">|</td><td align=3D"left" style=3D"vertical-align:top;=
+font-family:Arial,sans-serif;"><a href=3D"http://www.supergroup.co.za/deale=
+rships/" target=3D"_blank" id=3D"LPlnk689713" style=3D"text-decoration:none=
+;color:#333333;"><strong style=3D"font-weight:400;">Dealerships</strong></a=
+><br /></td><td align=3D"left" style=3D"vertical-align:top;font-size:14.67p=
+x;color:#626566;font-family:Calibri,Arial,sans-serif;">=E2=80=91</td><td al=
+ign=3D"left" style=3D"vertical-align:top;color:#C00000;font-family:Arial,sa=
+ns-serif;"><a href=3D"http://www.supergroup.co.za/" target=3D"_blank" id=3D=
+"LPlnk689713" style=3D"text-decoration:none;color:#C00000;"><strong style=
+=3D"font-weight:400;">Visit&nbsp;supergroup.co.za</strong></a><br /></td></=
+tr></table></td></tr></table></td></tr><tr style=3D"font-size:0;"><td colsp=
+an=3D"2" align=3D"left" style=3D"padding:0;vertical-align:top;"><table cell=
+padding=3D"0" cellspacing=3D"0" border=3D"0" style=3D"width:100%;font-size:=
+0;"><tr style=3D"font-size:0;"><td align=3D"left" style=3D"vertical-align:t=
+op;"><table cellpadding=3D"0" cellspacing=3D"0" border=3D"0" style=3D"width=
+:100%;font-size:0;"><tr style=3D"font-size:0;"><td align=3D"left" style=3D"=
+padding:5px 0 20px;vertical-align:top;"><table cellpadding=3D"0" cellspacin=
+g=3D"0" border=3D"0" style=3D"width:100%;font-size:0;line-height:normal;"><=
+tr style=3D"font-size:0;"><td align=3D"left" style=3D"vertical-align:top;">=
+<img src=3D"cid:image205034.png@213C656B.5961E1A7" border=3D"0" alt=3D"" st=
+yle=3D"font-size:0;" /></td><td align=3D"left" style=3D"vertical-align:top;=
+"><table cellpadding=3D"0" cellspacing=3D"0" border=3D"0" style=3D"width:10=
+0%;font-size:0;"><tr style=3D"font-size:0;"><td align=3D"left" style=3D"pad=
+ding:5px 3px 0 0;vertical-align:top;"><table cellpadding=3D"0" cellspacing=
+=3D"0" border=3D"0" style=3D"white-space:normal;color:#333333;font-size:14.=
+67px;font-family:Calibri,Arial,sans-serif;font-weight:400;font-style:normal=
+;text-align:justify;width:100%;"><tr style=3D"font-size:12px;"><td style=3D=
+"font-family:Arial,sans-serif;">Please consider the environment before prin=
+ting this email - This email is subject to the following <span style=3D"col=
+or:#C00000;"><a href=3D"http://www.supergroup.co.za/email-disclaimer/" targ=
+et=3D"_blank" id=3D"LPlnk689713" style=3D"text-decoration:none;color:#C0000=
+0;"><strong style=3D"font-weight:400;">disclaimer</strong></a></span><br />=
+</td></tr></table></td></tr></table></td></tr></table></td></tr></table></t=
+d></tr></table></td></tr></table></td></tr></table></td></tr></table></div>=
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm =
+0cm 0cm">
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US">From:</span></b><span lang=
+=3D"EN-US"> Erik Arokszallasi &lt;erik.arokszallasi@te-food.com&gt;
+<br>
+<b>Sent:</b> Tuesday, 08 November 2022 15:35<br>
+<b>To:</b> Greg Kronson &lt;greg.kronson@sgits.co.za&gt;; Adrian Lewis &lt;=
+adrian.lewis@supergrp.com&gt;; Sandor Miskey &lt;sandor.miskey@te-food.com&=
+gt;<br>
+<b>Subject:</b> RE: Student card<o:p></o:p></span></p>
+</div>
+</div>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<div>
+<p><b><span style=3D"font-size:15.0pt;font-family:&quot;Helvetica&quot;,san=
+s-serif;color:red">[EXTERNAL EMAIL think before you click]<o:p></o:p></span=
+></b></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:9.0pt;font-family:&quot;Hel=
+vetica&quot;,sans-serif;color:black"><o:p>&nbsp;</o:p></span></p>
+<div class=3D"MsoNormal" align=3D"center" style=3D"text-align:center">
+<hr size=3D"2" width=3D"100%" align=3D"center">
+</div>
+</div>
+<div>
+<div id=3D"compose-body-wrapper">
+<div>
+<p class=3D"MsoNormal">Hi, yes we can go down.<o:p></o:p></p>
+</div>
+<div>
+<p class=3D"MsoNormal">Can you send a very short order by email=C3=AD?<o:p>=
+</o:p></p>
+</div>
+<div>
+<p class=3D"MsoNormal">Thank you<o:p></o:p></p>
+</div>
+<div>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+</div>
+<div id=3D"tmjah_g_1299">
+<p class=3D"MsoNormal"><a href=3D"https://bluemail.me" target=3D"_blank">Bl=
+ueMail</a> for Desktop let=C3=B6lt=C3=A9se<o:p></o:p></p>
+</div>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+</div>
+<div>
+<p class=3D"MsoNormal">Greg Kronson wrote:<o:p></o:p></p>
+</div>
+<p class=3D"MsoNormal" style=3D"margin-bottom:12.0pt"><o:p>&nbsp;</o:p></p>
+<div>
+<blockquote style=3D"border:none;border-left:solid #CCCCCC 1.0pt;padding:0c=
+m 0cm 0cm 6.0pt;margin-left:4.8pt;margin-right:0cm">
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Hi Erik</=
+span><o:p></o:p></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">&nbsp;</s=
+pan><o:p></o:p></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Can we bo=
+ttom the Dev cost to Euro 10,000.00 &nbsp;once off</span><o:p></o:p></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">We will h=
+appily pay the hosting fees until POC is done</span><o:p></o:p></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">If we nee=
+d additional support hours, lets cost that Adhoc as and when we need it dur=
+ing POC</span><o:p></o:p></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">&nbsp;</s=
+pan><o:p></o:p></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Once we h=
+ave signed customer on board, we can look at monthly cost included going fo=
+rward
+</span><o:p></o:p></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">&nbsp;</s=
+pan><o:p></o:p></p>
+<div>
+<table class=3D"MsoNormalTable" border=3D"0" cellspacing=3D"0" cellpadding=
+=3D"0" width=3D"100%" style=3D"width:100.0%">
+<tbody>
+<tr>
+<td valign=3D"top" style=3D"padding:0cm 0cm 0cm 0cm">
+<table class=3D"MsoNormalTable" border=3D"0" cellspacing=3D"0" cellpadding=
+=3D"0">
+<tbody>
+<tr>
+<td valign=3D"top" style=3D"padding:26.25pt 0cm 0cm 0cm">
+<table class=3D"MsoNormalTable" border=3D"0" cellspacing=3D"0" cellpadding=
+=3D"0">
+<tbody>
+<tr>
+<td valign=3D"top" style=3D"padding:0cm 0cm 0cm 0cm">
+<table class=3D"MsoNormalTable" border=3D"0" cellspacing=3D"0" cellpadding=
+=3D"0">
+<tbody>
+<tr>
+<td valign=3D"top" style=3D"padding:0cm 0cm 0cm 0cm">
+<p class=3D"MsoNormal"><b><span style=3D"color:#626566">Greg&nbsp;Kronson</=
+span></b><b><span style=3D"font-size:1.0pt;font-family:remialcxesans;color:=
+white">=E2=80=8B</span></b><b><span style=3D"color:#626566"><o:p></o:p></sp=
+an></b></p>
+</td>
+<td valign=3D"top" style=3D"padding:0cm 0cm 0cm 0cm">
+<p class=3D"MsoNormal"><span style=3D"color:#626566">&nbsp;|&nbsp;<o:p></o:=
+p></span></p>
+</td>
+<td valign=3D"top" style=3D"padding:0cm 0cm 0cm 0cm">
+<p class=3D"MsoNormal"><span style=3D"color:#626566">Chief&nbsp;Digital&nbs=
+p;Officer<o:p></o:p></span></p>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr>
+<td valign=3D"top" style=3D"padding:0cm 0cm 0cm 0cm">
+<table class=3D"MsoNormalTable" border=3D"0" cellspacing=3D"0" cellpadding=
+=3D"0">
+<tbody>
+<tr>
+<td valign=3D"top" style=3D"padding:11.25pt 0cm 11.25pt 0cm">
+<p class=3D"MsoNormal"><span style=3D"font-size:1.0pt"><img border=3D"0" id=
+=3D"_x0000_i1044" src=3D"file:///C:/Users/erik/AppData/Roaming/BlueMail/Con=
+tent/2/Inline/_50_46_54_95_51_118_103_65_46_48_95_51_118_107_84/image258228=
+.png"></span><span style=3D"font-size:1.0pt"><o:p></o:p></span></p>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr>
+<td valign=3D"top" style=3D"padding:0cm 0cm 0cm 0cm">
+<table class=3D"MsoNormalTable" border=3D"0" cellspacing=3D"0" cellpadding=
+=3D"0">
+<tbody>
+<tr>
+<td valign=3D"top" style=3D"padding:0cm 0cm 0cm 0cm">
+<p class=3D"MsoNormal"><span style=3D"font-size:1.0pt"><img border=3D"0" id=
+=3D"_x0000_i1043" src=3D"file:///C:/Users/erik/AppData/Roaming/BlueMail/Con=
+tent/2/Inline/_50_46_54_95_51_118_103_65_46_48_95_51_118_107_84/image196990=
+.png"></span><span style=3D"font-size:1.0pt"><o:p></o:p></span></p>
+</td>
+<td valign=3D"top" style=3D"padding:0cm 0cm 0cm 0cm">
+<table class=3D"MsoNormalTable" border=3D"0" cellspacing=3D"0" cellpadding=
+=3D"0">
+<tbody>
+<tr>
+<td valign=3D"top" style=3D"padding:0cm 22.5pt 0cm 0cm">
+<p class=3D"MsoNormal"><span style=3D"color:#626566"><a href=3D"tel:+271152=
+34218" target=3D"_blank"><strong><span style=3D"font-family:&quot;Calibri&q=
+uot;,sans-serif;color:#626566;font-weight:normal;text-decoration:none">+271=
+15234218</span></strong></a><o:p></o:p></span></p>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td valign=3D"top" style=3D"padding:0cm 0cm 0cm 0cm">
+<table class=3D"MsoNormalTable" border=3D"0" cellspacing=3D"0" cellpadding=
+=3D"0">
+<tbody>
+<tr>
+<td valign=3D"top" style=3D"padding:0cm 0cm 0cm 7.5pt">
+<p class=3D"MsoNormal"><span style=3D"font-size:1.0pt"><img border=3D"0" id=
+=3D"_x0000_i1042" src=3D"file:///C:/Users/erik/AppData/Roaming/BlueMail/Con=
+tent/2/Inline/_50_46_54_95_51_118_103_65_46_48_95_51_118_107_84/image798707=
+.png"></span><span style=3D"font-size:1.0pt"><o:p></o:p></span></p>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td valign=3D"top" style=3D"padding:0cm 0cm 0cm 0cm">
+<table class=3D"MsoNormalTable" border=3D"0" cellspacing=3D"0" cellpadding=
+=3D"0">
+<tbody>
+<tr>
+<td valign=3D"top" style=3D"padding:0cm 22.5pt 0cm 0cm">
+<p class=3D"MsoNormal"><span style=3D"color:#626566"><a href=3D"fax:+271152=
+34911" target=3D"_blank"><strong><span style=3D"font-family:&quot;Calibri&q=
+uot;,sans-serif;color:#626566;font-weight:normal;text-decoration:none">+271=
+15234911</span></strong></a><o:p></o:p></span></p>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td valign=3D"top" style=3D"padding:0cm 0cm 0cm 0cm">
+<table class=3D"MsoNormalTable" border=3D"0" cellspacing=3D"0" cellpadding=
+=3D"0">
+<tbody>
+<tr>
+<td valign=3D"top" style=3D"padding:0cm 0cm 0cm 7.5pt">
+<p class=3D"MsoNormal"><span style=3D"font-size:1.0pt"><img border=3D"0" id=
+=3D"_x0000_i1041" src=3D"file:///C:/Users/erik/AppData/Roaming/BlueMail/Con=
+tent/2/Inline/_50_46_54_95_51_118_103_65_46_48_95_51_118_107_84/image243197=
+.png"></span><span style=3D"font-size:1.0pt"><o:p></o:p></span></p>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td valign=3D"top" style=3D"padding:0cm 0cm 0cm 0cm">
+<table class=3D"MsoNormalTable" border=3D"0" cellspacing=3D"0" cellpadding=
+=3D"0">
+<tbody>
+<tr>
+<td valign=3D"top" style=3D"padding:0cm 22.5pt 0cm 0cm">
+<p class=3D"MsoNormal"><span style=3D"color:#626566"><a href=3D"tel:+278257=
+94853" target=3D"_blank"><strong><span style=3D"font-family:&quot;Calibri&q=
+uot;,sans-serif;color:#626566;font-weight:normal;text-decoration:none">+278=
+25794853</span></strong></a><o:p></o:p></span></p>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td valign=3D"top" style=3D"padding:0cm 0cm 0cm 0cm">
+<p class=3D"MsoNormal"><span style=3D"font-size:1.0pt"><img border=3D"0" id=
+=3D"_x0000_i1040" src=3D"file:///C:/Users/erik/AppData/Roaming/BlueMail/Con=
+tent/2/Inline/_50_46_54_95_51_118_103_65_46_48_95_51_118_107_84/image836045=
+.png"></span><span style=3D"font-size:1.0pt"><o:p></o:p></span></p>
+</td>
+<td valign=3D"top" style=3D"padding:0cm 0cm 0cm 0cm">
+<table class=3D"MsoNormalTable" border=3D"0" cellspacing=3D"0" cellpadding=
+=3D"0">
+<tbody>
+<tr>
+<td valign=3D"top" style=3D"padding:0cm 22.5pt 0cm 0cm">
+<p class=3D"MsoNormal"><span style=3D"color:#626566"><a href=3D"mailto:greg=
+.kronson@sgits.co.za" target=3D"_blank"><strong><span style=3D"font-family:=
+&quot;Calibri&quot;,sans-serif;color:#626566;font-weight:normal;text-decora=
+tion:none">greg.kronson@sgits.co.za</span></strong></a><o:p></o:p></span></=
+p>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr>
+<td valign=3D"top" style=3D"padding:0cm 0cm 0cm 0cm">
+<table class=3D"MsoNormalTable" border=3D"0" cellspacing=3D"0" cellpadding=
+=3D"0">
+<tbody>
+<tr>
+<td valign=3D"top" style=3D"padding:7.5pt 0cm 0cm 0cm">
+<table class=3D"MsoNormalTable" border=3D"0" cellspacing=3D"0" cellpadding=
+=3D"0">
+<tbody>
+<tr>
+<td valign=3D"top" style=3D"padding:0cm 0cm 3.75pt 0cm">
+<table class=3D"MsoNormalTable" border=3D"0" cellspacing=3D"0" cellpadding=
+=3D"0">
+<tbody>
+<tr>
+<td valign=3D"top" style=3D"padding:0cm 0cm 0cm 0cm">
+<p class=3D"MsoNormal"><span style=3D"font-size:1.0pt"><img border=3D"0" he=
+ight=3D"60" style=3D"height:.625in" id=3D"_x0000_i1039" src=3D"file:///C:/U=
+sers/erik/AppData/Roaming/BlueMail/Content/2/Inline/_50_46_54_95_51_118_103=
+_65_46_48_95_51_118_107_84/image676636.png"></span><span style=3D"font-size=
+:1.0pt"><o:p></o:p></span></p>
+</td>
+</tr>
+<tr>
+<td valign=3D"top" style=3D"padding:0cm 0cm 0cm 0cm">
+<table class=3D"MsoNormalTable" border=3D"0" cellspacing=3D"0" cellpadding=
+=3D"0">
+<tbody>
+<tr>
+<td valign=3D"top" style=3D"padding:0cm 0cm 0cm 0cm">
+<p class=3D"MsoNormal"><span style=3D"font-size:9.0pt;color:#626566">Group&=
+nbsp;Information&nbsp;Technology&nbsp;Services<o:p></o:p></span></p>
+</td>
+<td valign=3D"top" style=3D"padding:0cm 0cm 0cm 0cm">
+<p class=3D"MsoNormal"><span style=3D"font-size:9.0pt;color:#626566">,&nbsp=
+;<o:p></o:p></span></p>
+</td>
+<td valign=3D"top" style=3D"padding:0cm 0cm 0cm 0cm">
+<p class=3D"MsoNormal"><span style=3D"font-size:9.0pt;color:#626566">27&nbs=
+p;Impala&nbsp;Road&nbsp;Chislehurston<o:p></o:p></span></p>
+</td>
+<td valign=3D"top" style=3D"padding:0cm 0cm 0cm 0cm">
+<p class=3D"MsoNormal"><span style=3D"font-size:9.0pt;color:#626566">,&nbsp=
+;<o:p></o:p></span></p>
+</td>
+<td valign=3D"top" style=3D"padding:0cm 0cm 0cm 0cm">
+<p class=3D"MsoNormal"><span style=3D"font-size:9.0pt;color:#626566">Sandto=
+n<o:p></o:p></span></p>
+</td>
+<td valign=3D"top" style=3D"padding:0cm 0cm 0cm 0cm">
+<p class=3D"MsoNormal"><span style=3D"font-size:9.0pt;color:#626566">,&nbsp=
+;<o:p></o:p></span></p>
+</td>
+<td valign=3D"top" style=3D"padding:0cm 0cm 0cm 0cm">
+<p class=3D"MsoNormal"><span style=3D"font-size:9.0pt;color:#626566">Gauten=
+g<o:p></o:p></span></p>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td valign=3D"top" style=3D"padding:0cm 0cm 3.75pt 0cm">
+<table class=3D"MsoNormalTable" border=3D"0" cellspacing=3D"0" cellpadding=
+=3D"0">
+<tbody>
+<tr>
+<td valign=3D"top" style=3D"padding:0cm 0cm 0cm 33.75pt">
+<p class=3D"MsoNormal"><span style=3D"font-size:1.0pt"><img border=3D"0" id=
+=3D"_x0000_i1038" src=3D"file:///C:/Users/erik/AppData/Roaming/BlueMail/Con=
+tent/2/Inline/_50_46_54_95_51_118_103_65_46_48_95_51_118_107_84/image536930=
+.png"></span><span style=3D"font-size:1.0pt"><o:p></o:p></span></p>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr>
+<td colspan=3D"2" valign=3D"top" style=3D"padding:0cm 0cm 0cm 0cm">
+<table class=3D"MsoNormalTable" border=3D"0" cellspacing=3D"0" cellpadding=
+=3D"0">
+<tbody>
+<tr>
+<td valign=3D"top" style=3D"padding:0cm 0cm 0cm 0cm">
+<p class=3D"MsoNormal"><span style=3D"font-size:1.0pt"><img border=3D"0" id=
+=3D"_x0000_i1037" src=3D"file:///C:/Users/erik/AppData/Roaming/BlueMail/Con=
+tent/2/Inline/_50_46_54_95_51_118_103_65_46_48_95_51_118_107_84/image029665=
+.png"></span><span style=3D"font-size:1.0pt"><o:p></o:p></span></p>
+</td>
+<td valign=3D"top" style=3D"padding:0cm 0cm 0cm 0cm">
+<table class=3D"MsoNormalTable" border=3D"0" cellspacing=3D"0" cellpadding=
+=3D"0">
+<tbody>
+<tr>
+<td valign=3D"top" style=3D"padding:3.75pt 0cm 0cm 0cm">
+<p class=3D"MsoNormal"><span style=3D"font-size:10.0pt;font-family:&quot;Ar=
+ial&quot;,sans-serif;color:#626566"><a href=3D"https://wa.me/27609496765" t=
+arget=3D"_blank"><strong><span style=3D"font-family:&quot;Arial&quot;,sans-=
+serif;color:#626566;font-weight:normal;text-decoration:none">Log&nbsp;a&nbs=
+p;call&nbsp;to&nbsp;SGIT&nbsp;via&nbsp;WhatsApp&nbsp;&nbsp;+27&nbsp;60&nbsp=
+;949&nbsp;6765</span></strong></a><o:p></o:p></span></p>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr>
+<td colspan=3D"2" valign=3D"top" style=3D"padding:0cm 0cm 0cm 0cm">
+<table class=3D"MsoNormalTable" border=3D"0" cellspacing=3D"0" cellpadding=
+=3D"0">
+<tbody>
+<tr>
+<td valign=3D"top" style=3D"padding:11.25pt 0cm 0cm 7.5pt">
+<table class=3D"MsoNormalTable" border=3D"0" cellspacing=3D"0" cellpadding=
+=3D"0">
+<tbody>
+<tr>
+<td valign=3D"top" style=3D"padding:0cm 0cm 0cm 0cm">
+<p class=3D"MsoNormal"><span style=3D"font-size:9.0pt;font-family:&quot;Ari=
+al&quot;,sans-serif;color:#333333"><a href=3D"http://www.supergroup.co.za/s=
+upply-chain/" target=3D"_blank"><strong><span style=3D"font-family:&quot;Ar=
+ial&quot;,sans-serif;color:#333333;font-weight:normal;text-decoration:none"=
+>Supply&nbsp;Chain</span></strong></a><o:p></o:p></span></p>
+</td>
+<td valign=3D"top" style=3D"padding:0cm 0cm 0cm 0cm">
+<p class=3D"MsoNormal"><span style=3D"color:#626566">|<o:p></o:p></span></p=
+>
+</td>
+<td valign=3D"top" style=3D"padding:0cm 0cm 0cm 0cm">
+<p class=3D"MsoNormal"><span style=3D"font-size:9.0pt;font-family:&quot;Ari=
+al&quot;,sans-serif;color:#333333"><a href=3D"http://www.supergroup.co.za/f=
+leet-solutions/" target=3D"_blank"><strong><span style=3D"font-family:&quot=
+;Arial&quot;,sans-serif;color:#333333;font-weight:normal;text-decoration:no=
+ne">Fleet&nbsp;Solutions</span></strong></a><o:p></o:p></span></p>
+</td>
+<td valign=3D"top" style=3D"padding:0cm 0cm 0cm 0cm">
+<p class=3D"MsoNormal"><span style=3D"color:#626566">|<o:p></o:p></span></p=
+>
+</td>
+<td valign=3D"top" style=3D"padding:0cm 0cm 0cm 0cm">
+<p class=3D"MsoNormal"><span style=3D"font-size:9.0pt;font-family:&quot;Ari=
+al&quot;,sans-serif;color:#333333"><a href=3D"http://www.supergroup.co.za/d=
+ealerships/" target=3D"_blank"><strong><span style=3D"font-family:&quot;Ari=
+al&quot;,sans-serif;color:#333333;font-weight:normal;text-decoration:none">=
+Dealerships</span></strong></a><o:p></o:p></span></p>
+</td>
+<td valign=3D"top" style=3D"padding:0cm 0cm 0cm 0cm">
+<p class=3D"MsoNormal"><span style=3D"color:#626566">=E2=80=91<o:p></o:p></=
+span></p>
+</td>
+<td valign=3D"top" style=3D"padding:0cm 0cm 0cm 0cm">
+<p class=3D"MsoNormal"><span style=3D"font-size:9.0pt;font-family:&quot;Ari=
+al&quot;,sans-serif;color:#C00000"><a href=3D"http://www.supergroup.co.za/"=
+ target=3D"_blank"><strong><span style=3D"font-family:&quot;Arial&quot;,san=
+s-serif;color:#C00000;font-weight:normal;text-decoration:none">Visit&nbsp;s=
+upergroup.co.za</span></strong></a><o:p></o:p></span></p>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr>
+<td colspan=3D"2" valign=3D"top" style=3D"padding:0cm 0cm 0cm 0cm">
+<table class=3D"MsoNormalTable" border=3D"0" cellspacing=3D"0" cellpadding=
+=3D"0" width=3D"100%" style=3D"width:100.0%">
+<tbody>
+<tr>
+<td valign=3D"top" style=3D"padding:0cm 0cm 0cm 0cm">
+<table class=3D"MsoNormalTable" border=3D"0" cellspacing=3D"0" cellpadding=
+=3D"0" width=3D"100%" style=3D"width:100.0%">
+<tbody>
+<tr>
+<td valign=3D"top" style=3D"padding:3.75pt 0cm 15.0pt 0cm">
+<table class=3D"MsoNormalTable" border=3D"0" cellspacing=3D"0" cellpadding=
+=3D"0" width=3D"100%" style=3D"width:100.0%">
+<tbody>
+<tr>
+<td valign=3D"top" style=3D"padding:0cm 0cm 0cm 0cm">
+<p class=3D"MsoNormal"><span style=3D"font-size:1.0pt"><img border=3D"0" id=
+=3D"_x0000_i1036" src=3D"file:///C:/Users/erik/AppData/Roaming/BlueMail/Con=
+tent/2/Inline/_50_46_54_95_51_118_103_65_46_48_95_51_118_107_84/image195269=
+.png"></span><span style=3D"font-size:1.0pt"><o:p></o:p></span></p>
+</td>
+<td valign=3D"top" style=3D"padding:0cm 0cm 0cm 0cm">
+<table class=3D"MsoNormalTable" border=3D"0" cellspacing=3D"0" cellpadding=
+=3D"0" width=3D"100%" style=3D"width:100.0%">
+<tbody>
+<tr>
+<td valign=3D"top" style=3D"padding:3.75pt 2.25pt 0cm 0cm">
+<table class=3D"MsoNormalTable" border=3D"0" cellspacing=3D"0" cellpadding=
+=3D"0" width=3D"100%" style=3D"width:100.0%">
+<tbody>
+<tr>
+<td style=3D"padding:0cm 0cm 0cm 0cm">
+<p class=3D"MsoNormal" style=3D"text-align:justify"><span style=3D"font-siz=
+e:9.0pt;font-family:&quot;Arial&quot;,sans-serif;color:#333333">Please cons=
+ider the environment before printing this email - This email is subject to =
+the following
+</span><span style=3D"font-size:9.0pt;font-family:&quot;Arial&quot;,sans-se=
+rif;color:#C00000"><a href=3D"http://www.supergroup.co.za/email-disclaimer/=
+" target=3D"_blank"><strong><span style=3D"font-family:&quot;Arial&quot;,sa=
+ns-serif;color:#C00000;font-weight:normal;text-decoration:none">disclaimer<=
+/span></strong></a></span><span style=3D"font-size:9.0pt;font-family:&quot;=
+Arial&quot;,sans-serif;color:#333333"><o:p></o:p></span></p>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm =
+0cm 0cm">
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US">From:</span></b><span lang=
+=3D"EN-US"> Erik Arokszallasi &lt;<a href=3D"mailto:erik.arokszallasi@te-fo=
+od.com">erik.arokszallasi@te-food.com</a>&gt;
+<br>
+<b>Sent:</b> Monday, 07 November 2022 13:59<br>
+<b>To:</b> Adrian Lewis &lt;<a href=3D"mailto:adrian.lewis@supergrp.com">ad=
+rian.lewis@supergrp.com</a>&gt;; Greg Kronson &lt;<a href=3D"mailto:greg.kr=
+onson@sgits.co.za">greg.kronson@sgits.co.za</a>&gt;; Sandor Miskey &lt;<a h=
+ref=3D"mailto:sandor.miskey@te-food.com">sandor.miskey@te-food.com</a>&gt;<=
+br>
+<b>Subject:</b> Student card</span><o:p></o:p></p>
+</div>
+<p class=3D"MsoNormal">&nbsp;<o:p></o:p></p>
+<div>
+<div>
+<p><b><span style=3D"font-size:15.0pt;font-family:&quot;Helvetica&quot;,san=
+s-serif;color:red">[EXTERNAL EMAIL think before you click]</span></b><o:p><=
+/o:p></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:9.0pt;font-family:&quot;Hel=
+vetica&quot;,sans-serif;color:black">&nbsp;</span><o:p></o:p></p>
+<div class=3D"MsoNormal" align=3D"center" style=3D"text-align:center">
+<hr size=3D"2" width=3D"100%" align=3D"center">
+</div>
+</div>
+<p class=3D"MsoNormal" style=3D"margin-bottom:12.0pt">Dear All,<o:p></o:p><=
+/p>
+</div>
+<div>
+<p class=3D"MsoNormal" style=3D"margin-bottom:12.0pt">Do you have any news =
+regarding to the project?<o:p></o:p></p>
+</div>
+<div>
+<p class=3D"MsoNormal" style=3D"margin-bottom:12.0pt">Thank you<o:p></o:p><=
+/p>
+</div>
+<div>
+<p class=3D"MsoNormal" style=3D"margin-bottom:12.0pt">=C3=81roksz=C3=A1ll=
+=C3=A1si Erik<o:p></o:p></p>
+</div>
+<div>
+<p class=3D"MsoNormal">CEO<o:p></o:p></p>
+</div>
+<div>
+<p class=3D"MsoNormal">TE-FOOD INTERNATIONAL<o:p></o:p></p>
+</div>
+<div>
+<p class=3D"MsoNormal">Mobile: +36 30 3747569<o:p></o:p></p>
+</div>
+<div>
+<p class=3D"MsoNormal">Skype: erik.arokszallasi<o:p></o:p></p>
+</div>
+<div>
+<p class=3D"MsoNormal">Telegram: <a href=3D"http://www.t.me/arokszallasi">
+http://www.t.me/arokszallasi</a><o:p></o:p></p>
+</div>
+</blockquote>
+</div>
+</div>
+</div>
+</body>
+</html>
+
+--_000_AM5PR0101MB248415C2C59DD65364D148CEC43E9AM5PR0101MB2484_--
+
+------_=_NextPart_3c57cf3b-b1b4-4595-b543-304a4cb69e2e
+Content-Type: image/png;
+	name="image419946.png"
+Content-Transfer-Encoding: base64
+Content-ID: <image419946.png@F16FE847.B6844614>
+Content-Description: image419946.png
+Content-Disposition: inline;
+	creation-date="Wed, 09 Nov 2022 07:47:31 +0000";
+	filename=image419946.png;
+	modification-date="Wed, 09 Nov 2022 07:47:31 +0000";
+	size=2932
+
+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
+3X///gMO7o6us7+fhwAAAABJRU5ErkJggg==
+------_=_NextPart_3c57cf3b-b1b4-4595-b543-304a4cb69e2e
+Content-Type: image/png;
+	name="image135345.png"
+Content-Transfer-Encoding: base64
+Content-ID: <image135345.png@C28D56F5.4C6DD444>
+Content-Description: image135345.png
+Content-Disposition: inline;
+	creation-date="Wed, 09 Nov 2022 07:47:31 +0000";
+	filename=image135345.png;
+	modification-date="Wed, 09 Nov 2022 07:47:31 +0000";
+	size=583
+
+iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
+AAAOwwAADsMBx2+oZAAAABZ0RVh0Q3JlYXRpb24gVGltZQAwNi8yMC8xNve1FU4AAAAcdEVYdFNv
+ZnR3YXJlAEFkb2JlIEZpcmV3b3JrcyBDUzQGstOgAAABn0lEQVQ4jdWUMUvrUBiGn0oFMyRChw5N
+xNWqd9DBqnMrOLi0OAuCgv4FByl0EYQLLg4iuGu7OIhNXZV26dZ0cBGTgh0UToYMDdRBPDfReEXs
+oO94+PLw5TlvEuv3+30GmKFBwn4HMP72wBcC0bLwbAfPtiMf0ibTKIaBOpn+GOi2LNrFEo/1xpc2
+ShXypHd3iGsaALHXW776M4vvunIwkZnjsd4gVcijjOkAPN3U8WwHAM9x5Gwyl2Xm6BAIOAzCAHpC
+RG7UEwLF0ENnfmBWvnIyl33ZbCFDYj5Du1gCoFs1SS7l8IWQOtSpND0hcK02ACOGIYGxqGJ3qybN
+zW0UXWdid4eHyxrDoyqJ+QzNzW3iqsrixTnOWRnv3ol2+BrPdrheXsF3Xab392gXS1JHMpclrml0
+ypWQt2BCPXRbloQBKIYecusLIS+oa9ZobmyF/L0DPlTNEODu+ITx9bUX2apKarVA57TyT41ZQ7Ss
+EPBdsYPpmjVShTzT+3sMayq3fw9CdYnKf4EAnXKFTrny2ZjMwL/lyNp8Jz//9zVw4DNQn675qO0b
+eAAAAABJRU5ErkJggg==
+------_=_NextPart_3c57cf3b-b1b4-4595-b543-304a4cb69e2e
+Content-Type: image/png;
+	name="image752665.png"
+Content-Transfer-Encoding: base64
+Content-ID: <image752665.png@3893318B.DC0BFE01>
+Content-Description: image752665.png
+Content-Disposition: inline;
+	creation-date="Wed, 09 Nov 2022 07:47:31 +0000";
+	filename=image752665.png;
+	modification-date="Wed, 09 Nov 2022 07:47:31 +0000";
+	size=603
+
+iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
+AAAOwwAADsMBx2+oZAAAABZ0RVh0Q3JlYXRpb24gVGltZQAwNi8yMC8xNve1FU4AAAAcdEVYdFNv
+ZnR3YXJlAEFkb2JlIEZpcmV3b3JrcyBDUzQGstOgAAABs0lEQVQ4jc2Uv0sjQRTHP5FYbLELZxHB
+XYiFQnLa+6OwMhELG9E+5OqTwME1giDYCFccXK3kD9DKQpZY2Ki71pIIIhhwmxR7MFtskcBcERKd
+7BiDWNy3fO/NZ7/z3ttJSSkln6ixz4QBpAcDzeMqbSFGOjxuWWTLJSWmOAw9n+ZRdWQ3zaMqoecP
+d2g4NuOWRcutDYWZc3kMx07EE0CATLGA+TU/FGg4Dnc/fo4GDE5O+Xvj61J9fVla0Ma1UzYcZygM
+ugPRSetwYnFB259BoK7PKSml7AjB03GVllsjfg6w3ulfT6LewHBsMmsFpssl0pbVBV6vbxA17keC
+vCUzn2P5/Kx7ZR3MsG2mtjeZWHxpfkcIQs+n5V4QB4FS32MkhpI2TeZ/HbJydclksUBUbxB6PqHn
+0xYRM5UdVq4uye3tkjbNhJHEULLfSthbmwDc7x8Q+rdKPq58Z6ayQ7Zcoi0Ej7//KPmEw97KRPUG
+8XMwmKbl1vq/m269UlJK6U7PKlcG6ERRolj5sG3TFkKpW3t66Do087l+sBNF78IA4iBQ6jKF1ReH
+vT38qF4/Y6n//sX+B+HQptYScOgnAAAAAElFTkSuQmCC
+------_=_NextPart_3c57cf3b-b1b4-4595-b543-304a4cb69e2e
+Content-Type: image/png;
+	name="image944511.png"
+Content-Transfer-Encoding: base64
+Content-ID: <image944511.png@E5A55CD2.5524BB77>
+Content-Description: image944511.png
+Content-Disposition: inline;
+	creation-date="Wed, 09 Nov 2022 07:47:31 +0000";
+	filename=image944511.png;
+	modification-date="Wed, 09 Nov 2022 07:47:31 +0000";
+	size=461
+
+iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
+AAAOwwAADsMBx2+oZAAAABZ0RVh0Q3JlYXRpb24gVGltZQAwNi8yMC8xNve1FU4AAAAcdEVYdFNv
+ZnR3YXJlAEFkb2JlIEZpcmV3b3JrcyBDUzQGstOgAAABJUlEQVQ4jWP8////fwYqAiZqGsbAwMDA
+gk3w1a7dDJ+uXcepiVNGhkHczYWBhY8PQ44R3cuXi8sZnq1dR9AlvJoaDGYrl2IYiuLldydOEmUY
+AwMDw+frNxiuN7ZiiFMUhj+ePMEQwxqGGnXVDPJJCTgNerVrN8Pl4nKsclhdiM8wBgYGBjE3VwY+
+LU3iDaQEjBoIAZ/x5BIGBgaGP58+MXx/8hSrHNZkcyo8GmcsMjAwMHx/8pTh+9OnDJwy0sQZ+Ofz
+Z4Z3J0/B+ZzS0gzfn2J3ETogKgztjh5gEDI3I8pAFBfyaWkysPDyMvz5/BlF0TFPX4bP129gaFYu
+zMPvQhY+PgazlUsZxFxdUBShG8YpLc1gOGsag5CFOYaBGMUXpYDq6RAAHSdWDrdy0RIAAAAASUVO
+RK5CYII=
+------_=_NextPart_3c57cf3b-b1b4-4595-b543-304a4cb69e2e
+Content-Type: image/png;
+	name="image776912.png"
+Content-Transfer-Encoding: base64
+Content-ID: <image776912.png@C1F420F6.B2134D1D>
+Content-Description: image776912.png
+Content-Disposition: inline;
+	creation-date="Wed, 09 Nov 2022 07:47:31 +0000";
+	filename=image776912.png;
+	modification-date="Wed, 09 Nov 2022 07:47:31 +0000";
+	size=710
+
+iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
+AAAOwwAADsMBx2+oZAAAABZ0RVh0Q3JlYXRpb24gVGltZQAwNi8yMC8xNve1FU4AAAAcdEVYdFNv
+ZnR3YXJlAEFkb2JlIEZpcmV3b3JrcyBDUzQGstOgAAACHklEQVQ4ja1UPWgUQRT+ImuxxUxxhYK7
+kIAp3OUQDnE3pLBLwMLmDKRIEwIKCoJFII0ggo0giI2FhVh4kCM/RYqQ5C6QRs2uRZqwG7ARMlvk
+wCtmIFvcwliYney4d1HkPthi3tv3zffefm9HpJQSQ8SlYZIBgHFRUkQxTnZaWuzq9BSI6wysGenX
+sohiHL14iW4Q9i2q+B5uPH/Wl7hEmKyu43Bx6bwFQkDPCnkUIxNC5aqvX8GaqeuMsoDTYybb1Zrc
+Gh2X7WpNspU1+SfYypp6Z2t0XP78uq/lNYUHDx6h02rDIAReswHiOkhZgu5+8LvVCR+mbUFEMcLZ
+OWRCwLQs3Pm8V1Z4eszUrd/fvFVq8lj+5KqLuZPtHaVQ2SZXAQBjC/NIWaLNMsfh4hJSlsCaqcO0
+LDXbHIowZUx9QYNSdQaAyc0NTG5uqHPnzEqmbZUu/CdjF8kBoLPdQsY5UpaU3lXGNm0bANANQmSc
+g7oODEKQCYGDh4+1om4QYvfmLXWuTPhlhcXgjw8fYVAKr9mAQcj57YSg4nsa+bX7da1Ws8232Tm1
+HbX373BlegoZ52ro1HVgUAoRxehxjsuUlrZFI0xZgi9376ltuP70CcYW5mFQCgDIOEeyuo4e51p8
+ICEAzbRqHL6HHucQ8ZGK3V7+pLVammEO4jrwmg1tVt0g1Mgqvqf2+68Ki8jXLreNadtq/QbhQsL/
+wdD/2L8A+FJRYQiXYysAAAAASUVORK5CYII=
+------_=_NextPart_3c57cf3b-b1b4-4595-b543-304a4cb69e2e
+Content-Type: image/png;
+	name="image034861.png"
+Content-Transfer-Encoding: base64
+Content-ID: <image034861.png@EB85AAA9.307905A8>
+Content-Description: image034861.png
+Content-Disposition: inline;
+	creation-date="Wed, 09 Nov 2022 07:47:31 +0000";
+	filename=image034861.png;
+	modification-date="Wed, 09 Nov 2022 07:47:31 +0000";
+	size=2089
+
+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
+------_=_NextPart_3c57cf3b-b1b4-4595-b543-304a4cb69e2e
+Content-Type: image/png;
+	name="image123767.png"
+Content-Transfer-Encoding: base64
+Content-ID: <image123767.png@2E82224B.B7CCBFA3>
+Content-Description: image123767.png
+Content-Disposition: inline;
+	creation-date="Wed, 09 Nov 2022 07:47:31 +0000";
+	filename=image123767.png;
+	modification-date="Wed, 09 Nov 2022 07:47:31 +0000";
+	size=3634
+
+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
+------_=_NextPart_3c57cf3b-b1b4-4595-b543-304a4cb69e2e
+Content-Type: image/png;
+	name="image109966.png"
+Content-Transfer-Encoding: base64
+Content-ID: <image109966.png@029AD82D.73DF5417>
+Content-Description: image109966.png
+Content-Disposition: inline;
+	creation-date="Wed, 09 Nov 2022 07:47:31 +0000";
+	filename=image109966.png;
+	modification-date="Wed, 09 Nov 2022 07:47:31 +0000";
+	size=1245
+
+iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
+AAAN1wAADdcBQiibeAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAARaSURB
+VEiJzZZbbFVFFIa/mdnntJW2tEAUolyCrRZs4gMPRAsoGMUSjIakKqggIoTEGE30QSPUBAi+IFqI
+UEoxGlTkxQsYfWmqIQ0HIw80bVSMh16AhFNSSi0tZ+89Fx/OxV5oTxMT40r+ZPbstda/18qefw38
+n6y9vX1t4AeD1lg3Gh0dHQcA718R9PT0fGmMcZNBMpn8C4iMl0vcarO6ujrv5MmTyczzqZ4mtre/
+hvIkApEKEw5rLKtn1vBGxbvZ2NOnT29ctmzZJzmJGhsbp63fsL4XoOtGnBfOPIHyFEKINMlIc85h
+rWXl7U/xduUuAC7ELxyqqKjYOhGRTCaTBmB32zZ+SHyNkCJVAAJww0L+WTvncA6chpaV7QA0Nzc/
+u2rVquO3JBoaGjIIIT8+/xEN8X1IKRG3bO5Ycy5FiBHEVv8GwG0FBR5gAGTGMRaLLXbOSWNC9v26
+h1BrgiAkCCxv3reDm35A4IfjIgxCwlDjm4C9rbtx1tLb29s9pqKBgQEHsPDYXCJ5CikkCPh97WUA
+rty8wsPfLMpdmXUYY2ir6QSgqKhIATZTkbDWYq3FWEMQaPwgZPkd1Wit0VozIzID3w9zIgg1oTY0
+tB/EWkssFns927rW1tYV1lqOtDWgjUFrQxhqZkZnZYm01tw9pYIw1DmhtWFnrBZrLWVlZTuyRKWl
+pc8752hoPYQODWEaB1r3Z0k6rnfQdrU1+24i6NDgrMU5h1JqCqSlQyl1j3OO+LU4BQURhHDZngc6
+QAmPqZGp6NBM7hfEoU2KKGMSwDk3CBCRYxWk/NM5CAGFkUK2Vr46ORqXIhtuEiAIgp+EEDw6/zGU
+knjeSDz+7SN4nsc7D2znvSXv40UUXkShlOTi5h7unbYgu+dFFJ6n0mdQINIHUQLU19fvF0Kwo2rX
+sAAvi66bcTY3b0QpxYbKF+ne1MNDd63g4uarKKX48ekWujf14HkpEi8imV9ShhCCvr6+Fhh2jvr7
++x1AxRezs9o22kqi0zn7TPu4LSs7OiulENZyZk0bxdFiamtr59bV1XVnlSEIgl+klLxUuYVoxCMa
+HYsh+ll4fDbbz76F53kjsOXUxpRfRCEklOSXIKWkrq6ue0RFgBi8MWgRsOhEOVLmFjkHBCYkT6V+
+IutSo+Psk3+ghOLcuXPrq6qqjsKoySjSyaNRDyklk7G89KzLjIsDD36OJz2cczpDMoKos7Nzm5SS
++vMfkJcXYbRsj6fimaNitOHY0u+YX1QOQH5+fnREfGYRBL4DuP+ruRQXFrFnUT2Lpy/ls67DHI5/
+iJAy5Tx8HAHGWu6MzuHYku+zSaPRvOx4GE0ktNZ23P4Avk1y5M/9/HytBd8kqSiu5Ll5L1NetCDr
+k0wmuwoLC+eNm+TSpUs7h180fN8faGpqWg7Qd63vRK6LSeD712tqagon+lAArLFu8Mbg5cbGxsoJ
+3Lx4PL4mkUjsTSQSBzs7O19Zt25dac7k/7X9DSr9rnrTda5aAAAAAElFTkSuQmCC
+------_=_NextPart_3c57cf3b-b1b4-4595-b543-304a4cb69e2e
+Content-Type: image/png;
+	name="image205034.png"
+Content-Transfer-Encoding: base64
+Content-ID: <image205034.png@213C656B.5961E1A7>
+Content-Description: image205034.png
+Content-Disposition: inline;
+	creation-date="Wed, 09 Nov 2022 07:47:31 +0000";
+	filename=image205034.png;
+	modification-date="Wed, 09 Nov 2022 07:47:31 +0000";
+	size=480
+
+iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
+AAAOwwAADsMBx2+oZAAAABZ0RVh0Q3JlYXRpb24gVGltZQAwNi8yMC8xNve1FU4AAAAcdEVYdFNv
+ZnR3YXJlAEFkb2JlIEZpcmV3b3JrcyBDUzQGstOgAAABOElEQVQ4jc2UsU7DMBCG/yLEFNSBKV2S
+qRvqwMSUvACKKl4gE3PeIO4TdO5buCMsdRcmorpv4A6UpVE9sJDlGBBtg500lAz829m6z3f+z+4Q
+EaFFnbUJ+59ArjjEWuzi8yZJutCQGwmZS+hCQ6wFdKGxzJcAgPQmRdgLjwO54mAZ2yVWyb/0j1fI
+MoZRNmrSAHxnD+zYxoYrjuHTsBEMAOhhj7CakjwnjWGe45ViAyhzidX7qjHw24xKIFfcqOBnFb8C
+HipwAwCorLh70UXcj+uBoft1YuRH0IWubT+5Nu/a6jLLGLjitfM3uBpA3ktj3dqyzGUtLHADiDth
+3TMGm2UMUzXF+Ha8e2bztzk8x0PYCxH3Y8OIkuhAs9cZYQKKHiM6VSXgYrOg9CWl7cf2ZKDVlL+o
+9Q/2E4BBCm8mHtDvAAAAAElFTkSuQmCC
+------_=_NextPart_3c57cf3b-b1b4-4595-b543-304a4cb69e2e--
+

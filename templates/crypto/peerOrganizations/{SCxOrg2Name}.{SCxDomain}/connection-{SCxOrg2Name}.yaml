@@ -1,0 +1,35 @@
+---
+name: ${SCxNetwork}-${SCxOrg2Name}
+version: 1.0.0
+client:
+  organization: ${SCxOrg2Name}
+  connection:
+    timeout:
+      peer:
+        endorser: '300'
+organizations:
+  Org${ORG}:
+    mspid: ${SCxOrg2Name}MSP
+    peers:
+    - peer0.${SCxOrg2Name}.${SCxDomain}
+    certificateAuthorities:
+    - ca.${SCxOrg2Name}.${SCxDomain}
+peers:
+  peer0.org${ORG}.example.com:
+    url: grpcs://localhost:${SCxOrg2P0Port}
+    tlsCACerts:
+      pem: |
+          ${SCxOrg2PeerPEM}
+    grpcOptions:
+      ssl-target-name-override: peer0.${SCxOrg2Name}.${SCxDomain}
+      hostnameOverride: peer0.${SCxOrg2Name}.${SCxDomain}
+certificateAuthorities:
+  ca.org${ORG}.example.com:
+    url: https://localhost:${SCxOrg2CAPort}
+    caName: ca-${SCxOrg2Name}
+    tlsCACerts:
+      pem: 
+        - |
+          ${SCxOrg2CAPEM}
+    httpOptions:
+      verify: false
