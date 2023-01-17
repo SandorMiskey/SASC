@@ -8,7 +8,7 @@
 
 # region: paths
 
-SCxBase=/Users/SMiskey/Desktop/SASC
+# SCxBase=/Users/SMiskey/Desktop/SASC
 SCxBin=${SCxBase}/bin
 SCxCommon=${SCxBase}/scripts/common.sh
 SCxTemps=${SCxBase}/templates
