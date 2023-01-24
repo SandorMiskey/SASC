@@ -27,7 +27,7 @@ Organizations:
         ID: ${SCxOrderer1Name}MSP
 
         # MSPDir is the filesystem path which contains the MSP configuration
-        MSPDir: ${SCxCrypto}/ordererOrganizations/${SCxDomain}/msp
+        MSPDir: ${SCxCrypto}/ordererOrganizations/${SCxOrderer1Name}.${SCxDomain}/msp
 
         # Policies defines the set of policies at this level of the config tree
         # For organization policies, their canonical path is usually
@@ -44,7 +44,7 @@ Organizations:
                 Rule: "OR('${SCxOrderer1Name}MSP.admin')"
 
         OrdererEndpoints:
-            - ${SCxOrderer1Name}.${SCxDomain}:7050
+            - orderer0.${SCxOrderer1Name}.${SCxDomain}:${SCxOrderer1P0Port}
 
     - &${SCxOrg1Name}
         # DefaultOrg defines the organization which is used in the sampleconfig
@@ -210,14 +210,14 @@ Orderer: &OrdererDefaults
     # as TLS validation.  The preferred way to specify orderer addresses is now
     # to include the OrdererEndpoints item in your org definition
     Addresses:
-        - orderer.${SCxDomain}:7050
+        - orderer0.${SCxOrderer1Name}.${SCxDomain}:${SCxOrderer1P0Port}
 
     EtcdRaft:
         Consenters:
-        - Host: orderer.${SCxDomain}
-          Port: 7050
-          ClientTLSCert: ${SCxCrypto}/ordererOrganizations/${SCxDomain}/orderers/orderer.${SCxDomain}/tls/server.crt
-          ServerTLSCert: ${SCxCrypto}/ordererOrganizations/${SCxDomain}/orderers/orderer.${SCxDomain}/tls/server.crt
+        - Host: orderer0.${SCxOrderer1Name}.${SCxDomain}
+          Port: ${SCxOrderer1P0Port}
+          ClientTLSCert: ${SCxCrypto}/ordererOrganizations/${SCxOrderer1Name}.${SCxDomain}/orderers/orderer0.${SCxOrderer1Name}.${SCxDomain}/tls/server.crt
+          ServerTLSCert: ${SCxCrypto}/ordererOrganizations/${SCxOrderer1Name}.${SCxDomain}/orderers/orderer0.${SCxOrderer1Name}.${SCxDomain}/tls/server.crt
 
     # Batch Timeout: The amount of time to wait before creating a batch
     BatchTimeout: 2s

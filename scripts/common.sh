@@ -14,8 +14,9 @@ export SCxCommon=${SCxBase}/scripts/common.sh
 export SCxTemps=${SCxBase}/templates
 export SCxData=${SCxBase}/data
 export SCxArtifacts=${SCxData}/artifacts
+export SCxChains=${SCxData}/chains
 export SCxConf=${SCxData}/conf
-export SCxCrypto=${SCxData}/crypto
+export SCxCrypto=${SCxData}/orgs
 
 export PATH=${SCxBin}:${SCxBase}/scripts:$PATH
 
@@ -24,6 +25,7 @@ export PATH=${SCxBin}:${SCxBase}/scripts:$PATH
 
 SCxCAV=1.5.5
 SCxFabricV=2.4.7
+SCxFabricLoggingSpec=DEBUG	# FATAL | PANIC | ERROR | WARNING | INFO | DEBUG
 
 # endregion: fabric
 # region: orgs and channels
@@ -32,22 +34,26 @@ export SCxNetwork=sasc
 export SCxDomain=${SCxNetwork}.te-food.com
 export SCxGenesisProfile=TwoOrgsApplicationGenesis
 export SCxChannel=${SCxNetwork}-default
+
 export SCxOrderer1Name=Orderer
+export SCxOrderer1P0Port=7050		# 7050
+export SCxOrderer1P0AdminPort=7051	# 7053
+export SCxOrderer1P0OpPort=7052		# 9443
 
 export SCxOrg1Name=Org1
-export SCxOrg1P0Port=7051
-export SCxOrg1CAPort=7054
+export SCxOrg1CAPort=8050
+export SCxOrg1P0Port=8051
 export SCxOrg1PeerPEM=${SCxCrypto}/peerOrganizations/${SCxOrg1Name}.${SCxDomain}/tlsca/tlsca.${SCxOrg1Name}.${SCxDomain}-cert.pem
 export SCxOrg1CAPEM=${SCxCrypto}/peerOrganizations/${SCxOrg1Name}.${SCxDomain}/ca/ca.${SCxOrg1Name}.${SCxDomain}-cert.pem
 
 export SCxOrg2Name=Org2
+export SCxOrg2CAPort=9050
 export SCxOrg2P0Port=9051
-export SCxOrg2CAPort=8054
 export SCxOrg2PeerPEM=${SCxCrypto}/peerOrganizations/${SCxOrg2Name}.${SCxDomain}/tlsca/tlsca.${SCxOrg2Name}.${SCxDomain}-cert.pem
 export SCxOrg2CAPEM=${SCxCrypto}/peerOrganizations/${SCxOrg2Name}.${SCxDomain}/ca/ca.${SCxOrg2Name}.${SCxDomain}-cert.pem
 
 # SCxCryptoConfig=${SCxConf}/crypto-config.yaml
-declare -a SCxCryptoConfig=("${SCxConf}/crypto-config-${SCxOrgOrdererName}.yaml" "${SCxConf}/crypto-config-${SCxOrg1Name}.yaml" "${SCxConf}/crypto-config-${SCxOrg2Name}.yaml")
+declare -a SCxCryptoConfig=("${SCxConf}/crypto-config-${SCxOrderer1Name}.yaml" "${SCxConf}/crypto-config-${SCxOrg1Name}.yaml" "${SCxConf}/crypto-config-${SCxOrg2Name}.yaml")
 
 # endregion: orgs
 # region: funcs' params

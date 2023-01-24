@@ -519,9 +519,9 @@ vm:
         # Parameters on creating docker container.
         # Container may be efficiently created using ipam & dns-server for cluster
         # NetworkMode - sets the networking mode for the container. Supported
-        # standard values are: `host`(default),`bridge`,`ipvlan`,`none`.
+        # standard values are: ``host``(default),``bridge``,``ipvlan``,``none``.
         # Dns - a list of DNS servers for the container to use.
-        # Note:  `Privileged` `Binds` `Links` and `PortBindings` properties of
+        # Note:  ``Privileged`` ``Binds`` ``Links`` and ``PortBindings`` properties of
         # Docker Host Config are not supported and will not be used if set.
         # LogConfig - sets the logging driver (Type) and related options
         # (Config) for Docker. For more info,
@@ -547,8 +547,8 @@ chaincode:
 
     # The id is used by the Chaincode stub to register the executing Chaincode
     # ID with the Peer and is generally supplied through ENV variables
-    # the `path` form of ID is provided when installing the chaincode.
-    # The `name` is used for all other requests and can be any string.
+    # the ``path`` form of ID is provided when installing the chaincode.
+    # The ``name`` is used for all other requests and can be any string.
     id:
         path:
         name:

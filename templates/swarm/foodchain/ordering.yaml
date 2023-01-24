@@ -1,18 +1,3 @@
-#
-# Copyright TE-FOOD International Corp., All Rights Reserved.
-#
-#
-
-version: '3'
-
-networks:
-    swarmnet:
-        external:
-            name: ${NETWORK}
-
-#volumes:
-#    orderer1.${NETWORK}.foodchain.te-food.com:
-#    orderer2.${NETWORK}.foodchain.te-food.com:
 
 services:
 
