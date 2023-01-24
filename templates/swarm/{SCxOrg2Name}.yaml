@@ -1,0 +1,46 @@
+version: '3.7'
+
+networks:
+  ${SCxNetwork}:
+    name: ${SCxNetwork}
+
+services:
+
+ peer0.${SCxOrg2Name}.${SCxDomain}:
+    container_name: peer0.${SCxOrg2Name}.${SCxDomain}
+    image: hyperledger/fabric-peer:${SCxFabricV}
+    labels:
+      service: hyperledger-fabric
+    environment:
+      - FABRIC_CFG_PATH=/etc/hyperledger/peercfg
+      - FABRIC_LOGGING_SPEC=${SCxFabricLoggingSpec}
+      #- FABRIC_LOGGING_SPEC=DEBUG
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_PROFILE_ENABLED=false
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+      # Peer specific variables
+      - CORE_PEER_ID=peer0.${SCxOrg2Name}.${SCxDomain}
+      - CORE_PEER_ADDRESS=peer0.${SCxOrg2Name}.${SCxDomain}:${SCxOrg2P0Port}
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:${SCxOrg2P0Port}
+      - CORE_PEER_CHAINCODEADDRESS=peer0.${SCxOrg2Name}.${SCxDomain}:${SCxOrg2P0ChainPort}
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:${SCxOrg2P0ChainPort}
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.${SCxOrg2Name}.${SCxDomain}:${SCxOrg2P0Port}
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.${SCxOrg2Name}.${SCxDomain}:${SCxOrg2P0Port}
+      - CORE_PEER_LOCALMSPID=${SCxOrg2Name}MSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
+      - CORE_OPERATIONS_LISTENADDRESS=peer0.${SCxOrg2Name}.${SCxDomain}:${SCxOrg2P0OpPort}
+      - CORE_METRICS_PROVIDER=prometheus
+      - CHAINCODE_AS_A_SERVICE_BUILDER_CONFIG={"peername":"peer0${SCxOrg2Name}."}
+      - CORE_CHAINCODE_EXECUTETIMEOUT=300s
+    volumes:
+        - ${SCxCrypto}/peerOrganizations/${SCxOrg2Name}.${SCxDomain}/peers/peer0.${SCxOrderer1Name}.${SCxDomain}:/etc/hyperledger/fabric
+        - ${SCxChains}/${SCxOrg2Name}/peer0:/var/hyperledger/production
+    working_dir: /root
+    command: peer node start
+    ports:
+      - ${SCxOrg2P0Port}:${SCxOrg2P0Port}
+      - ${SCxOrg2P0OpPort}:${SCxOrg2P0OpPort}
+    networks:
+      - ${SCxNetwork}

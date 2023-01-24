@@ -12,6 +12,7 @@
 export SCxBin=${SCxBase}/bin
 export SCxCommon=${SCxBase}/scripts/common.sh
 export SCxTemps=${SCxBase}/templates
+export SCxScripts=${SCxBase}/scripts
 export SCxData=${SCxBase}/data
 export SCxArtifacts=${SCxData}/artifacts
 export SCxChains=${SCxData}/chains
@@ -43,12 +44,16 @@ export SCxOrderer1P0OpPort=7052		# 9443
 export SCxOrg1Name=Org1
 export SCxOrg1CAPort=8050
 export SCxOrg1P0Port=8051
+export SCxOrg1P0ChainPort=8052
+export SCxOrg1P0OpPort=8053
 export SCxOrg1PeerPEM=${SCxCrypto}/peerOrganizations/${SCxOrg1Name}.${SCxDomain}/tlsca/tlsca.${SCxOrg1Name}.${SCxDomain}-cert.pem
 export SCxOrg1CAPEM=${SCxCrypto}/peerOrganizations/${SCxOrg1Name}.${SCxDomain}/ca/ca.${SCxOrg1Name}.${SCxDomain}-cert.pem
 
 export SCxOrg2Name=Org2
 export SCxOrg2CAPort=9050
 export SCxOrg2P0Port=9051
+export SCxOrg2P0ChainPort=9052
+export SCxOrg2P0OpPort=9053
 export SCxOrg2PeerPEM=${SCxCrypto}/peerOrganizations/${SCxOrg2Name}.${SCxDomain}/tlsca/tlsca.${SCxOrg2Name}.${SCxDomain}-cert.pem
 export SCxOrg2CAPEM=${SCxCrypto}/peerOrganizations/${SCxOrg2Name}.${SCxDomain}/ca/ca.${SCxOrg2Name}.${SCxDomain}-cert.pem
 

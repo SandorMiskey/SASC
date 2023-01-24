@@ -12,6 +12,7 @@ if [ ! -f  $SCxCommon ]; then
 	exit 1
 fi
 source $SCxCommon
+cd $SCxScripts
 
 # endregion: load common.sh
 # region: check for dependencies and versions
