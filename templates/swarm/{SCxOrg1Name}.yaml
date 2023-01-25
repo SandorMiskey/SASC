@@ -35,13 +35,40 @@ services:
       - CORE_METRICS_PROVIDER=prometheus
       - CHAINCODE_AS_A_SERVICE_BUILDER_CONFIG={"peername":"peer0${SCxOrg1Name}."}
       - CORE_CHAINCODE_EXECUTETIMEOUT=300s
+
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb0.${SCxOrg1Name}.${SCxDomain}:5984
+      # The CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME and CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD
+      # provide the credentials for ledger to connect to CouchDB.  The username and password must
+      # match the username and password set for the associated CouchDB.
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=${SCxCouchDbUser}
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=${SC_COUCHDB_PASSWORD}
     volumes:
-        - ${SCxCrypto}/peerOrganizations/${SCxOrg1Name}.${SCxDomain}/peers/peer0.${SCxOrderer1Name}.${SCxDomain}:/etc/hyperledger/fabric
-        - ${SCxChains}/${SCxOrg1Name}/peer0:/var/hyperledger/production
+        - ${SC_PATH_ORGS}/peerOrganizations/${SCxOrg1Name}.${SCxDomain}/peers/peer0.${SCxOrg1Name}.${SCxDomain}:/etc/hyperledger/fabric
+        - ${SC_PATH_CHAINS}/${SCxOrg1Name}/peer0:/var/hyperledger/production
     working_dir: /root
     command: peer node start
     ports:
       - ${SCxOrg1P0Port}:${SCxOrg1P0Port}
       - ${SCxOrg1P0OpPort}:${SCxOrg1P0OpPort}
+    networks:
+      - ${SCxNetwork}
+    depends_on:
+      - couchdb0.${SCxOrg1Name}.${SCxDomain}
+
+  couchdb0.${SCxOrg1Name}.${SCxDomain}:
+    container_name: couchdb0.${SCxOrg1Name}.${SCxDomain}
+    image: couchdb:${SCxCouchDbV}
+    labels:
+      service: hyperledger-fabric
+    # Populate the COUCHDB_USER and COUCHDB_PASSWORD to set an admin user and password
+    # for CouchDB.  This will prevent CouchDB from operating in an "Admin Party" mode.
+    environment:
+      - COUCHDB_USER=${SCxCouchDbUser}
+      - COUCHDB_PASSWORD=${SC_COUCHDB_PASSWORD}
+    # Comment/Uncomment the port mapping if you want to hide/expose the CouchDB service,
+    # for example map it to utilize Fauxton User Interface in dev environments.
+    ports:
+      - "${SCxOrg1C0Port}:5984"
     networks:
       - ${SCxNetwork}

@@ -10,8 +10,8 @@ OrdererOrgs:
   # ---------------------------------------------------------------------------
   # Orderer
   # ---------------------------------------------------------------------------
-  - Name: ${SCxOrderer1Name} 
-    Domain: ${SCxOrderer1Name}.${SCxDomain}
+  - Name: ${SC_ORDERER1_NAME} 
+    Domain: ${SC_ORDERER1_NAME}.${SCxDomain}
     EnableNodeOUs: true
     # ---------------------------------------------------------------------------
     # "Specs" - See PeerOrgs for complete description

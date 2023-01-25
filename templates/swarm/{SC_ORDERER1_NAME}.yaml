@@ -16,8 +16,8 @@ networks:
 
 services:
 
-  orderer0.${SCxOrderer1Name}.${SCxDomain}:
-    container_name: orderer0.${SCxOrderer1Name}.${SCxDomain}
+  orderer0.${SC_ORDERER1_NAME}.${SCxDomain}:
+    container_name: orderer0.${SC_ORDERER1_NAME}.${SCxDomain}
     image: hyperledger/fabric-orderer:${SCxFabricV}
     labels:
       service: hyperledger-fabric
@@ -25,7 +25,7 @@ services:
       - FABRIC_LOGGING_SPEC=${SCxFabricLoggingSpec}
       - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
       - ORDERER_GENERAL_LISTENPORT=${SCxOrderer1P0Port}
-      - ORDERER_GENERAL_LOCALMSPID=${SCxOrderer1Name}MSP
+      - ORDERER_GENERAL_LOCALMSPID=${SC_ORDERER1_NAME}MSP
       - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
       # enabled TLS
       - ORDERER_GENERAL_TLS_ENABLED=true
@@ -43,14 +43,14 @@ services:
       - ORDERER_ADMIN_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
       - ORDERER_ADMIN_TLS_CLIENTROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
       - ORDERER_ADMIN_LISTENADDRESS=0.0.0.0:${SCxOrderer1P0AdminPort}
-      - ORDERER_OPERATIONS_LISTENADDRESS=orderer0.${SCxOrderer1Name}.${SCxDomain}:${SCxOrderer1P0OpPort}
+      - ORDERER_OPERATIONS_LISTENADDRESS=orderer0.${SC_ORDERER1_NAME}.${SCxDomain}:${SCxOrderer1P0OpPort}
       - ORDERER_METRICS_PROVIDER=prometheus
     working_dir: /root
     command: orderer
     volumes:
-        - ${SCxCrypto}/ordererOrganizations/${SCxOrderer1Name}.${SCxDomain}/orderers/orderer0.${SCxOrderer1Name}.${SCxDomain}/msp:/var/hyperledger/orderer/msp
-        - ${SCxCrypto}/ordererOrganizations/${SCxOrderer1Name}.${SCxDomain}/orderers/orderer0.${SCxOrderer1Name}.${SCxDomain}/tls/:/var/hyperledger/orderer/tls
-        - ${SCxChains}/${SCxOrderer1Name}/orderer0:/var/hyperledger/production/orderer
+        - ${SC_PATH_ORGS}/ordererOrganizations/${SC_ORDERER1_NAME}.${SCxDomain}/orderers/orderer0.${SC_ORDERER1_NAME}.${SCxDomain}/msp:/var/hyperledger/orderer/msp
+        - ${SC_PATH_ORGS}/ordererOrganizations/${SC_ORDERER1_NAME}.${SCxDomain}/orderers/orderer0.${SC_ORDERER1_NAME}.${SCxDomain}/tls/:/var/hyperledger/orderer/tls
+        - ${SC_PATH_CHAINS}/${SC_ORDERER1_NAME}/orderer0:/var/hyperledger/production/orderer
     ports:
       - ${SCxOrderer1P0Port}:${SCxOrderer1P0Port}
       - ${SCxOrderer1P0AdminPort}:${SCxOrderer1P0AdminPort}

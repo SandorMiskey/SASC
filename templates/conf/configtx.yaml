@@ -16,18 +16,18 @@ Organizations:
 
     # SampleOrg defines an MSP using the sampleconfig.  It should never be used
     # in production but may be used as a template for other definitions
-    # - &${SCxOrderer1Name}Org
-    - &${SCxOrderer1Name}
+    # - &${SC_ORDERER1_NAME}Org
+    - &${SC_ORDERER1_NAME}
         # DefaultOrg defines the organization which is used in the sampleconfig
         # of the fabric.git development environment
-        # Name: ${SCxOrderer1Name}Org
-        Name: ${SCxOrderer1Name}
+        # Name: ${SC_ORDERER1_NAME}Org
+        Name: ${SC_ORDERER1_NAME}
 
         # ID to load the MSP definition as
-        ID: ${SCxOrderer1Name}MSP
+        ID: ${SC_ORDERER1_NAME}MSP
 
         # MSPDir is the filesystem path which contains the MSP configuration
-        MSPDir: ${SCxCrypto}/ordererOrganizations/${SCxOrderer1Name}.${SCxDomain}/msp
+        MSPDir: ${SC_PATH_ORGS}/ordererOrganizations/${SC_ORDERER1_NAME}.${SCxDomain}/msp
 
         # Policies defines the set of policies at this level of the config tree
         # For organization policies, their canonical path is usually
@@ -35,16 +35,16 @@ Organizations:
         Policies:
             Readers:
                 Type: Signature
-                Rule: "OR('${SCxOrderer1Name}MSP.member')"
+                Rule: "OR('${SC_ORDERER1_NAME}MSP.member')"
             Writers:
                 Type: Signature
-                Rule: "OR('${SCxOrderer1Name}MSP.member')"
+                Rule: "OR('${SC_ORDERER1_NAME}MSP.member')"
             Admins:
                 Type: Signature
-                Rule: "OR('${SCxOrderer1Name}MSP.admin')"
+                Rule: "OR('${SC_ORDERER1_NAME}MSP.admin')"
 
         OrdererEndpoints:
-            - orderer0.${SCxOrderer1Name}.${SCxDomain}:${SCxOrderer1P0Port}
+            - orderer0.${SC_ORDERER1_NAME}.${SCxDomain}:${SCxOrderer1P0Port}
 
     - &${SCxOrg1Name}
         # DefaultOrg defines the organization which is used in the sampleconfig
@@ -54,7 +54,7 @@ Organizations:
         # ID to load the MSP definition as
         ID: ${SCxOrg1Name}MSP
 
-        MSPDir: ${SCxCrypto}/peerOrganizations/${SCxOrg1Name}.${SCxDomain}/msp
+        MSPDir: ${SC_PATH_ORGS}/peerOrganizations/${SCxOrg1Name}.${SCxDomain}/msp
 
         # Policies defines the set of policies at this level of the config tree
         # For organization policies, their canonical path is usually
@@ -81,7 +81,7 @@ Organizations:
         # ID to load the MSP definition as
         ID: ${SCxOrg2Name}MSP
 
-        MSPDir: ${SCxCrypto}/peerOrganizations/${SCxOrg2Name}.${SCxDomain}/msp
+        MSPDir: ${SC_PATH_ORGS}/peerOrganizations/${SCxOrg2Name}.${SCxDomain}/msp
 
         # Policies defines the set of policies at this level of the config tree
         # For organization policies, their canonical path is usually
@@ -210,14 +210,14 @@ Orderer: &OrdererDefaults
     # as TLS validation.  The preferred way to specify orderer addresses is now
     # to include the OrdererEndpoints item in your org definition
     Addresses:
-        - orderer0.${SCxOrderer1Name}.${SCxDomain}:${SCxOrderer1P0Port}
+        - orderer0.${SC_ORDERER1_NAME}.${SCxDomain}:${SCxOrderer1P0Port}
 
     EtcdRaft:
         Consenters:
-        - Host: orderer0.${SCxOrderer1Name}.${SCxDomain}
+        - Host: orderer0.${SC_ORDERER1_NAME}.${SCxDomain}
           Port: ${SCxOrderer1P0Port}
-          ClientTLSCert: ${SCxCrypto}/ordererOrganizations/${SCxOrderer1Name}.${SCxDomain}/orderers/orderer0.${SCxOrderer1Name}.${SCxDomain}/tls/server.crt
-          ServerTLSCert: ${SCxCrypto}/ordererOrganizations/${SCxOrderer1Name}.${SCxDomain}/orderers/orderer0.${SCxOrderer1Name}.${SCxDomain}/tls/server.crt
+          ClientTLSCert: ${SC_PATH_ORGS}/ordererOrganizations/${SC_ORDERER1_NAME}.${SCxDomain}/orderers/orderer0.${SC_ORDERER1_NAME}.${SCxDomain}/tls/server.crt
+          ServerTLSCert: ${SC_PATH_ORGS}/ordererOrganizations/${SC_ORDERER1_NAME}.${SCxDomain}/orderers/orderer0.${SC_ORDERER1_NAME}.${SCxDomain}/tls/server.crt
 
     # Batch Timeout: The amount of time to wait before creating a batch
     BatchTimeout: 2s
@@ -307,7 +307,7 @@ Profiles:
         Orderer:
             <<: *OrdererDefaults
             Organizations:
-                - *${SCxOrderer1Name}
+                - *${SC_ORDERER1_NAME}
             Capabilities: *OrdererCapabilities
         Application:
             <<: *ApplicationDefaults

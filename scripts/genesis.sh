@@ -6,13 +6,17 @@
 
 # region: load common functions
 
-[[ ${SCxCommon:-"unset"} == "unset" ]] && SCxCommon="./common.sh"
-if [ ! -f  $SCxCommon ]; then
-	echo "=> ./common.sh not found, make sure SCxCommon is set or you execute this from the repo's 'scrips' directory!"
+[[ ${SC_PATH_COMMON:-"unset"} == "unset" ]] && SC_PATH_COMMON="./common.sh"
+if [ ! -f  $SC_PATH_COMMON ]; then
+	echo "=> ./common.sh not found, make sure SC_PATH_COMMON is set or you execute this from the repo's 'scrips' directory!"
 	exit 1
 fi
-source $SCxCommon
-cd $SCxScripts
+source $SC_PATH_COMMON
+
+if [[ ${SC_PATH_BASE:-"unset"} == "unset" ]]; then
+	TExVerify 1 "SC_PATH_BASE is unset"
+fi
+cd $SC_PATH_SCRIPTS
 
 # endregion: load common.sh
 # region: check for dependencies and versions
@@ -50,10 +54,10 @@ TExYN "validate ca binary versions?" _CAVersions
 # region: remove config and persistent data
 
 _WipePersistent() {
-	TExPrintf "removing $SCxData"
-	err=$( rm -Rf "$SCxData" )
+	TExPrintf "removing $SC_PATH_DATA"
+	err=$( rm -Rf "$SC_PATH_DATA" )
 	TExVerify $? $err
-	err=$( mkdir "$SCxData" )
+	err=$( mkdir "$SC_PATH_DATA" )
 	TExVerify $? $err
 }
 
@@ -65,9 +69,9 @@ TExYN "wipe persistent data?" _WipePersistent
 
 _Config() {
 	TExPrintf "processing templates:"
-	for template in $( find $SCxTemps/* ! -name '.*' -print ); do
+	for template in $( find $SC_PATH_TEMPLATES/* ! -name '.*' -print ); do
 		target=$( TExSetvar $template )
-		target=$( echo $target | sed s+$SCxTemps+$SCxData+ )
+		target=$( echo $target | sed s+$SC_PATH_TEMPLATES+$SC_PATH_DATA+ )
 		TExPrintf "$template -> $target"
 		if [[ -d $template ]]; then
 			err=$( mkdir -p "$target" )
@@ -91,17 +95,17 @@ _one_line_pem() {
 }
 
 _Crypto() {
-	if [[ "$(declare -p SCxCryptoConfig)" =~ "declare -a" ]]; then
-		TExPrintf "SCxCryptoConfig is array"
-		for cconf in "${SCxCryptoConfig[@]}"
+	if [[ "$(declare -p SC_ORG_CONFIG)" =~ "declare -a" ]]; then
+		TExPrintf "SC_ORG_CONFIG is array"
+		for cconf in "${SC_ORG_CONFIG[@]}"
 		do
 			TExPrintf "processing $cconf"
-			err=$( cryptogen generate --config $cconf --output="$SCxCrypto" )
+			err=$( cryptogen generate --config $cconf --output="$SC_PATH_ORGS" )
 			TExVerify $? $err
 		done
 	else
-		TExPrintf "SCxCryptoConfig is not array, processing $SCxCryptoConfig"
-		err=$( cryptogen generate --config $SCxCryptoConfig --output="$SCxCrypto" )
+		TExPrintf "SC_ORG_CONFIG is not array, processing $SC_ORG_CONFIG"
+		err=$( cryptogen generate --config $SC_ORG_CONFIG --output="$SC_PATH_ORGS" )
 		TExVerify $? $err
 	fi
 
@@ -118,7 +122,7 @@ TExYN "regenerate certificates and reprocess config files?" _Crypto
 # region:
 
 _GenesisBlock() {
-	configtxgen -profile $SCxGenesisProfile -outputBlock "${SCxArtifacts}/${SCxChannel}-genesis.block" -configPath "$SCxConf" -channelID $SCxChannel
+	configtxgen -profile $SCxGenesisProfile -outputBlock "${SC_PATH_ARTIFACTS}/${SCxChannel}-genesis.block" -configPath "$SC_PATH_CONF" -channelID $SCxChannel
 	TExVerify $? "failed to generate orderer genesis block..."
 
 }

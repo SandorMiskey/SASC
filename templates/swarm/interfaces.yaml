@@ -20,8 +20,8 @@ services:
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
     command: /bin/bash
     volumes:
-        - ${SCxCrypto}:/opt/gopath/src/github.com/hyperledger/fabric/peer/organizations
-        - ${SCxScripts}:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
+        - ${SC_PATH_ORGS}:/opt/gopath/src/github.com/hyperledger/fabric/peer/organizations
+        - ${SC_PATH_SCRIPTS}:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
     depends_on:
       - peer0.${SCxOrg1Name}.${SCxDomain}
       - peer0.${SCxOrg2Name}.${SCxDomain}

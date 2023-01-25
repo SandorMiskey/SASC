@@ -8,35 +8,39 @@
 
 # region: paths
 
-# SCxBase=/Users/SMiskey/Desktop/SASC
-export SCxBin=${SCxBase}/bin
-export SCxCommon=${SCxBase}/scripts/common.sh
-export SCxTemps=${SCxBase}/templates
-export SCxScripts=${SCxBase}/scripts
-export SCxData=${SCxBase}/data
-export SCxArtifacts=${SCxData}/artifacts
-export SCxChains=${SCxData}/chains
-export SCxConf=${SCxData}/conf
-export SCxCrypto=${SCxData}/orgs
+# SC_PATH_BASE=/Users/SMiskey/Desktop/SASC
+export SC_PATH_TEMPLATES=${SC_PATH_BASE}/templates
+export SC_PATH_SCRIPTS=${SC_PATH_BASE}/scripts
+export SC_PATH_COMMON=${SC_PATH_SCRIPTS}/common.sh
+export SC_PATH_DATA=${SC_PATH_BASE}/data
+export SC_PATH_ARTIFACTS=${SC_PATH_DATA}/artifacts
+export SC_PATH_CHAINS=${SC_PATH_DATA}/chains
+export SC_PATH_CONF=${SC_PATH_DATA}/conf
+export SC_PATH_ORGS=${SC_PATH_DATA}/orgs
 
-export PATH=${SCxBin}:${SCxBase}/scripts:$PATH
+export PATH=${SC_PATH_BASE}/bin:${SC_PATH_SCRIPTS}:$PATH
 
 # endregion: paths
 # region: fabric and co
 
-SCxCAV=1.5.5
-SCxFabricV=2.4.7
-SCxFabricLoggingSpec=DEBUG	# FATAL | PANIC | ERROR | WARNING | INFO | DEBUG
+export SCxCAV=1.5.5
+export SCxFabricV=2.4.7
+export SCxCouchDbV=3.1.1
+export SCxCouchDbUser=admin
+export SCxFabricLoggingSpec=DEBUG	# FATAL | PANIC | ERROR | WARNING | INFO | DEBUG
+export SCxGenesisProfile=TwoOrgsApplicationGenesis
 
 # endregion: fabric
 # region: orgs and channels
 
 export SCxNetwork=sasc
 export SCxDomain=${SCxNetwork}.te-food.com
-export SCxGenesisProfile=TwoOrgsApplicationGenesis
 export SCxChannel=${SCxNetwork}-default
 
-export SCxOrderer1Name=Orderer
+export SC_ORDERER1_NAME=Orderer
+# SC_ORDERER1_NAME -> SC_ORG_ORDERER1_NAME ?
+# SC_ORDERER1_DOMAIN (SC_ORG_ORDERER1_DOMAIN)
+# SC_ORDERER1_P0_HOSTNAME...
 export SCxOrderer1P0Port=7050		# 7050
 export SCxOrderer1P0AdminPort=7051	# 7053
 export SCxOrderer1P0OpPort=7052		# 9443
@@ -46,19 +50,21 @@ export SCxOrg1CAPort=8050
 export SCxOrg1P0Port=8051
 export SCxOrg1P0ChainPort=8052
 export SCxOrg1P0OpPort=8053
-export SCxOrg1PeerPEM=${SCxCrypto}/peerOrganizations/${SCxOrg1Name}.${SCxDomain}/tlsca/tlsca.${SCxOrg1Name}.${SCxDomain}-cert.pem
-export SCxOrg1CAPEM=${SCxCrypto}/peerOrganizations/${SCxOrg1Name}.${SCxDomain}/ca/ca.${SCxOrg1Name}.${SCxDomain}-cert.pem
+export SCxOrg1C0Port=8054
+export SCxOrg1PeerPEM=${SC_PATH_ORGS}/peerOrganizations/${SCxOrg1Name}.${SCxDomain}/tlsca/tlsca.${SCxOrg1Name}.${SCxDomain}-cert.pem
+export SCxOrg1CAPEM=${SC_PATH_ORGS}/peerOrganizations/${SCxOrg1Name}.${SCxDomain}/ca/ca.${SCxOrg1Name}.${SCxDomain}-cert.pem
 
 export SCxOrg2Name=Org2
 export SCxOrg2CAPort=9050
 export SCxOrg2P0Port=9051
 export SCxOrg2P0ChainPort=9052
 export SCxOrg2P0OpPort=9053
-export SCxOrg2PeerPEM=${SCxCrypto}/peerOrganizations/${SCxOrg2Name}.${SCxDomain}/tlsca/tlsca.${SCxOrg2Name}.${SCxDomain}-cert.pem
-export SCxOrg2CAPEM=${SCxCrypto}/peerOrganizations/${SCxOrg2Name}.${SCxDomain}/ca/ca.${SCxOrg2Name}.${SCxDomain}-cert.pem
+export SCxOrg2C0Port=9054
+export SCxOrg2PeerPEM=${SC_PATH_ORGS}/peerOrganizations/${SCxOrg2Name}.${SCxDomain}/tlsca/tlsca.${SCxOrg2Name}.${SCxDomain}-cert.pem
+export SCxOrg2CAPEM=${SC_PATH_ORGS}/peerOrganizations/${SCxOrg2Name}.${SCxDomain}/ca/ca.${SCxOrg2Name}.${SCxDomain}-cert.pem
 
-# SCxCryptoConfig=${SCxConf}/crypto-config.yaml
-declare -a SCxCryptoConfig=("${SCxConf}/crypto-config-${SCxOrderer1Name}.yaml" "${SCxConf}/crypto-config-${SCxOrg1Name}.yaml" "${SCxConf}/crypto-config-${SCxOrg2Name}.yaml")
+# SC_ORG_CONFIG=${SC_PATH_CONF}/crypto-config.yaml
+declare -a SC_ORG_CONFIG=("${SC_PATH_CONF}/crypto-config-${SC_ORDERER1_NAME}.yaml" "${SC_PATH_CONF}/crypto-config-${SCxOrg1Name}.yaml" "${SC_PATH_CONF}/crypto-config-${SCxOrg2Name}.yaml")
 
 # endregion: orgs
 # region: funcs' params
@@ -72,6 +78,14 @@ TExSILENT=false
 
 # endregion: variables
 # region: functions
+
+TExCheckBase() {
+	if [[ ${SC_PATH_BASE:-"unset"} == "unset" ]]; then
+		false
+	else
+		true
+	fi
+}
 
 TExDefaults() {
 	#
