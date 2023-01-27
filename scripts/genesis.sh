@@ -22,7 +22,7 @@ cd $SC_PATH_SCRIPTS
 # region: check for dependencies and versions
 
 _FabricVersions() {
-	local required_version=$SCxFabricV
+	local required_version=$SC_VERSION_FABRIC
 	local cryptogen_version=$( cryptogen version | grep Version: | sed 's/.*Version: //' )
 	local configtxgen_version=$( configtxgen -version | grep Version: | sed 's/.*Version: //' )
 
@@ -35,7 +35,7 @@ _FabricVersions() {
 	fi 
 }
 _CAVersions() {
-	local required_version=$SCxCAV
+	local required_version=$SC_VERSION_CA
 	local actual_version=$( fabric-ca-client version | grep Version: | sed 's/.*Version: //' )
 
 	TExPrintf "required ca version: $required_version"
@@ -68,6 +68,8 @@ TExYN "wipe persistent data?" _WipePersistent
 
 
 _Config() {
+	export DOCKER_NS='$(DOCKER_NS)'
+	export TWO_DIGIT_VERSION='$(TWO_DIGIT_VERSION)'
 	TExPrintf "processing templates:"
 	for template in $( find $SC_PATH_TEMPLATES/* ! -name '.*' -print ); do
 		target=$( TExSetvar $template )
@@ -122,7 +124,7 @@ TExYN "regenerate certificates and reprocess config files?" _Crypto
 # region:
 
 _GenesisBlock() {
-	configtxgen -profile $SCxGenesisProfile -outputBlock "${SC_PATH_ARTIFACTS}/${SCxChannel}-genesis.block" -configPath "$SC_PATH_CONF" -channelID $SCxChannel
+	configtxgen -profile $SC_CHANNEL_PROFILE -outputBlock "${SC_PATH_ARTIFACTS}/${SC_CHANNEL_NAME}-genesis.block" -configPath "$SC_PATH_CONF" -channelID $SC_CHANNEL_NAME
 	TExVerify $? "failed to generate orderer genesis block..."
 
 }

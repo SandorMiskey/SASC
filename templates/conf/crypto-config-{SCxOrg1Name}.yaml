@@ -11,7 +11,7 @@ PeerOrgs:
   # Org1
   # ---------------------------------------------------------------------------
   - Name: ${SCxOrg1Name}
-    Domain: ${SCxOrg1Name}.${SCxDomain}
+    Domain: ${SCxOrg1Name}.${SC_NETWORK_DOMAIN}
     EnableNodeOUs: true
     # ---------------------------------------------------------------------------
     # "Specs"

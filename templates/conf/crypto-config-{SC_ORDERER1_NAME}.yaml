@@ -11,12 +11,12 @@ OrdererOrgs:
   # Orderer
   # ---------------------------------------------------------------------------
   - Name: ${SC_ORDERER1_NAME} 
-    Domain: ${SC_ORDERER1_NAME}.${SCxDomain}
+    Domain: ${SC_ORDERER1_DOMAIN}
     EnableNodeOUs: true
     # ---------------------------------------------------------------------------
     # "Specs" - See PeerOrgs for complete description
     # ---------------------------------------------------------------------------
     Specs:
-      - Hostname: orderer0
+      - Hostname: ${SC_ORDERER1_O0_NAME}
         SANS:
           - localhost

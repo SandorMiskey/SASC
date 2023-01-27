@@ -1,5 +1,5 @@
 ---
-name: ${SCxNetwork}-${SCxOrg1Name}
+name: ${SC_NETWORK_NAME}-${SCxOrg1Name}
 version: 1.0.0
 client:
   organization: ${SCxOrg1Name}
@@ -11,9 +11,9 @@ organizations:
   Org${ORG}:
     mspid: ${SCxOrg1Name}MSP
     peers:
-    - peer0.${SCxOrg1Name}.${SCxDomain}
+    - peer0.${SCxOrg1Name}.${SC_NETWORK_DOMAIN}
     certificateAuthorities:
-    - ca.${SCxOrg1Name}.${SCxDomain}
+    - ca.${SCxOrg1Name}.${SC_NETWORK_DOMAIN}
 peers:
   peer0.org${ORG}.example.com:
     url: grpcs://localhost:${SCxOrg1P0Port}
@@ -21,8 +21,8 @@ peers:
       pem: |
           ${SCxOrg1PeerPEM}
     grpcOptions:
-      ssl-target-name-override: peer0.${SCxOrg1Name}.${SCxDomain}
-      hostnameOverride: peer0.${SCxOrg1Name}.${SCxDomain}
+      ssl-target-name-override: peer0.${SCxOrg1Name}.${SC_NETWORK_DOMAIN}
+      hostnameOverride: peer0.${SCxOrg1Name}.${SC_NETWORK_DOMAIN}
 certificateAuthorities:
   ca.org${ORG}.example.com:
     url: https://localhost:${SCxOrg1CAPort}

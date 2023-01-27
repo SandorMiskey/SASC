@@ -1,29 +1,30 @@
 version: '3.7'
 
 networks:
-  ${SCxNetwork}:
-    name: ${SCxNetwork}
+  ${SC_NETWORK_NAME}:
+    name: ${SC_NETWORK_NAME}
 
 services:
 
   cli:
     container_name: cli
-    image: hyperledger/fabric-tools:${SCxFabricV}
+    image: hyperledger/fabric-tools:${SC_VERSION_FABRIC}
     labels:
       service: hyperledger-fabric
     tty: true
     stdin_open: true
     environment:
       - GOPATH=/opt/gopath
-      - FABRIC_LOGGING_SPEC=${SCxFabricLoggingSpec}
+      - FABRIC_LOGGING_SPEC=${SC_FABRIC_LOGLEVEL}
       - FABRIC_CFG_PATH=/etc/hyperledger/peercfg
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
     command: /bin/bash
     volumes:
         - ${SC_PATH_ORGS}:/opt/gopath/src/github.com/hyperledger/fabric/peer/organizations
         - ${SC_PATH_SCRIPTS}:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
+        - ${SC_PATH_CONF}/peercfg:/etc/hyperledger/peercfg
     depends_on:
-      - peer0.${SCxOrg1Name}.${SCxDomain}
-      - peer0.${SCxOrg2Name}.${SCxDomain}
+      - peer0.${SCxOrg1Name}.${SC_NETWORK_DOMAIN}
+      - peer0.${SCxOrg2Name}.${SC_NETWORK_DOMAIN}
     networks:
-      - ${SCxNetwork}
+      - ${SC_NETWORK_NAME}
