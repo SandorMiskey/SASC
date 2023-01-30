@@ -4,7 +4,6 @@ networks:
   ${SC_NETWORK_NAME}:
     name: ${SC_NETWORK_NAME}
 
-
 services:
 
  ${SC_ORG2_P1_FQDN}:
@@ -51,6 +50,7 @@ services:
         - ${SC_PATH_CHAINS}/${SC_ORG2_NAME}/${SC_ORG2_P1_NAME}:/var/hyperledger/production
         - ${SC_PATH_CONF}/peercfg:/etc/hyperledger/peercfg
         # - ${DOCKER_SOCK}:/host/var/run/docker.sock
+        # - /var/run/:/host/var/run/
     working_dir: /root
     command: peer node start
     ports:
@@ -59,7 +59,20 @@ services:
     networks:
       - ${SC_NETWORK_NAME}
     depends_on:
-      - couchdb0.${SC_ORG2_DOMAIN}
+      - ${SC_ORG2_C1_FQDN}
+    deploy:                                                                                                                                                                                                
+      replicas: 1
+      placement:
+        constraints: [node.hostname == ${SC_ORG2_P1_WORKER}]
+      restart_policy:
+        condition: any 
+        delay: 5s
+        max_attempts: 5
+    # hostname: ${SC_ORG2_P1_FQDN}
+    # networks:
+    #   ${SC_NETWORK_NAME}:
+    #     aliases:
+    #       - ${SC_ORG2_P1_FQDN}
 
   ${SC_ORG2_C1_FQDN}:
     container_name: ${SC_ORG2_C1_FQDN}
@@ -77,3 +90,16 @@ services:
       - "${SC_ORG2_C1_PORT}:5984"
     networks:
       - ${SC_NETWORK_NAME}
+    deploy:                                                                                                                                                                                                
+      replicas: 1
+      placement:
+        constraints: [node.hostname == ${SC_ORG2_C1_WORKER}]
+      restart_policy:
+        condition: any 
+        delay: 5s
+        max_attempts: 5
+    # hostname: ${SC_ORG2_C1_FQDN}
+    # networks:
+    #   ${SC_NETWORK_NAME}:
+    #     aliases:
+    #       - ${SC_ORG2_C1_FQDN}
