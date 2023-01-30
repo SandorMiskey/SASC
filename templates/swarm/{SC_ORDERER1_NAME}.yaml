@@ -1,10 +1,5 @@
 version: '3.7'
 
-# volumes:
-#   ${SC_ORDERER1_O0_NAME}.${SC_NETWORK_DOMAIN}:
-#   peer0.${SCxOrg1Name}.${SC_NETWORK_DOMAIN}:
-#   peer0.${SCxOrg2Name}.${SC_NETWORK_DOMAIN}:
-
 # networks:
 #   swarmnet:
 #     external:                                                                                                                                                                                                                                                               
@@ -16,15 +11,15 @@ networks:
 
 services:
 
-  ${SC_ORDERER1_O0_FQDN}:
-    container_name: ${SC_ORDERER1_O0_FQDN}
+  ${SC_ORDERER1_O1_FQDN}:
+    container_name: ${SC_ORDERER1_O1_FQDN}
     image: hyperledger/fabric-orderer:${SC_VERSION_FABRIC}
     labels:
       service: hyperledger-fabric
     environment:
       - FABRIC_LOGGING_SPEC=${SC_FABRIC_LOGLEVEL}
       - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
-      - ORDERER_GENERAL_LISTENPORT=${SC_ORDERER1_O0_PORT}
+      - ORDERER_GENERAL_LISTENPORT=${SC_ORDERER1_O1_PORT}
       - ORDERER_GENERAL_LOCALMSPID=${SC_ORDERER1_NAME}MSP
       - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
       # enabled TLS
@@ -42,18 +37,18 @@ services:
       - ORDERER_ADMIN_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
       - ORDERER_ADMIN_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
       - ORDERER_ADMIN_TLS_CLIENTROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
-      - ORDERER_ADMIN_LISTENADDRESS=0.0.0.0:${SC_ORDERER1_O0_ADMINPORT}
-      - ORDERER_OPERATIONS_LISTENADDRESS=${SC_ORDERER1_O0_FQDN}:${SC_ORDERER1_O0_OPPORT}
+      - ORDERER_ADMIN_LISTENADDRESS=0.0.0.0:${SC_ORDERER1_O1_ADMINPORT}
+      - ORDERER_OPERATIONS_LISTENADDRESS=${SC_ORDERER1_O1_FQDN}:${SC_ORDERER1_O1_OPPORT}
       - ORDERER_METRICS_PROVIDER=prometheus
     working_dir: /root
     command: orderer
     volumes:
-        - ${SC_PATH_ORGS}/ordererOrganizations/${SC_ORDERER1_DOMAIN}/orderers/${SC_ORDERER1_O0_FQDN}/msp:/var/hyperledger/orderer/msp
-        - ${SC_PATH_ORGS}/ordererOrganizations/${SC_ORDERER1_DOMAIN}/orderers/${SC_ORDERER1_O0_FQDN}/tls/:/var/hyperledger/orderer/tls
-        - ${SC_PATH_CHAINS}/${SC_ORDERER1_NAME}/${SC_ORDERER1_O0_NAME}:/var/hyperledger/production/orderer
+        - ${SC_PATH_ORGS}/ordererOrganizations/${SC_ORDERER1_DOMAIN}/orderers/${SC_ORDERER1_O1_FQDN}/msp:/var/hyperledger/orderer/msp
+        - ${SC_PATH_ORGS}/ordererOrganizations/${SC_ORDERER1_DOMAIN}/orderers/${SC_ORDERER1_O1_FQDN}/tls/:/var/hyperledger/orderer/tls
+        - ${SC_PATH_CHAINS}/${SC_ORDERER1_NAME}/${SC_ORDERER1_O1_NAME}:/var/hyperledger/production/orderer
     ports:
-      - ${SC_ORDERER1_O0_PORT}:${SC_ORDERER1_O0_PORT}
-      - ${SC_ORDERER1_O0_ADMINPORT}:${SC_ORDERER1_O0_ADMINPORT}
-      - ${SC_ORDERER1_O0_OPPORT}:${SC_ORDERER1_O0_OPPORT}
+      - ${SC_ORDERER1_O1_PORT}:${SC_ORDERER1_O1_PORT}
+      - ${SC_ORDERER1_O1_ADMINPORT}:${SC_ORDERER1_O1_ADMINPORT}
+      - ${SC_ORDERER1_O1_OPPORT}:${SC_ORDERER1_O1_OPPORT}
     networks:
       - ${SC_NETWORK_NAME}

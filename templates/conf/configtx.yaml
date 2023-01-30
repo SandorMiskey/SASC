@@ -44,17 +44,17 @@ Organizations:
                 Rule: "OR('${SC_ORDERER1_NAME}MSP.admin')"
 
         OrdererEndpoints:
-            - ${SC_ORDERER1_O0_FQDN}:${SC_ORDERER1_O0_PORT}
+            - ${SC_ORDERER1_O1_FQDN}:${SC_ORDERER1_O1_PORT}
 
-    - &${SCxOrg1Name}
+    - &${SC_ORG1_NAME}
         # DefaultOrg defines the organization which is used in the sampleconfig
         # of the fabric.git development environment
-        Name: ${SCxOrg1Name}MSP
+        Name: ${SC_ORG1_NAME}MSP
 
         # ID to load the MSP definition as
-        ID: ${SCxOrg1Name}MSP
+        ID: ${SC_ORG1_NAME}MSP
 
-        MSPDir: ${SC_PATH_ORGS}/peerOrganizations/${SCxOrg1Name}.${SC_NETWORK_DOMAIN}/msp
+        MSPDir: ${SC_PATH_ORGS}/peerOrganizations/${SC_ORG1_DOMAIN}/msp
 
         # Policies defines the set of policies at this level of the config tree
         # For organization policies, their canonical path is usually
@@ -62,26 +62,26 @@ Organizations:
         Policies:
             Readers:
                 Type: Signature
-                Rule: "OR('${SCxOrg1Name}MSP.admin', '${SCxOrg1Name}MSP.peer', '${SCxOrg1Name}MSP.client')"
+                Rule: "OR('${SC_ORG1_NAME}MSP.admin', '${SC_ORG1_NAME}MSP.peer', '${SC_ORG1_NAME}MSP.client')"
             Writers:
                 Type: Signature
-                Rule: "OR('${SCxOrg1Name}MSP.admin', '${SCxOrg1Name}MSP.client')"
+                Rule: "OR('${SC_ORG1_NAME}MSP.admin', '${SC_ORG1_NAME}MSP.client')"
             Admins:
                 Type: Signature
-                Rule: "OR('${SCxOrg1Name}MSP.admin')"
+                Rule: "OR('${SC_ORG1_NAME}MSP.admin')"
             Endorsement:
                 Type: Signature
-                Rule: "OR('${SCxOrg1Name}MSP.peer')"
+                Rule: "OR('${SC_ORG1_NAME}MSP.peer')"
 
-    - &${SCxOrg2Name}
+    - &${SC_ORG2_NAME}
         # DefaultOrg defines the organization which is used in the sampleconfig
         # of the fabric.git development environment
-        Name: ${SCxOrg2Name}MSP
+        Name: ${SC_ORG2_NAME}MSP
 
         # ID to load the MSP definition as
-        ID: ${SCxOrg2Name}MSP
+        ID: ${SC_ORG2_NAME}MSP
 
-        MSPDir: ${SC_PATH_ORGS}/peerOrganizations/${SCxOrg2Name}.${SC_NETWORK_DOMAIN}/msp
+        MSPDir: ${SC_PATH_ORGS}/peerOrganizations/${SC_ORG2_DOMAIN}/msp
 
         # Policies defines the set of policies at this level of the config tree
         # For organization policies, their canonical path is usually
@@ -89,16 +89,16 @@ Organizations:
         Policies:
             Readers:
                 Type: Signature
-                Rule: "OR('${SCxOrg2Name}MSP.admin', '${SCxOrg2Name}MSP.peer', '${SCxOrg2Name}MSP.client')"
+                Rule: "OR('${SC_ORG2_NAME}MSP.admin', '${SC_ORG2_NAME}MSP.peer', '${SC_ORG2_NAME}MSP.client')"
             Writers:
                 Type: Signature
-                Rule: "OR('${SCxOrg2Name}MSP.admin', '${SCxOrg2Name}MSP.client')"
+                Rule: "OR('${SC_ORG2_NAME}MSP.admin', '${SC_ORG2_NAME}MSP.client')"
             Admins:
                 Type: Signature
-                Rule: "OR('${SCxOrg2Name}MSP.admin')"
+                Rule: "OR('${SC_ORG2_NAME}MSP.admin')"
             Endorsement:
                 Type: Signature
-                Rule: "OR('${SCxOrg2Name}MSP.peer')"
+                Rule: "OR('${SC_ORG2_NAME}MSP.peer')"
 
 ################################################################################
 #
@@ -210,14 +210,14 @@ Orderer: &OrdererDefaults
     # as TLS validation.  The preferred way to specify orderer addresses is now
     # to include the OrdererEndpoints item in your org definition
     Addresses:
-        - ${SC_ORDERER1_O0_FQDN}:${SC_ORDERER1_O0_PORT}
+        - ${SC_ORDERER1_O1_FQDN}:${SC_ORDERER1_O1_PORT}
 
     EtcdRaft:
         Consenters:
-        - Host: ${SC_ORDERER1_O0_FQDN}
-          Port: ${SC_ORDERER1_O0_PORT}
-          ClientTLSCert: ${SC_PATH_ORGS}/ordererOrganizations/${SC_ORDERER1_DOMAIN}/orderers/${SC_ORDERER1_O0_FQDN}/tls/server.crt
-          ServerTLSCert: ${SC_PATH_ORGS}/ordererOrganizations/${SC_ORDERER1_DOMAIN}/orderers/${SC_ORDERER1_O0_FQDN}/tls/server.crt
+        - Host: ${SC_ORDERER1_O1_FQDN}
+          Port: ${SC_ORDERER1_O1_PORT}
+          ClientTLSCert: ${SC_PATH_ORGS}/ordererOrganizations/${SC_ORDERER1_DOMAIN}/orderers/${SC_ORDERER1_O1_FQDN}/tls/server.crt
+          ServerTLSCert: ${SC_PATH_ORGS}/ordererOrganizations/${SC_ORDERER1_DOMAIN}/orderers/${SC_ORDERER1_O1_FQDN}/tls/server.crt
 
     # Batch Timeout: The amount of time to wait before creating a batch
     BatchTimeout: 2s
@@ -312,6 +312,6 @@ Profiles:
         Application:
             <<: *ApplicationDefaults
             Organizations:
-                - *${SCxOrg1Name}
-                - *${SCxOrg2Name}
+                - *${SC_ORG1_NAME}
+                - *${SC_ORG2_NAME}
             Capabilities: *ApplicationCapabilities

@@ -97,23 +97,23 @@ _one_line_pem() {
 }
 
 _Crypto() {
-	if [[ "$(declare -p SC_ORG_CONFIG)" =~ "declare -a" ]]; then
-		TExPrintf "SC_ORG_CONFIG is array"
-		for cconf in "${SC_ORG_CONFIG[@]}"
+	if [[ "$(declare -p SC_CRYPTO_CONFIG)" =~ "declare -a" ]]; then
+		TExPrintf "SC_CRYPTO_CONFIG is array"
+		for cconf in "${SC_CRYPTO_CONFIG[@]}"
 		do
 			TExPrintf "processing $cconf"
 			err=$( cryptogen generate --config $cconf --output="$SC_PATH_ORGS" )
 			TExVerify $? $err
 		done
 	else
-		TExPrintf "SC_ORG_CONFIG is not array, processing $SC_ORG_CONFIG"
-		err=$( cryptogen generate --config $SC_ORG_CONFIG --output="$SC_PATH_ORGS" )
+		TExPrintf "SC_CRYPTO_CONFIG is not array, processing $SC_CRYPTO_CONFIG"
+		err=$( cryptogen generate --config $SC_CRYPTO_CONFIG --output="$SC_PATH_ORGS" )
 		TExVerify $? $err
 	fi
 
-	SCxOrg1PeerPEM=$( _one_line_pem $SCxOrg1PeerPEM )
+	SC_ORG1_PEER_PEM=$( _one_line_pem $SC_ORG1_PEER_PEM )
 	SCxOrg2PeerPEM=$( _one_line_pem $SCxOrg2PeerPEM )
-	SCxOrg1CAPEM=$( _one_line_pem $SCxOrg1CAPEM )
+	SC_ORG1_CA_PEM=$( _one_line_pem $SC_ORG1_CA_PEM )
 	SCxOrg2CAPEM=$( _one_line_pem $SCxOrg2CAPEM )
 	_Config
 }

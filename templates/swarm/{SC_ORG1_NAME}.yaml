@@ -7,8 +7,8 @@ networks:
 
 services:
 
- peer0.${SCxOrg1Name}.${SC_NETWORK_DOMAIN}:
-    container_name: peer0.${SCxOrg1Name}.${SC_NETWORK_DOMAIN}
+ ${SC_ORG1_P1_FQDN}:
+    container_name: ${SC_ORG1_P1_FQDN}
     image: hyperledger/fabric-peer:${SC_VERSION_FABRIC}
     labels:
       service: hyperledger-fabric
@@ -22,22 +22,22 @@ services:
       - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
       - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
       # Peer specific variables
-      - CORE_PEER_ID=peer0.${SCxOrg1Name}.${SC_NETWORK_DOMAIN}
-      - CORE_PEER_ADDRESS=peer0.${SCxOrg1Name}.${SC_NETWORK_DOMAIN}:${SCxOrg1P0Port}
-      - CORE_PEER_LISTENADDRESS=0.0.0.0:${SCxOrg1P0Port}
-      - CORE_PEER_CHAINCODEADDRESS=peer0.${SCxOrg1Name}.${SC_NETWORK_DOMAIN}:${SCxOrg1P0ChainPort}
-      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:${SCxOrg1P0ChainPort}
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.${SCxOrg1Name}.${SC_NETWORK_DOMAIN}:${SCxOrg1P0Port}
-      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.${SCxOrg1Name}.${SC_NETWORK_DOMAIN}:${SCxOrg1P0Port}
-      - CORE_PEER_LOCALMSPID=${SCxOrg1Name}MSP
+      - CORE_PEER_ID=${SC_ORG1_P1_FQDN}
+      - CORE_PEER_ADDRESS=${SC_ORG1_P1_FQDN}:${SC_ORG1_P1_PORT}
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:${SC_ORG1_P1_PORT}
+      - CORE_PEER_CHAINCODEADDRESS=${SC_ORG1_P1_FQDN}:${SC_ORG1_P1_CHAINPORT}
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:${SC_ORG1_P1_CHAINPORT}
+      - CORE_PEER_GOSSIP_BOOTSTRAP=${SC_ORG1_P1_FQDN}:${SC_ORG1_P1_PORT}
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=${SC_ORG1_P1_FQDN}:${SC_ORG1_P1_PORT}
+      - CORE_PEER_LOCALMSPID=${SC_ORG1_NAME}MSP
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
-      - CORE_OPERATIONS_LISTENADDRESS=peer0.${SCxOrg1Name}.${SC_NETWORK_DOMAIN}:${SCxOrg1P0OpPort}
+      - CORE_OPERATIONS_LISTENADDRESS=${SC_ORG1_P1_FQDN}:${SC_ORG1_P1_OPPORT}
       - CORE_METRICS_PROVIDER=prometheus
-      - CHAINCODE_AS_A_SERVICE_BUILDER_CONFIG={"peername":"peer0${SCxOrg1Name}."}
+      - CHAINCODE_AS_A_SERVICE_BUILDER_CONFIG={"peername":"${SC_ORG1_P1_NAME}${SC_ORG1_NAME}."}
       - CORE_CHAINCODE_EXECUTETIMEOUT=300s
 
       - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb0.${SCxOrg1Name}.${SC_NETWORK_DOMAIN}:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb0.${SC_ORG1_DOMAIN}:5984
       # The CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME and CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD
       # provide the credentials for ledger to connect to CouchDB.  The username and password must
       # match the username and password set for the associated CouchDB.
@@ -47,22 +47,22 @@ services:
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
       - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=${SC_NETWORK_NAME}
     volumes:
-        - ${SC_PATH_ORGS}/peerOrganizations/${SCxOrg1Name}.${SC_NETWORK_DOMAIN}/peers/peer0.${SCxOrg1Name}.${SC_NETWORK_DOMAIN}:/etc/hyperledger/fabric
-        - ${SC_PATH_CHAINS}/${SCxOrg1Name}/peer0:/var/hyperledger/production
+        - ${SC_PATH_ORGS}/peerOrganizations/${SC_ORG1_DOMAIN}/peers/${SC_ORG1_P1_FQDN}:/etc/hyperledger/fabric
+        - ${SC_PATH_CHAINS}/${SC_ORG1_NAME}/${SC_ORG1_P1_NAME}:/var/hyperledger/production
         - ${SC_PATH_CONF}/peercfg:/etc/hyperledger/peercfg
         # - ${DOCKER_SOCK}:/host/var/run/docker.sock
     working_dir: /root
     command: peer node start
     ports:
-      - ${SCxOrg1P0Port}:${SCxOrg1P0Port}
-      - ${SCxOrg1P0OpPort}:${SCxOrg1P0OpPort}
+      - ${SC_ORG1_P1_PORT}:${SC_ORG1_P1_PORT}
+      - ${SC_ORG1_P1_OPPORT}:${SC_ORG1_P1_OPPORT}
     networks:
       - ${SC_NETWORK_NAME}
     depends_on:
-      - couchdb0.${SCxOrg1Name}.${SC_NETWORK_DOMAIN}
+      - couchdb0.${SC_ORG1_DOMAIN}
 
-  couchdb0.${SCxOrg1Name}.${SC_NETWORK_DOMAIN}:
-    container_name: couchdb0.${SCxOrg1Name}.${SC_NETWORK_DOMAIN}
+  ${SC_ORG1_C1_FQDN}:
+    container_name: ${SC_ORG1_C1_FQDN}
     image: couchdb:${SC_VERSION_COUCHDB}
     labels:
       service: hyperledger-fabric
@@ -74,6 +74,6 @@ services:
     # Comment/Uncomment the port mapping if you want to hide/expose the CouchDB service,
     # for example map it to utilize Fauxton User Interface in dev environments.
     ports:
-      - "${SCxOrg1C0Port}:5984"
+      - "${SC_ORG1_C1_PORT}:5984"
     networks:
       - ${SC_NETWORK_NAME}

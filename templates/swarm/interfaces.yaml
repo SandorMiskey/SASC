@@ -24,7 +24,7 @@ services:
         - ${SC_PATH_SCRIPTS}:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
         - ${SC_PATH_CONF}/peercfg:/etc/hyperledger/peercfg
     depends_on:
-      - peer0.${SCxOrg1Name}.${SC_NETWORK_DOMAIN}
-      - peer0.${SCxOrg2Name}.${SC_NETWORK_DOMAIN}
-    networks:
+      - ${SC_ORG1_P1_FQDN}
+      - ${SC_ORG2_P1_FQDN}
+    etworks:
       - ${SC_NETWORK_NAME}

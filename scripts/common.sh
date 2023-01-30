@@ -41,35 +41,41 @@ export SC_CHANNEL_PROFILE=TwoOrgsApplicationGenesis
 export SC_CHANNEL_NAME=${SC_NETWORK_NAME}-default
 
 export SC_ORDERER1_NAME=Orderer
-# SC_ORDERER1_DOMAIN (SC_ORG_ORDERER1_DOMAIN)
-# SC_ORDERER1_P0_HOSTNAME...
 export SC_ORDERER1_DOMAIN=${SC_ORDERER1_NAME}.${SC_NETWORK_DOMAIN}
-export SC_ORDERER1_O0_NAME=orderer0
-export SC_ORDERER1_O0_FQDN=${SC_ORDERER1_O0_NAME}.${SC_ORDERER1_DOMAIN}
-export SC_ORDERER1_O0_PORT=7050		# 7050
-export SC_ORDERER1_O0_ADMINPORT=7051	# 7053
-export SC_ORDERER1_O0_OPPORT=7052		# 9443
+export SC_ORDERER1_O1_NAME=orderer1
+export SC_ORDERER1_O1_FQDN=${SC_ORDERER1_O1_NAME}.${SC_ORDERER1_DOMAIN}
+export SC_ORDERER1_O1_PORT=7050		# 7050
+export SC_ORDERER1_O1_ADMINPORT=7051	# 7053
+export SC_ORDERER1_O1_OPPORT=7052		# 9443
 
-export SCxOrg1Name=Org1
-export SCxOrg1CAPort=8050
-export SCxOrg1P0Port=8051
-export SCxOrg1P0ChainPort=8052
-export SCxOrg1P0OpPort=8053
-export SCxOrg1C0Port=8054
-export SCxOrg1PeerPEM=${SC_PATH_ORGS}/peerOrganizations/${SCxOrg1Name}.${SC_NETWORK_DOMAIN}/tlsca/tlsca.${SCxOrg1Name}.${SC_NETWORK_DOMAIN}-cert.pem
-export SCxOrg1CAPEM=${SC_PATH_ORGS}/peerOrganizations/${SCxOrg1Name}.${SC_NETWORK_DOMAIN}/ca/ca.${SCxOrg1Name}.${SC_NETWORK_DOMAIN}-cert.pem
+export SC_ORG1_NAME=Org1
+export SC_ORG1_DOMAIN=${SC_ORG1_NAME}.${SC_NETWORK_DOMAIN}
+export SC_ORG1_PEER_PEM=${SC_PATH_ORGS}/peerOrganizations/${SC_ORG1_DOMAIN}/tlsca/tlsca.${SC_ORG1_DOMAIN}-cert.pem
+export SC_ORG1_CA_PEM=${SC_PATH_ORGS}/peerOrganizations/${SC_ORG1_DOMAIN}/ca/ca.${SC_ORG1_DOMAIN}-cert.pem
+export SC_ORG1_CA_PORT=8050
+export SC_ORG1_P1_NAME=peer1
+export SC_ORG1_P1_FQDN=${SC_ORG1_P1_NAME}.${SC_ORG1_DOMAIN}
+export SC_ORG1_P1_PORT=8051
+export SC_ORG1_P1_CHAINPORT=8052
+export SC_ORG1_P1_OPPORT=8053
+export SC_ORG1_C1_FQDN=couchdb0.${SC_ORG1_DOMAIN}
+export SC_ORG1_C1_PORT=8054
 
-export SCxOrg2Name=Org2
-export SCxOrg2CAPort=9050
-export SCxOrg2P0Port=9051
-export SCxOrg2P0ChainPort=9052
-export SCxOrg2P0OpPort=9053
-export SCxOrg2C0Port=9054
-export SCxOrg2PeerPEM=${SC_PATH_ORGS}/peerOrganizations/${SCxOrg2Name}.${SC_NETWORK_DOMAIN}/tlsca/tlsca.${SCxOrg2Name}.${SC_NETWORK_DOMAIN}-cert.pem
-export SCxOrg2CAPEM=${SC_PATH_ORGS}/peerOrganizations/${SCxOrg2Name}.${SC_NETWORK_DOMAIN}/ca/ca.${SCxOrg2Name}.${SC_NETWORK_DOMAIN}-cert.pem
+export SC_ORG2_NAME=Org2
+export SC_ORG2_DOMAIN=${SC_ORG2_NAME}.${SC_NETWORK_DOMAIN}
+export SC_ORG2_PEER_PEM=${SC_PATH_ORGS}/peerOrganizations/${SC_ORG2_DOMAIN}/tlsca/tlsca.${SC_ORG2_DOMAIN}-cert.pem
+export SC_ORG2_CA_PEM=${SC_PATH_ORGS}/peerOrganizations/${SC_ORG2_DOMAIN}/ca/ca.${SC_ORG2_DOMAIN}-cert.pem
+export SC_ORG2_CA_PORT=9050
+export SC_ORG2_P1_NAME=peer1
+export SC_ORG2_P1_FQDN=${SC_ORG2_P1_NAME}.${SC_ORG2_DOMAIN}
+export SC_ORG2_P1_PORT=9051
+export SC_ORG2_P1_CHAINPORT=9052
+export SC_ORG2_P1_OPPORT=9053
+export SC_ORG2_C1_FQDN=couchdb0.${SC_ORG2_DOMAIN}
+export SC_ORG2_C1_PORT=9054
 
-# SC_ORG_CONFIG=${SC_PATH_CONF}/crypto-config.yaml
-declare -a SC_ORG_CONFIG=("${SC_PATH_CONF}/crypto-config-${SC_ORDERER1_NAME}.yaml" "${SC_PATH_CONF}/crypto-config-${SCxOrg1Name}.yaml" "${SC_PATH_CONF}/crypto-config-${SCxOrg2Name}.yaml")
+# SC_CRYPTO_CONFIG=${SC_PATH_CONF}/crypto-config.yaml
+declare -a SC_CRYPTO_CONFIG=("${SC_PATH_CONF}/crypto-config-${SC_ORDERER1_NAME}.yaml" "${SC_PATH_CONF}/crypto-config-${SC_ORG1_NAME}.yaml" "${SC_PATH_CONF}/crypto-config-${SCxOrg2Name}.yaml")
 
 # endregion: orgs
 # region: funcs' params
