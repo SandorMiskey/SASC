@@ -121,7 +121,7 @@ _Crypto() {
 TExYN "regenerate certificates and reprocess config files?" _Crypto
 
 # endregion: org certs
-# region:
+# region: genesis block
 
 _GenesisBlock() {
 	configtxgen -profile $SC_CHANNEL_PROFILE -outputBlock "${SC_PATH_ARTIFACTS}/${SC_CHANNEL_NAME}-genesis.block" -configPath "$SC_PATH_CONF" -channelID $SC_CHANNEL_NAME

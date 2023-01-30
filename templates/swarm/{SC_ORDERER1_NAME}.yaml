@@ -46,9 +46,22 @@ services:
         - ${SC_PATH_ORGS}/ordererOrganizations/${SC_ORDERER1_DOMAIN}/orderers/${SC_ORDERER1_O1_FQDN}/msp:/var/hyperledger/orderer/msp
         - ${SC_PATH_ORGS}/ordererOrganizations/${SC_ORDERER1_DOMAIN}/orderers/${SC_ORDERER1_O1_FQDN}/tls/:/var/hyperledger/orderer/tls
         - ${SC_PATH_CHAINS}/${SC_ORDERER1_NAME}/${SC_ORDERER1_O1_NAME}:/var/hyperledger/production/orderer
+        - ${SC_PATH_ARTIFACTS}/${SC_CHANNEL_NAME}-genesis.block:/var/hyperledger/orderer/${SC_CHANNEL_NAME}-genesis.block
     ports:
       - ${SC_ORDERER1_O1_PORT}:${SC_ORDERER1_O1_PORT}
       - ${SC_ORDERER1_O1_ADMINPORT}:${SC_ORDERER1_O1_ADMINPORT}
       - ${SC_ORDERER1_O1_OPPORT}:${SC_ORDERER1_O1_OPPORT}
     networks:
       - ${SC_NETWORK_NAME}
+    deploy:                                                                                                                                                                                                
+      replicas: 1
+      placement:
+        constraints: [node.hostname == ${SC_ORDERER1_O1_WORKER}]
+      restart_policy:
+        condition: any 
+        delay: 5s
+    # hostname: ${SC_ORDERER1_O1_FQDN}
+    # networks:
+    #   ${SC_NETWORK_NAME}:
+    #     aliases:
+    #       - ${SC_ORDERER1_O1_FQDN}
