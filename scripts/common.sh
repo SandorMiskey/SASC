@@ -39,7 +39,9 @@ export SC_NETWORK_NAME=sasc
 export SC_NETWORK_DOMAIN=${SC_NETWORK_NAME}.te-food.com
 export SC_CHANNEL_PROFILE=TwoOrgsApplicationGenesis
 export SC_CHANNEL_NAME=${SC_NETWORK_NAME}-default
-export SC_SWARM_MANAGER=sasc-manager
+export SC_SWARM_MANAGER=ip-10-97-85-63
+export SC_SWARM_INIT="--advertise-addr 35.158.186.93:2377 --listen-addr 0.0.0.0:2377 --cert-expiry 1000000h0m0s"
+export SC_SWARM_VPORT=5001
 
 export SC_ORDERER1_NAME=Orderer
 export SC_ORDERER1_DOMAIN=${SC_ORDERER1_NAME}.${SC_NETWORK_DOMAIN}
@@ -61,7 +63,8 @@ export SC_ORG1_P1_PORT=8051
 export SC_ORG1_P1_CHAINPORT=8052
 export SC_ORG1_P1_OPPORT=8053
 export SC_ORG1_P1_WORKER=$SC_SWARM_MANAGER
-export SC_ORG1_C1_FQDN=couchdb0.${SC_ORG1_DOMAIN}
+export SC_ORG1_C1_NAME=couchdb1
+export SC_ORG1_C1_FQDN=${SC_ORG1_C1_NAME}.${SC_ORG1_DOMAIN}
 export SC_ORG1_C1_PORT=8054
 export SC_ORG1_C1_WORKER=$SC_SWARM_MANAGER
 
@@ -76,12 +79,13 @@ export SC_ORG2_P1_PORT=9051
 export SC_ORG2_P1_CHAINPORT=9052
 export SC_ORG2_P1_OPPORT=9053
 export SC_ORG2_P1_WORKER=$SC_SWARM_MANAGER
-export SC_ORG2_C1_FQDN=couchdb0.${SC_ORG2_DOMAIN}
+export SC_ORG2_C1_NAME=couchdb1
+export SC_ORG2_C1_FQDN=${SC_ORG1_C2_NAME}.${SC_ORG2_DOMAIN}
 export SC_ORG2_C1_PORT=9054
 export SC_ORG2_C1_WORKER=$SC_SWARM_MANAGER
 
 # SC_CRYPTO_CONFIG=${SC_PATH_CONF}/crypto-config.yaml
-declare -a SC_CRYPTO_CONFIG=("${SC_PATH_CONF}/crypto-config-${SC_ORDERER1_NAME}.yaml" "${SC_PATH_CONF}/crypto-config-${SC_ORG1_NAME}.yaml" "${SC_PATH_CONF}/crypto-config-${SCxOrg2Name}.yaml")
+declare -a SC_CRYPTO_CONFIG=("${SC_PATH_CONF}/crypto-config-${SC_ORDERER1_NAME}.yaml" "${SC_PATH_CONF}/crypto-config-${SC_ORG1_NAME}.yaml" "${SC_PATH_CONF}/crypto-config-${SC_ORG2_NAME}.yaml")
 
 # endregion: orgs
 # region: funcs' params
@@ -188,13 +192,16 @@ TExVerify() {
 	# -> TE_PANIC=false
 
 	TExDefaults
-	if [ $1 -ne 0 ]; then
+	if [ $1 -ne 0 ]
+	then
 		# >&2 TExPrintf "$2" "\b${TExBOLD}%s${TExNORM}\n"
 		>&2 TExPrintfBold "$2"
 		if [[ "$TExPANIC" == true ]]; then
 			TExPrintf "TExVerify(): TExPANIC set to 'true', leaving..." "\b%s\n"
 			exit 1
 		fi
+	else
+		if [ -z ${3+x} ]; then echo -n ""; else TExPrintf "$3"; fi
 	fi
 }
 

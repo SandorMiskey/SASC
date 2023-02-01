@@ -112,9 +112,9 @@ _Crypto() {
 	fi
 
 	SC_ORG1_PEER_PEM=$( _one_line_pem $SC_ORG1_PEER_PEM )
-	SCxOrg2PeerPEM=$( _one_line_pem $SCxOrg2PeerPEM )
+	SC_ORG2_PEER_PEM=$( _one_line_pem $SC_ORG2_PEER_PEM )
 	SC_ORG1_CA_PEM=$( _one_line_pem $SC_ORG1_CA_PEM )
-	SCxOrg2CAPEM=$( _one_line_pem $SCxOrg2CAPEM )
+	SC_ORG2_CA_PEM=$( _one_line_pem $SC_ORG2_CA_PEM )
 	_Config
 }
 
@@ -131,4 +131,36 @@ _GenesisBlock() {
 
 TExYN "create genesis block?" _GenesisBlock
 
-# endregion:
+# endregion: genesis block
+# region: swarm init
+
+_SwarmLeave() {
+	_leave() {
+		status=$( docker swarm leave --force 2>&1 )
+		TExVerify $? "$status" "swarm status: $status"
+		unset status
+	}
+	local force=$TExFORCE
+	TExFORCE=false
+	TExYN "Removing the last manager erases all current state of the swarm. Are you sure?" _leave
+	TExFORCE=$force
+}
+
+_SwarmInit() {
+	token=$( docker swarm init ${SC_SWARM_INIT} 2>&1 )
+	local status=$?
+	TExVerify $status "$token"
+	if [ $status -eq 0 ]; then
+		local token=$( printf "$token" | tr -d '\n' | sed "s/.*--token //" | sed "s/ .*$//" )
+		local file=${SC_PATH_CONF}/swarm-worker-token
+		TExPrintf "swarm worker token is $token"
+		echo $token > $file
+		TExVerify $? "unable to write worker token to $file" "worken token is writen to $file"
+	fi
+	unset token
+}
+
+TExYN "leave docker swarm?" _SwarmLeave
+TExYN "init docker swarm?" _SwarmInit
+
+# endregion: swarm init
