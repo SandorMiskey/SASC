@@ -1,13 +1,9 @@
 version: '3.7'
 
-# networks:
-#   swarmnet:
-#     external:                                                                                                                                                                                                                                                               
-#       name: ${SC_NETWORK_NAME}
 networks:
   ${SC_NETWORK_NAME}:
     name: ${SC_NETWORK_NAME}
-
+    external: true
 
 services:
 
@@ -50,18 +46,17 @@ services:
       - ${SC_ORDERER1_O1_PORT}:${SC_ORDERER1_O1_PORT}
       - ${SC_ORDERER1_O1_ADMINPORT}:${SC_ORDERER1_O1_ADMINPORT}
       - ${SC_ORDERER1_O1_OPPORT}:${SC_ORDERER1_O1_OPPORT}
-    networks:
-      - ${SC_NETWORK_NAME}
     deploy:                                                                                                                                                                                                
       replicas: 1
       placement:
         constraints: [node.hostname == ${SC_ORDERER1_O1_WORKER}]
       restart_policy:
         condition: any 
-        delay: 5s
+        delay: ${SC_SWARM_DELAY}s
     hostname: ${SC_ORDERER1_O1_FQDN}
-    # container_name: ${SC_ORDERER1_O1_FQDN}
-    # networks:
-    #   ${SC_NETWORK_NAME}:
-    #     aliases:
-    #       - ${SC_ORDERER1_O1_FQDN}
+    networks:
+      ${SC_NETWORK_NAME}:
+        aliases:
+          - ${SC_ORDERER1_O1_NAME}
+          - ${SC_ORDERER1_O1_FQDN}
+

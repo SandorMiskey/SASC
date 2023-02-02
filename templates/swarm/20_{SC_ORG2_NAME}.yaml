@@ -3,14 +3,24 @@ version: '3.7'
 networks:
   ${SC_NETWORK_NAME}:
     name: ${SC_NETWORK_NAME}
+    external: true
 
 services:
 
- ${SC_ORG2_P1_NAME}:
-    hostname: ${SC_ORG2_P1_FQDN}
-    image: hyperledger/fabric-peer:${SC_VERSION_FABRIC}
-    labels:
-      service: hyperledger-fabric
+  # region: P1 + C1
+
+  ${SC_ORG2_P1_NAME}:
+    command: peer node start
+    depends_on:
+      - ${SC_ORG2_C1_FQDN}
+    deploy:                                                                                                                                                                                                
+      placement:
+        constraints: [ node.hostname == ${SC_ORG2_P1_WORKER} ]
+      replicas: 1
+      restart_policy:
+        condition: any 
+        delay: ${SC_SWARM_DELAY}s
+        max_attempts: 5
     environment:
       - FABRIC_CFG_PATH=/etc/hyperledger/peercfg
       - FABRIC_LOGGING_SPEC=${SC_FABRIC_LOGLEVEL}
@@ -36,15 +46,23 @@ services:
       - CORE_CHAINCODE_EXECUTETIMEOUT=300s
 
       - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=${SC_ORG2_C1_FQDN}:5984
-      # The CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME and CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD
-      # provide the credentials for ledger to connect to CouchDB.  The username and password must
-      # match the username and password set for the associated CouchDB.
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=${SC_ORG2_C1_FQDN}:${SC_ORG2_C1_PORT}
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=${SC_COUCHDB_USER}
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=${SC_COUCHDB_PASSWORD}
 
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
       - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=${SC_NETWORK_NAME}
+    hostname: ${SC_ORG2_P1_FQDN}
+    image: hyperledger/fabric-peer:${SC_VERSION_FABRIC}
+    labels:
+      service: hyperledger-fabric
+    networks:
+      ${SC_NETWORK_NAME}:
+        aliases:
+          - ${SC_ORG2_P1_FQDN}
+    ports:
+      - ${SC_ORG2_P1_PORT}:${SC_ORG2_P1_PORT}
+      - ${SC_ORG2_P1_OPPORT}:${SC_ORG2_P1_OPPORT}
     volumes:
         - ${SC_PATH_ORGS}/peerOrganizations/${SC_ORG2_DOMAIN}/peers/${SC_ORG2_P1_FQDN}:/etc/hyperledger/fabric
         - ${SC_PATH_CHAINS}/${SC_ORG2_NAME}/${SC_ORG2_P1_NAME}:/var/hyperledger/production
@@ -52,54 +70,118 @@ services:
         # - ${DOCKER_SOCK}:/host/var/run/docker.sock
         # - /var/run/:/host/var/run/
     working_dir: /root
-    command: peer node start
-    ports:
-      - ${SC_ORG2_P1_PORT}:${SC_ORG2_P1_PORT}
-      - ${SC_ORG2_P1_OPPORT}:${SC_ORG2_P1_OPPORT}
-    networks:
-      - ${SC_NETWORK_NAME}
-    depends_on:
-      - ${SC_ORG2_C1_FQDN}
-    deploy:                                                                                                                                                                                                
-      replicas: 1
-      placement:
-        constraints: [node.hostname == ${SC_ORG2_P1_WORKER}]
-      restart_policy:
-        condition: any 
-        delay: 5s
-        max_attempts: 5
-    # hostname: ${SC_ORG2_P1_FQDN}
-    # networks:
-    #   ${SC_NETWORK_NAME}:
-    #     aliases:
-    #       - ${SC_ORG2_P1_FQDN}
 
   ${SC_ORG2_C1_NAME}:
-    hostname: ${SC_ORG2_C1_FQDN}
-    image: couchdb:${SC_VERSION_COUCHDB}
-    labels:
-      service: hyperledger-fabric
-    # Populate the COUCHDB_USER and COUCHDB_PASSWORD to set an admin user and password
-    # for CouchDB.  This will prevent CouchDB from operating in an "Admin Party" mode.
     environment:
       - COUCHDB_USER=${SC_COUCHDB_USER}
       - COUCHDB_PASSWORD=${SC_COUCHDB_PASSWORD}
-    # Comment/Uncomment the port mapping if you want to hide/expose the CouchDB service,
-    # for example map it to utilize Fauxton User Interface in dev environments.
-    ports:
-      - "${SC_ORG2_C1_PORT}:5984"
-    networks:
-      - ${SC_NETWORK_NAME}
+      - COUCHDB_PORT=${SC_ORG2_C1_PORT}
     deploy:                                                                                                                                                                                                
       replicas: 1
       placement:
         constraints: [node.hostname == ${SC_ORG2_C1_WORKER}]
       restart_policy:
         condition: any 
-        delay: 5s
+        delay: ${SC_SWARM_DELAY}s
         max_attempts: 5
-    # hostname: ${SC_ORG2_C1_FQDN}
-    # networks:
-    #   ${SC_NETWORK_NAME}:
-    #     aliases:
-    #       - ${SC_ORG2_C1_FQDN}
+    hostname: ${SC_ORG2_C1_FQDN}
+    image: couchdb:${SC_VERSION_COUCHDB}
+    labels:
+      service: hyperledger-fabric
+    networks:
+      ${SC_NETWORK_NAME}:
+        aliases:
+          - ${SC_ORG2_C1_FQDN}
+    ports:
+      - "${SC_ORG2_C1_PORT}:${SC_ORG2_C1_PORT}"
+
+  # endregion: P1 + C1
+  # region: P2 + C2
+
+  ${SC_ORG2_P2_NAME}:
+    command: peer node start
+    depends_on:
+      - ${SC_ORG2_C2_FQDN}
+    deploy:                                                                                                                                                                                                
+      placement:
+        constraints: [ node.hostname == ${SC_ORG2_P2_WORKER} ]
+      replicas: 1
+      restart_policy:
+        condition: any 
+        delay: ${SC_SWARM_DELAY}s
+        max_attempts: 5
+    environment:
+      - FABRIC_CFG_PATH=/etc/hyperledger/peercfg
+      - FABRIC_LOGGING_SPEC=${SC_FABRIC_LOGLEVEL}
+      #- FABRIC_LOGGING_SPEC=DEBUG
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_PROFILE_ENABLED=false
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+      # Peer specific variables
+      - CORE_PEER_ID=${SC_ORG2_P2_FQDN}
+      - CORE_PEER_ADDRESS=${SC_ORG2_P2_FQDN}:${SC_ORG2_P2_PORT}
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:${SC_ORG2_P2_PORT}
+      - CORE_PEER_CHAINCODEADDRESS=${SC_ORG2_P2_FQDN}:${SC_ORG2_P2_CHAINPORT}
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:${SC_ORG2_P2_CHAINPORT}
+      - CORE_PEER_GOSSIP_BOOTSTRAP=${SC_ORG2_P2_FQDN}:${SC_ORG2_P2_PORT}
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=${SC_ORG2_P2_FQDN}:${SC_ORG2_P2_PORT}
+      - CORE_PEER_LOCALMSPID=${SC_ORG2_NAME}MSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
+      - CORE_OPERATIONS_LISTENADDRESS=${SC_ORG2_P2_FQDN}:${SC_ORG2_P2_OPPORT}
+      - CORE_METRICS_PROVIDER=prometheus
+      - CHAINCODE_AS_A_SERVICE_BUILDER_CONFIG={"peername":"${SC_ORG2_P2_NAME}${SC_ORG2_NAME}."}
+      - CORE_CHAINCODE_EXECUTETIMEOUT=300s
+
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=${SC_ORG2_C2_FQDN}:${SC_ORG2_C2_PORT}
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=${SC_COUCHDB_USER}
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=${SC_COUCHDB_PASSWORD}
+
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=${SC_NETWORK_NAME}
+    hostname: ${SC_ORG2_P2_FQDN}
+    image: hyperledger/fabric-peer:${SC_VERSION_FABRIC}
+    labels:
+      service: hyperledger-fabric
+    networks:
+      ${SC_NETWORK_NAME}:
+        aliases:
+          - ${SC_ORG2_P2_FQDN}
+    ports:
+      - ${SC_ORG2_P2_PORT}:${SC_ORG2_P2_PORT}
+      - ${SC_ORG2_P2_OPPORT}:${SC_ORG2_P2_OPPORT}
+    volumes:
+        - ${SC_PATH_ORGS}/peerOrganizations/${SC_ORG2_DOMAIN}/peers/${SC_ORG2_P2_FQDN}:/etc/hyperledger/fabric
+        - ${SC_PATH_CHAINS}/${SC_ORG2_NAME}/${SC_ORG2_P2_NAME}:/var/hyperledger/production
+        - ${SC_PATH_CONF}/peercfg:/etc/hyperledger/peercfg
+        # - ${DOCKER_SOCK}:/host/var/run/docker.sock
+        # - /var/run/:/host/var/run/
+    working_dir: /root
+
+  ${SC_ORG2_C2_NAME}:
+    environment:
+      - COUCHDB_USER=${SC_COUCHDB_USER}
+      - COUCHDB_PASSWORD=${SC_COUCHDB_PASSWORD}
+      - COUCHDB_PORT=${SC_ORG2_C2_PORT}
+    deploy:                                                                                                                                                                                                
+      replicas: 1
+      placement:
+        constraints: [node.hostname == ${SC_ORG2_C2_WORKER}]
+      restart_policy:
+        condition: any 
+        delay: ${SC_SWARM_DELAY}s
+        max_attempts: 5
+    hostname: ${SC_ORG2_C2_FQDN}
+    image: couchdb:${SC_VERSION_COUCHDB}
+    labels:
+      service: hyperledger-fabric
+    networks:
+      ${SC_NETWORK_NAME}:
+        aliases:
+          - ${SC_ORG2_C2_FQDN}
+    ports:
+      - "${SC_ORG2_C2_PORT}:${SC_ORG2_C2_PORT}"
+
+  # endregion: P2 + C2

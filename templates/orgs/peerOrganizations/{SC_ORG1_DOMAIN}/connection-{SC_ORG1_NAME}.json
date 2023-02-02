@@ -15,7 +15,8 @@
         "${SC_ORG1_NAME}": {
             "mspid": "${SC_ORG1_NAME}MSP",
             "peers": [
-                "${SC_ORG1_P1_FQDN}"
+                "${SC_ORG1_P1_FQDN}",
+                "${SC_ORG1_P2_FQDN}"
             ],
             "certificateAuthorities": [
                 "ca.${SC_ORG1_DOMAIN}"
@@ -32,6 +33,16 @@
                 "ssl-target-name-override": "${SC_ORG1_P1_FQDN}",
                 "hostnameOverride": "${SC_ORG1_P1_FQDN}"
             }
+        },
+        "${SC_ORG1_P2_FQDN}": {
+            "url": "grpcs://localhost:${SC_ORG1_P2_PORT}",
+            "tlsCACerts": {
+                "pem": "${SC_ORG1_PEER_PEM}"
+            },
+            "grpcOptions": {
+                "ssl-target-name-override": "${SC_ORG1_P2_FQDN}",
+                "hostnameOverride": "${SC_ORG1_P2_FQDN}"
+            }
         }
     },
     "certificateAuthorities": {
@@ -39,7 +50,9 @@
             "url": "https://localhost:${SC_ORG1_CA_PORT}",
             "caName": "ca-${SC_ORG1_NAME}",
             "tlsCACerts": {
-                "pem": ["${SC_ORG1_CA_PEM}"]
+                "pem": [
+                    "${SC_ORG1_CA_PEM}"
+                ]
             },
             "httpOptions": {
                 "verify": false

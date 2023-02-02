@@ -3,6 +3,7 @@ version: '3.7'
 networks:
   ${SC_NETWORK_NAME}:
     name: ${SC_NETWORK_NAME}
+    external: true
 
 services:
 
@@ -38,12 +39,9 @@ services:
       # - ${ARTIFACTS}:/opt/gopath/src/github.com/hyperledger/fabric/peer/artifacts
       - /var/run/:/host/var/run/
     networks:
-      - ${SC_NETWORK_NAME}
-    # networks:
-    #   ${SC_NETWORK_NAME}:
-    #     aliases:
-    #       - cli
-    #       - cli.${SC_NETWORK_DOMAIN}
+      ${SC_NETWORK_NAME}:
+        aliases:
+          - cli
     # depends_on:
     #   - ${SC_ORG1_P1_FQDN}
     #   - ${SC_ORG2_P1_FQDN}
@@ -53,24 +51,7 @@ services:
         constraints: [ node.hostname == ${SC_ORG1_P1_WORKER} ]
       restart_policy:
         condition: any 
-        delay: 5s
-
-  busybox:
-    image: busybox
-    volumes:
-      - ${SC_PATH_SCRIPTS}:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
-    networks:
-      - ${SC_NETWORK_NAME}
-    # networks:
-    #   ${SC_NETWORK_NAME}:
-    #     aliases
-    #       - busybox
-    #       - busybox.${SC_NETWORK_DOMAIN}
-    command: top
-    deploy:
-      replicas: 1
-      placement:
-        constraints: [ node.hostname == ${SC_ORG1_P1_WORKER} ]
+        delay: ${SC_SWARM_DELAY}s
 
   visualizer:
     image: dockersamples/visualizer
@@ -78,14 +59,25 @@ services:
       - ${SC_PATH_SCRIPTS}:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
-      - ${SC_NETWORK_NAME}
-    # networks:
-    #   ${SC_NETWORK_NAME}:
-    #     aliases:
-    #       - visualizer
-    #       - visualizer.${SC_NETWORK_DOMAIN}
+      ${SC_NETWORK_NAME}:
+        aliases:
+          - visualizer
     ports:
       - ${SC_SWARM_VPORT}:8080
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [ node.hostname == ${SC_ORG1_P1_WORKER} ]
+
+  busybox:
+    image: busybox
+    volumes:
+      - ${SC_PATH_SCRIPTS}:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
+    networks:
+      ${SC_NETWORK_NAME}:
+        aliases:
+          - busybox
+    command: top
     deploy:
       replicas: 1
       placement:
@@ -96,12 +88,9 @@ services:
     volumes:
       - ${SC_PATH_SCRIPTS}:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
     networks:
-      - ${SC_NETWORK_NAME}
-    # networks:
-    #   ${SC_NETWORK_NAME}:
-    #     aliases:
-    #       - netshoot
-    #       - netshoot.${SC_NETWORK_DOMAIN}
+      ${SC_NETWORK_NAME}:
+        aliases:
+          - netshoot
     command: top
     deploy:
       replicas: 1

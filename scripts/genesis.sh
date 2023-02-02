@@ -55,7 +55,7 @@ TExYN "validate ca binary versions?" _CAVersions
 
 _WipePersistent() {
 	TExPrintf "removing $SC_PATH_DATA"
-	err=$( rm -Rf "$SC_PATH_DATA" )
+	err=$( sudo rm -Rf "$SC_PATH_DATA" )
 	TExVerify $? $err
 	err=$( mkdir "$SC_PATH_DATA" )
 	TExVerify $? $err
@@ -136,31 +136,71 @@ TExYN "create genesis block?" _GenesisBlock
 
 _SwarmLeave() {
 	_leave() {
+		local status
 		status=$( docker swarm leave --force 2>&1 )
 		TExVerify $? "$status" "swarm status: $status"
-		unset status
 	}
+
 	local force=$TExFORCE
 	TExFORCE=false
 	TExYN "Removing the last manager erases all current state of the swarm. Are you sure?" _leave
 	TExFORCE=$force
+
+	unset status
+	unset force
 }
 
 _SwarmInit() {
+	local token
+	local status
 	token=$( docker swarm init ${SC_SWARM_INIT} 2>&1 )
-	local status=$?
+	status=$?
 	TExVerify $status "$token"
 	if [ $status -eq 0 ]; then
 		local token=$( printf "$token" | tr -d '\n' | sed "s/.*--token //" | sed "s/ .*$//" )
-		local file=${SC_PATH_CONF}/swarm-worker-token
+		local file=${SC_PATH_SWARM}/swarm-worker-token
 		TExPrintf "swarm worker token is $token"
 		echo $token > $file
 		TExVerify $? "unable to write worker token to $file" "worken token is writen to $file"
 	fi
 	unset token
+	unset status
+	unset file
 }
 
 TExYN "leave docker swarm?" _SwarmLeave
 TExYN "init docker swarm?" _SwarmInit
 
 # endregion: swarm init
+# region: bootstrap stacks
+
+_SwarmBootstrap() {
+	# network
+	local out
+	out=$( docker network create $SC_NETWORK_INIT 2>&1 )
+	TExVerify $? "failed to create network: `echo $out`" "network $SC_NETWORK_NAME is up"
+
+	# config files
+	local cfg
+	cfg=$( find $SC_PATH_SWARM/*yaml ! -name '.*' -print 2>&1 )
+	TExVerify $? "$cfg"
+
+	# deploy
+	for cfg in $cfg; do
+		local stack
+		local out
+		stack=$( printf $cfg | sed "s/.*_//" | sed "s/.yaml//" | sed "s/^/${SC_NETWORK_NAME}_/" )
+		TExPrintf "deploying $cfg as ${stack}"
+		out=$( docker stack deploy -c $cfg $stack 2>&1 )
+		TExVerify $? "failed to deploy $stack: `echo $out`" "stack deploy msg: `echo $out`"
+		TExSleep $SC_SWARM_DELAY
+	done
+	unset out
+	unset cfg
+}
+
+TExYN "bootstrap stacks?" _SwarmBootstrap
+
+# endregion: bootstrap stacks
+
+# TODO: peer connection to couchdb?, ports?, 

@@ -17,6 +17,7 @@ export SC_PATH_ARTIFACTS=${SC_PATH_DATA}/artifacts
 export SC_PATH_CHAINS=${SC_PATH_DATA}/chains
 export SC_PATH_CONF=${SC_PATH_DATA}/conf
 export SC_PATH_ORGS=${SC_PATH_DATA}/orgs
+export SC_PATH_SWARM=${SC_PATH_DATA}/swarm
 
 export PATH=${SC_PATH_BASE}/bin:${SC_PATH_SCRIPTS}:$PATH
 
@@ -35,13 +36,17 @@ export SC_FABRIC_LOGLEVEL=DEBUG		# FATAL | PANIC | ERROR | WARNING | INFO | DEBU
 # endregion: fabric
 # region: orgs and channels
 
-export SC_NETWORK_NAME=sasc
+export SC_NETWORK_NAME=SASC
 export SC_NETWORK_DOMAIN=${SC_NETWORK_NAME}.te-food.com
+export SC_NETWORK_INIT="--attachable --driver overlay --subnet 10.96.0.0/24 $SC_NETWORK_NAME"
 export SC_CHANNEL_PROFILE=TwoOrgsApplicationGenesis
 export SC_CHANNEL_NAME=${SC_NETWORK_NAME}-default
 export SC_SWARM_MANAGER=ip-10-97-85-63
 export SC_SWARM_INIT="--advertise-addr 35.158.186.93:2377 --listen-addr 0.0.0.0:2377 --cert-expiry 1000000h0m0s"
 export SC_SWARM_VPORT=5001
+export SC_SWARM_DELAY=10
+
+# region: OEDERER
 
 export SC_ORDERER1_NAME=Orderer
 export SC_ORDERER1_DOMAIN=${SC_ORDERER1_NAME}.${SC_NETWORK_DOMAIN}
@@ -52,40 +57,72 @@ export SC_ORDERER1_O1_ADMINPORT=7051	# 7053
 export SC_ORDERER1_O1_OPPORT=7052		# 9443
 export SC_ORDERER1_O1_WORKER=$SC_SWARM_MANAGER
 
+# endregion: OEDERER
+# region: ORG1
+
 export SC_ORG1_NAME=Org1
 export SC_ORG1_DOMAIN=${SC_ORG1_NAME}.${SC_NETWORK_DOMAIN}
 export SC_ORG1_PEER_PEM=${SC_PATH_ORGS}/peerOrganizations/${SC_ORG1_DOMAIN}/tlsca/tlsca.${SC_ORG1_DOMAIN}-cert.pem
 export SC_ORG1_CA_PEM=${SC_PATH_ORGS}/peerOrganizations/${SC_ORG1_DOMAIN}/ca/ca.${SC_ORG1_DOMAIN}-cert.pem
 export SC_ORG1_CA_PORT=8050
+
 export SC_ORG1_P1_NAME=peer1
 export SC_ORG1_P1_FQDN=${SC_ORG1_P1_NAME}.${SC_ORG1_DOMAIN}
-export SC_ORG1_P1_PORT=8051
-export SC_ORG1_P1_CHAINPORT=8052
-export SC_ORG1_P1_OPPORT=8053
+export SC_ORG1_P1_PORT=8151
+export SC_ORG1_P1_CHAINPORT=8152
+export SC_ORG1_P1_OPPORT=8153
 export SC_ORG1_P1_WORKER=$SC_SWARM_MANAGER
 export SC_ORG1_C1_NAME=couchdb1
 export SC_ORG1_C1_FQDN=${SC_ORG1_C1_NAME}.${SC_ORG1_DOMAIN}
-export SC_ORG1_C1_PORT=8054
+export SC_ORG1_C1_PORT=8154
 export SC_ORG1_C1_WORKER=$SC_SWARM_MANAGER
+
+export SC_ORG1_P2_NAME=peer2
+export SC_ORG1_P2_FQDN=${SC_ORG1_P2_NAME}.${SC_ORG1_DOMAIN}
+export SC_ORG1_P2_PORT=8251
+export SC_ORG1_P2_CHAINPORT=8252
+export SC_ORG1_P2_OPPORT=8253
+export SC_ORG1_P2_WORKER=$SC_SWARM_MANAGER
+export SC_ORG1_C2_NAME=couchdb2
+export SC_ORG1_C2_FQDN=${SC_ORG1_C2_NAME}.${SC_ORG1_DOMAIN}
+export SC_ORG1_C2_PORT=8254
+export SC_ORG1_C2_WORKER=$SC_SWARM_MANAGER
+
+# endregion: ORG1
+# region: ORG2
 
 export SC_ORG2_NAME=Org2
 export SC_ORG2_DOMAIN=${SC_ORG2_NAME}.${SC_NETWORK_DOMAIN}
 export SC_ORG2_PEER_PEM=${SC_PATH_ORGS}/peerOrganizations/${SC_ORG2_DOMAIN}/tlsca/tlsca.${SC_ORG2_DOMAIN}-cert.pem
 export SC_ORG2_CA_PEM=${SC_PATH_ORGS}/peerOrganizations/${SC_ORG2_DOMAIN}/ca/ca.${SC_ORG2_DOMAIN}-cert.pem
 export SC_ORG2_CA_PORT=9050
+
 export SC_ORG2_P1_NAME=peer1
 export SC_ORG2_P1_FQDN=${SC_ORG2_P1_NAME}.${SC_ORG2_DOMAIN}
-export SC_ORG2_P1_PORT=9051
-export SC_ORG2_P1_CHAINPORT=9052
-export SC_ORG2_P1_OPPORT=9053
+export SC_ORG2_P1_PORT=9151
+export SC_ORG2_P1_CHAINPORT=9152
+export SC_ORG2_P1_OPPORT=9153
 export SC_ORG2_P1_WORKER=$SC_SWARM_MANAGER
 export SC_ORG2_C1_NAME=couchdb1
-export SC_ORG2_C1_FQDN=${SC_ORG1_C2_NAME}.${SC_ORG2_DOMAIN}
-export SC_ORG2_C1_PORT=9054
+export SC_ORG2_C1_FQDN=${SC_ORG2_C1_NAME}.${SC_ORG2_DOMAIN}
+export SC_ORG2_C1_PORT=9154
 export SC_ORG2_C1_WORKER=$SC_SWARM_MANAGER
 
-# SC_CRYPTO_CONFIG=${SC_PATH_CONF}/crypto-config.yaml
+export SC_ORG2_P2_NAME=peer2
+export SC_ORG2_P2_FQDN=${SC_ORG2_P2_NAME}.${SC_ORG2_DOMAIN}
+export SC_ORG2_P2_PORT=9251
+export SC_ORG2_P2_CHAINPORT=9252
+export SC_ORG2_P2_OPPORT=9253
+export SC_ORG2_P2_WORKER=$SC_SWARM_MANAGER
+export SC_ORG2_C2_NAME=couchdb2
+export SC_ORG2_C2_FQDN=${SC_ORG2_C2_NAME}.${SC_ORG2_DOMAIN}
+export SC_ORG2_C2_PORT=9254
+export SC_ORG2_C2_WORKER=$SC_SWARM_MANAGER
+
+# endregion: ORG2
+
 declare -a SC_CRYPTO_CONFIG=("${SC_PATH_CONF}/crypto-config-${SC_ORDERER1_NAME}.yaml" "${SC_PATH_CONF}/crypto-config-${SC_ORG1_NAME}.yaml" "${SC_PATH_CONF}/crypto-config-${SC_ORG2_NAME}.yaml")
+# SC_CRYPTO_CONFIG=${SC_PATH_CONF}/crypto-config.yaml
 
 # endregion: orgs
 # region: funcs' params

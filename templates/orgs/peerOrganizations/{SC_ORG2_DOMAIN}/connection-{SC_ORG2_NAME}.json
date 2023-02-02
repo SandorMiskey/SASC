@@ -15,7 +15,8 @@
         "${SC_ORG2_NAME}": {
             "mspid": "${SC_ORG2_NAME}MSP",
             "peers": [
-                "${SC_ORG2_P1_FQDN}"
+                "${SC_ORG2_P1_FQDN}",
+                "${SC_ORG2_P2_FQDN}"
             ],
             "certificateAuthorities": [
                 "ca.${SC_ORG2_DOMAIN}"
@@ -31,6 +32,16 @@
             "grpcOptions": {
                 "ssl-target-name-override": "${SC_ORG2_P1_FQDN}",
                 "hostnameOverride": "${SC_ORG2_P1_FQDN}"
+            }
+        },
+        "${SC_ORG2_P2_FQDN}": {
+            "url": "grpcs://localhost:${SC_ORG2_P2_PORT}",
+            "tlsCACerts": {
+                "pem": "${SC_ORG2_PEER_PEM}"
+            },
+            "grpcOptions": {
+                "ssl-target-name-override": "${SC_ORG2_P2_FQDN}",
+                "hostnameOverride": "${SC_ORG2_P2_FQDN}"
             }
         }
     },
