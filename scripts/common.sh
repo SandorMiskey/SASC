@@ -34,59 +34,47 @@ export SC_COUCHDB_PASSWORD=$SC_COUCHDB_PASSWORD
 export SC_FABRIC_LOGLEVEL=DEBUG		# FATAL | PANIC | ERROR | WARNING | INFO | DEBUG
 
 # endregion: fabric
-# region: orgs and channels
+# region: network and channel
 
 export SC_NETWORK_NAME=SASC
 export SC_NETWORK_DOMAIN=${SC_NETWORK_NAME}.te-food.com
-export SC_NETWORK_INIT="--attachable --driver overlay --subnet 10.96.0.0/24 $SC_NETWORK_NAME"
 export SC_CHANNEL_PROFILE=TwoOrgsApplicationGenesis
 export SC_CHANNEL_NAME=${SC_NETWORK_NAME}-default
-export SC_SWARM_MANAGER=ip-10-97-85-63
-export SC_SWARM_INIT="--advertise-addr 35.158.186.93:2377 --listen-addr 0.0.0.0:2377 --cert-expiry 1000000h0m0s"
-export SC_SWARM_VPORT=5001
-export SC_SWARM_DELAY=10
 
-# region: OEDERER
+# endregion: network and channel
+# region: orgs
 
-export SC_ORDERER1_NAME=Orderer
-export SC_ORDERER1_DOMAIN=${SC_ORDERER1_NAME}.${SC_NETWORK_DOMAIN}
-export SC_ORDERER1_O1_NAME=orderer1
-export SC_ORDERER1_O1_FQDN=${SC_ORDERER1_O1_NAME}.${SC_ORDERER1_DOMAIN}
-export SC_ORDERER1_O1_PORT=7050			# 7050
-export SC_ORDERER1_O1_ADMINPORT=7051	# 7053
-export SC_ORDERER1_O1_OPPORT=7052		# 9443
-export SC_ORDERER1_O1_WORKER=$SC_SWARM_MANAGER
-
-# endregion: OEDERER
 # region: ORG1
 
 export SC_ORG1_NAME=Org1
 export SC_ORG1_DOMAIN=${SC_ORG1_NAME}.${SC_NETWORK_DOMAIN}
 export SC_ORG1_PEER_PEM=${SC_PATH_ORGS}/peerOrganizations/${SC_ORG1_DOMAIN}/tlsca/tlsca.${SC_ORG1_DOMAIN}-cert.pem
 export SC_ORG1_CA_PEM=${SC_PATH_ORGS}/peerOrganizations/${SC_ORG1_DOMAIN}/ca/ca.${SC_ORG1_DOMAIN}-cert.pem
-export SC_ORG1_CA_PORT=8050
+export SC_ORG1_CA_PORT=5100
+
+export SC_ORG1_C1_NAME=couchdb1
+export SC_ORG1_C1_FQDN=${SC_ORG1_C1_NAME}.${SC_ORG1_DOMAIN}
+export SC_ORG1_C1_PORT=5110
+export SC_ORG1_C1_WORKER=$SC_SWARM_MANAGER
 
 export SC_ORG1_P1_NAME=peer1
 export SC_ORG1_P1_FQDN=${SC_ORG1_P1_NAME}.${SC_ORG1_DOMAIN}
-export SC_ORG1_P1_PORT=8151
-export SC_ORG1_P1_CHAINPORT=8152
-export SC_ORG1_P1_OPPORT=8153
+export SC_ORG1_P1_PORT=5111
+export SC_ORG1_P1_CHAINPORT=5112
+export SC_ORG1_P1_OPPORT=5113
 export SC_ORG1_P1_WORKER=$SC_SWARM_MANAGER
-export SC_ORG1_C1_NAME=couchdb1
-export SC_ORG1_C1_FQDN=${SC_ORG1_C1_NAME}.${SC_ORG1_DOMAIN}
-export SC_ORG1_C1_PORT=8154
-export SC_ORG1_C1_WORKER=$SC_SWARM_MANAGER
+
+export SC_ORG1_C2_NAME=couchdb2
+export SC_ORG1_C2_FQDN=${SC_ORG1_C2_NAME}.${SC_ORG1_DOMAIN}
+export SC_ORG1_C2_PORT=5120
+export SC_ORG1_C2_WORKER=$SC_SWARM_MANAGER
 
 export SC_ORG1_P2_NAME=peer2
 export SC_ORG1_P2_FQDN=${SC_ORG1_P2_NAME}.${SC_ORG1_DOMAIN}
-export SC_ORG1_P2_PORT=8251
-export SC_ORG1_P2_CHAINPORT=8252
-export SC_ORG1_P2_OPPORT=8253
+export SC_ORG1_P2_PORT=5121
+export SC_ORG1_P2_CHAINPORT=5122
+export SC_ORG1_P2_OPPORT=5123
 export SC_ORG1_P2_WORKER=$SC_SWARM_MANAGER
-export SC_ORG1_C2_NAME=couchdb2
-export SC_ORG1_C2_FQDN=${SC_ORG1_C2_NAME}.${SC_ORG1_DOMAIN}
-export SC_ORG1_C2_PORT=8254
-export SC_ORG1_C2_WORKER=$SC_SWARM_MANAGER
 
 # endregion: ORG1
 # region: ORG2
@@ -95,36 +83,68 @@ export SC_ORG2_NAME=Org2
 export SC_ORG2_DOMAIN=${SC_ORG2_NAME}.${SC_NETWORK_DOMAIN}
 export SC_ORG2_PEER_PEM=${SC_PATH_ORGS}/peerOrganizations/${SC_ORG2_DOMAIN}/tlsca/tlsca.${SC_ORG2_DOMAIN}-cert.pem
 export SC_ORG2_CA_PEM=${SC_PATH_ORGS}/peerOrganizations/${SC_ORG2_DOMAIN}/ca/ca.${SC_ORG2_DOMAIN}-cert.pem
-export SC_ORG2_CA_PORT=9050
+export SC_ORG2_CA_PORT=5200
+
+export SC_ORG2_C1_NAME=couchdb1
+export SC_ORG2_C1_FQDN=${SC_ORG2_C1_NAME}.${SC_ORG2_DOMAIN}
+export SC_ORG2_C1_PORT=5210
+export SC_ORG2_C1_WORKER=$SC_SWARM_MANAGER
 
 export SC_ORG2_P1_NAME=peer1
 export SC_ORG2_P1_FQDN=${SC_ORG2_P1_NAME}.${SC_ORG2_DOMAIN}
-export SC_ORG2_P1_PORT=9151
-export SC_ORG2_P1_CHAINPORT=9152
-export SC_ORG2_P1_OPPORT=9153
+export SC_ORG2_P1_PORT=5211
+export SC_ORG2_P1_CHAINPORT=5212
+export SC_ORG2_P1_OPPORT=5213
 export SC_ORG2_P1_WORKER=$SC_SWARM_MANAGER
+
 export SC_ORG2_C1_NAME=couchdb1
 export SC_ORG2_C1_FQDN=${SC_ORG2_C1_NAME}.${SC_ORG2_DOMAIN}
-export SC_ORG2_C1_PORT=9154
+export SC_ORG2_C1_PORT=5220
 export SC_ORG2_C1_WORKER=$SC_SWARM_MANAGER
 
 export SC_ORG2_P2_NAME=peer2
 export SC_ORG2_P2_FQDN=${SC_ORG2_P2_NAME}.${SC_ORG2_DOMAIN}
-export SC_ORG2_P2_PORT=9251
-export SC_ORG2_P2_CHAINPORT=9252
-export SC_ORG2_P2_OPPORT=9253
+export SC_ORG2_P2_PORT=5221
+export SC_ORG2_P2_CHAINPORT=5222
+export SC_ORG2_P2_OPPORT=5223
 export SC_ORG2_P2_WORKER=$SC_SWARM_MANAGER
-export SC_ORG2_C2_NAME=couchdb2
-export SC_ORG2_C2_FQDN=${SC_ORG2_C2_NAME}.${SC_ORG2_DOMAIN}
-export SC_ORG2_C2_PORT=9254
-export SC_ORG2_C2_WORKER=$SC_SWARM_MANAGER
-
+x
 # endregion: ORG2
+# region: OEDERER1
+
+export SC_ORDERER1_NAME=Orderer
+export SC_ORDERER1_DOMAIN=${SC_ORDERER1_NAME}.${SC_NETWORK_DOMAIN}
+export SC_ORDERER1_CA_PORT=5900
+
+export SC_ORDERER1_O1_NAME=orderer1
+export SC_ORDERER1_O1_FQDN=${SC_ORDERER1_O1_NAME}.${SC_ORDERER1_DOMAIN}
+export SC_ORDERER1_O1_PORT=5910
+export SC_ORDERER1_O1_ADMINPORT=5911
+export SC_ORDERER1_O1_OPPORT=5912
+export SC_ORDERER1_O1_WORKER=$SC_SWARM_MANAGER
+
+# endregion: OEDERER1
+# region: crypto config
 
 declare -a SC_CRYPTO_CONFIG=("${SC_PATH_CONF}/crypto-config-${SC_ORDERER1_NAME}.yaml" "${SC_PATH_CONF}/crypto-config-${SC_ORG1_NAME}.yaml" "${SC_PATH_CONF}/crypto-config-${SC_ORG2_NAME}.yaml")
 # SC_CRYPTO_CONFIG=${SC_PATH_CONF}/crypto-config.yaml
 
+# endregion: crypto config
+
 # endregion: orgs
+# region: interfaces
+
+export SC_IFS_VISUALIZER=5000
+
+# endregion: interfaces
+# region: swarm
+
+export SC_SWARM_MANAGER=ip-10-97-85-63
+export SC_SWARM_NETWORK="--attachable --driver overlay --subnet 10.96.0.0/24 $SC_NETWORK_NAME"
+export SC_SWARM_INIT="--advertise-addr 35.158.186.93:2377 --listen-addr 0.0.0.0:2377 --cert-expiry 1000000h0m0s"
+export SC_SWARM_DELAY=10
+
+# endregion: swarm
 # region: funcs' params
 
 TExFORCE=true

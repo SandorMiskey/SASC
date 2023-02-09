@@ -42,9 +42,8 @@ services:
       ${SC_NETWORK_NAME}:
         aliases:
           - cli
-    # depends_on:
-    #   - ${SC_ORG1_P1_FQDN}
-    #   - ${SC_ORG2_P1_FQDN}
+    depends_on:
+      - ${SC_ORG1_P1_FQDN}
     deploy:
       replicas: 1
       placement:
@@ -63,7 +62,7 @@ services:
         aliases:
           - visualizer
     ports:
-      - ${SC_SWARM_VPORT}:8080
+      - ${SC_IFS_VISUALIZER}:8080
     deploy:
       replicas: 1
       placement:

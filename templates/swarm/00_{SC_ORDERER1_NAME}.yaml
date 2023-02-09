@@ -33,7 +33,8 @@ services:
       - ORDERER_ADMIN_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
       - ORDERER_ADMIN_TLS_CLIENTROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
       - ORDERER_ADMIN_LISTENADDRESS=0.0.0.0:${SC_ORDERER1_O1_ADMINPORT}
-      - ORDERER_OPERATIONS_LISTENADDRESS=${SC_ORDERER1_O1_FQDN}:${SC_ORDERER1_O1_OPPORT}
+      # - ORDERER_OPERATIONS_LISTENADDRESS=${SC_ORDERER1_O1_FQDN}:${SC_ORDERER1_O1_OPPORT}
+      - ORDERER_OPERATIONS_LISTENADDRESS=0.0.0.0:${SC_ORDERER1_O1_OPPORT}
       - ORDERER_METRICS_PROVIDER=prometheus
     working_dir: /root
     command: orderer
@@ -42,10 +43,10 @@ services:
       - ${SC_PATH_ORGS}/ordererOrganizations/${SC_ORDERER1_DOMAIN}/orderers/${SC_ORDERER1_O1_FQDN}/tls/:/var/hyperledger/orderer/tls
       - ${SC_PATH_CHAINS}/${SC_ORDERER1_NAME}/${SC_ORDERER1_O1_NAME}:/var/hyperledger/production/orderer
       - ${SC_PATH_ARTIFACTS}/${SC_CHANNEL_NAME}-genesis.block:/var/hyperledger/orderer/${SC_CHANNEL_NAME}-genesis.block
-    ports:
-      - ${SC_ORDERER1_O1_PORT}:${SC_ORDERER1_O1_PORT}
-      - ${SC_ORDERER1_O1_ADMINPORT}:${SC_ORDERER1_O1_ADMINPORT}
-      - ${SC_ORDERER1_O1_OPPORT}:${SC_ORDERER1_O1_OPPORT}
+    # ports:
+    #   - ${SC_ORDERER1_O1_PORT}:${SC_ORDERER1_O1_PORT}
+    #   - ${SC_ORDERER1_O1_ADMINPORT}:${SC_ORDERER1_O1_ADMINPORT}
+    #   - ${SC_ORDERER1_O1_OPPORT}:${SC_ORDERER1_O1_OPPORT}
     deploy:                                                                                                                                                                                                
       replicas: 1
       placement:

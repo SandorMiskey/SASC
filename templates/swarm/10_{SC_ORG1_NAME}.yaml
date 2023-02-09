@@ -46,7 +46,7 @@ services:
       - CORE_CHAINCODE_EXECUTETIMEOUT=300s
 
       - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=${SC_ORG1_C1_FQDN}:${SC_ORG1_C1_PORT}
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=${SC_ORG1_C1_FQDN}:5984
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=${SC_COUCHDB_USER}
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=${SC_COUCHDB_PASSWORD}
 
@@ -60,9 +60,9 @@ services:
       ${SC_NETWORK_NAME}:
         aliases:
           - ${SC_ORG1_P1_FQDN}
-    ports:
-      - ${SC_ORG1_P1_PORT}:${SC_ORG1_P1_PORT}
-      - ${SC_ORG1_P1_OPPORT}:${SC_ORG1_P1_OPPORT}
+    # ports:
+    #   - ${SC_ORG1_P1_PORT}:${SC_ORG1_P1_PORT}
+    #   - ${SC_ORG1_P1_OPPORT}:${SC_ORG1_P1_OPPORT}
     volumes:
         - ${SC_PATH_ORGS}/peerOrganizations/${SC_ORG1_DOMAIN}/peers/${SC_ORG1_P1_FQDN}:/etc/hyperledger/fabric
         - ${SC_PATH_CHAINS}/${SC_ORG1_NAME}/${SC_ORG1_P1_NAME}:/var/hyperledger/production
@@ -75,7 +75,6 @@ services:
     environment:
       - COUCHDB_USER=${SC_COUCHDB_USER}
       - COUCHDB_PASSWORD=${SC_COUCHDB_PASSWORD}
-      - COUCHDB_PORT=${SC_ORG1_C1_PORT}
     deploy:                                                                                                                                                                                                
       replicas: 1
       placement:
@@ -93,7 +92,7 @@ services:
         aliases:
           - ${SC_ORG1_C1_FQDN}
     ports:
-      - "${SC_ORG1_C1_PORT}:${SC_ORG1_C1_PORT}"
+      - "${SC_ORG1_C1_PORT}:5984"
 
   # endregion: P1 + C1
   # region: P2 + C2
@@ -135,7 +134,7 @@ services:
       - CORE_CHAINCODE_EXECUTETIMEOUT=300s
 
       - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=${SC_ORG1_C2_FQDN}:${SC_ORG1_C2_PORT}
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=${SC_ORG1_C2_FQDN}:5984
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=${SC_COUCHDB_USER}
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=${SC_COUCHDB_PASSWORD}
 
@@ -149,9 +148,9 @@ services:
       ${SC_NETWORK_NAME}:
         aliases:
           - ${SC_ORG1_P2_FQDN}
-    ports:
-      - ${SC_ORG1_P2_PORT}:${SC_ORG1_P2_PORT}
-      - ${SC_ORG1_P2_OPPORT}:${SC_ORG1_P2_OPPORT}
+    # ports:
+    #   - ${SC_ORG1_P2_PORT}:${SC_ORG1_P2_PORT}
+    #   - ${SC_ORG1_P2_OPPORT}:${SC_ORG1_P2_OPPORT}
     volumes:
         - ${SC_PATH_ORGS}/peerOrganizations/${SC_ORG1_DOMAIN}/peers/${SC_ORG1_P2_FQDN}:/etc/hyperledger/fabric
         - ${SC_PATH_CHAINS}/${SC_ORG1_NAME}/${SC_ORG1_P2_NAME}:/var/hyperledger/production
@@ -164,7 +163,6 @@ services:
     environment:
       - COUCHDB_USER=${SC_COUCHDB_USER}
       - COUCHDB_PASSWORD=${SC_COUCHDB_PASSWORD}
-      - COUCHDB_PORT=${SC_ORG1_C2_PORT}
     deploy:                                                                                                                                                                                                
       replicas: 1
       placement:
@@ -182,6 +180,6 @@ services:
         aliases:
           - ${SC_ORG1_C2_FQDN}
     ports:
-      - "${SC_ORG1_C2_PORT}:${SC_ORG1_C2_PORT}"
+      - "${SC_ORG1_C2_PORT}:5984"
 
   # endregion: P2 + C2

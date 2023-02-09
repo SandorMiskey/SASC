@@ -177,7 +177,7 @@ TExYN "init docker swarm?" _SwarmInit
 _SwarmBootstrap() {
 	# network
 	local out
-	out=$( docker network create $SC_NETWORK_INIT 2>&1 )
+	out=$( docker network create $SC_SWARM_NETWORK 2>&1 )
 	TExVerify $? "failed to create network: `echo $out`" "network $SC_NETWORK_NAME is up"
 
 	# config files
@@ -202,5 +202,3 @@ _SwarmBootstrap() {
 TExYN "bootstrap stacks?" _SwarmBootstrap
 
 # endregion: bootstrap stacks
-
-# TODO: peer connection to couchdb?, ports?, 
