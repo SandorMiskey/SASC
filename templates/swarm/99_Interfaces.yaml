@@ -52,22 +52,6 @@ services:
         condition: any 
         delay: ${SC_SWARM_DELAY}s
 
-  visualizer:
-    image: dockersamples/visualizer
-    volumes:
-      - ${SC_PATH_SCRIPTS}:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
-      - /var/run/docker.sock:/var/run/docker.sock
-    networks:
-      ${SC_NETWORK_NAME}:
-        aliases:
-          - visualizer
-    ports:
-      - ${SC_IFS_VISUALIZER}:8080
-    deploy:
-      replicas: 1
-      placement:
-        constraints: [ node.hostname == ${SC_ORG1_P1_WORKER} ]
-
   busybox:
     image: busybox
     volumes:
@@ -78,7 +62,7 @@ services:
           - busybox
     command: top
     deploy:
-      replicas: 1
+      replicas: 0
       placement:
         constraints: [ node.hostname == ${SC_ORG1_P1_WORKER} ]
 
@@ -92,6 +76,6 @@ services:
           - netshoot
     command: top
     deploy:
-      replicas: 1
+      replicas: 0
       placement:
         constraints: [ node.hostname == ${SC_ORG1_P1_WORKER} ]

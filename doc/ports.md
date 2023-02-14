@@ -1,8 +1,13 @@
 # Ports
 
-## Interfaces: 5000 -> 5099
+## metrics and interfaces: 5000 -> 5049
 
-* [SC_IFS_VISUALIZER=5000](http://35.158.186.93:5000)
+* api/swagger/ui TBD
+
+### metrics: 5050 -> 5099
+
+* [SC_METRICS_VISUALIZER=5050 (->8080)](http://35.158.186.93:5050)
+* grafana/prometheus TBD
 
 ## ORG1: 5100 -> 5199
 
@@ -10,14 +15,14 @@
 
 ### org1 peer1/couchdb1: 5110 -> 5119
 
-* [SC_ORG1_C1_PORT=5110](http://35.158.186.93:5110/_utils/#login)
+* [SC_ORG1_C1_PORT=5110 (-> 5984)](http://35.158.186.93:5110/_utils/#login)
 * SC_ORG1_P1_PORT=5111
 * SC_ORG1_P1_CHAINPORT=5112
 * SC_ORG1_P1_OPPORT=5113
 
 ### org1 peer2/couchdb2: 5120 -> 5129
 
-* [SC_ORG1_C1_PORT=5120](http://35.158.186.93:5120/_utils/#login)
+* [SC_ORG1_C1_PORT=5120 (-> 5984)](http://35.158.186.93:5120/_utils/#login)
 * SC_ORG1_P1_PORT=5121
 * SC_ORG1_P1_CHAINPORT=5122
 * SC_ORG1_P1_OPPORT=5123
@@ -28,14 +33,14 @@
 
 ### org2 peer1/couchdb1: 5210 -> 5219
 
-* [SC_ORG1_C1_PORT=5210](http://35.158.186.93:5210/_utils/#login)
+* [SC_ORG1_C1_PORT=5210 (-> 5984)](http://35.158.186.93:5210/_utils/#login)
 * SC_ORG1_P1_PORT=5211
 * SC_ORG1_P1_CHAINPORT=5212
 * SC_ORG1_P1_OPPORT=5213
 
 ### org2 peer2/couchdb2: 5220 -> 5229
 
-* [SC_ORG1_C1_PORT=5220](http://35.158.186.93:5220/_utils/#login)
+* [SC_ORG1_C1_PORT=5220 (-> 5984)](http://35.158.186.93:5220/_utils/#login)
 * SC_ORG1_P1_PORT=5221
 * SC_ORG1_P1_CHAINPORT=5222
 * SC_ORG1_P1_OPPORT=5223

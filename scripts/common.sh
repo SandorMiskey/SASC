@@ -97,10 +97,10 @@ export SC_ORG2_P1_CHAINPORT=5212
 export SC_ORG2_P1_OPPORT=5213
 export SC_ORG2_P1_WORKER=$SC_SWARM_MANAGER
 
-export SC_ORG2_C1_NAME=couchdb1
-export SC_ORG2_C1_FQDN=${SC_ORG2_C1_NAME}.${SC_ORG2_DOMAIN}
-export SC_ORG2_C1_PORT=5220
-export SC_ORG2_C1_WORKER=$SC_SWARM_MANAGER
+export SC_ORG2_C2_NAME=couchdb2
+export SC_ORG2_C2_FQDN=${SC_ORG2_C1_NAME}.${SC_ORG2_DOMAIN}
+export SC_ORG2_C2_PORT=5220
+export SC_ORG2_C2_WORKER=$SC_SWARM_MANAGER
 
 export SC_ORG2_P2_NAME=peer2
 export SC_ORG2_P2_FQDN=${SC_ORG2_P2_NAME}.${SC_ORG2_DOMAIN}
@@ -132,9 +132,9 @@ declare -a SC_CRYPTO_CONFIG=("${SC_PATH_CONF}/crypto-config-${SC_ORDERER1_NAME}.
 # endregion: crypto config
 
 # endregion: orgs
-# region: interfaces
+# region: interfaces and metrics
 
-export SC_IFS_VISUALIZER=5000
+export SC_METRICS_VISUALIZER=5050
 
 # endregion: interfaces
 # region: swarm
