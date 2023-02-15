@@ -126,7 +126,7 @@ export SC_ORDERER1_O1_WORKER=$SC_SWARM_MANAGER
 # endregion: OEDERER1
 # region: crypto config
 
-declare -a SC_CRYPTO_CONFIG=("${SC_PATH_CONF}/crypto-config-${SC_ORDERER1_NAME}.yaml" "${SC_PATH_CONF}/crypto-config-${SC_ORG1_NAME}.yaml" "${SC_PATH_CONF}/crypto-config-${SC_ORG2_NAME}.yaml")
+declare -a SC_CRYPTO_CONFIG=("${SC_PATH_CONF}/crypto-config/${SC_ORDERER1_NAME}.yaml" "${SC_PATH_CONF}/crypto-config/${SC_ORG1_NAME}.yaml" "${SC_PATH_CONF}/crypto-config/${SC_ORG2_NAME}.yaml")
 # SC_CRYPTO_CONFIG=${SC_PATH_CONF}/crypto-config.yaml
 
 # endregion: crypto config
@@ -134,7 +134,19 @@ declare -a SC_CRYPTO_CONFIG=("${SC_PATH_CONF}/crypto-config-${SC_ORDERER1_NAME}.
 # endregion: orgs
 # region: interfaces and metrics
 
-export SC_METRICS_VISUALIZER=5050
+export SC_INTERFACES_CLI=$SC_SWARM_MANAGER
+export SC_INTERFACES_BBOX=$SC_SWARM_MANAGER
+export SC_INTERFACES_NETSHOOT=$SC_SWARM_MANAGER
+
+export SC_METRICS_HOST=$SC_SWARM_MANAGER
+export SC_METRICS_VISUALIZER_PORT=5050
+export SC_METRICS_VISUALIZER_HOST=$SC_METRICS_HOST
+export SC_METRICS_PROMETHEUS_PORT=5051
+export SC_METRICS_PROMETHEUS_HOST=$SC_METRICS_HOST
+export SC_METRICS_CADVISOR_PORT=5052
+export SC_METRICS_CADVISOR_HOST=$SC_METRICS_HOST
+export SC_METRICS_NEXPORTER_PORT=5053
+export SC_METRICS_NEXPORTER_HOST=$SC_METRICS_HOST
 
 # endregion: interfaces
 # region: swarm

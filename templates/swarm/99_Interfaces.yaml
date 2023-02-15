@@ -47,7 +47,7 @@ services:
     deploy:
       replicas: 1
       placement:
-        constraints: [ node.hostname == ${SC_ORG1_P1_WORKER} ]
+        constraints: [ node.hostname == ${SC_INTERFACES_CLI} ]
       restart_policy:
         condition: any 
         delay: ${SC_SWARM_DELAY}s
@@ -64,7 +64,7 @@ services:
     deploy:
       replicas: 0
       placement:
-        constraints: [ node.hostname == ${SC_ORG1_P1_WORKER} ]
+        constraints: [ node.hostname == ${SC_INTERFACES_BBOX} ]
 
   netshoot:
     image: nicolaka/netshoot
@@ -78,4 +78,4 @@ services:
     deploy:
       replicas: 0
       placement:
-        constraints: [ node.hostname == ${SC_ORG1_P1_WORKER} ]
+        constraints: [ node.hostname == ${SC_INTERFACES_NETSHOOT} ]

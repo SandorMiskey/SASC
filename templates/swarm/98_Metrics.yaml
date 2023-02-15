@@ -5,20 +5,94 @@ networks:
     name: ${SC_NETWORK_NAME}
     external: true
 
-services:
+volumes:
+    prometheus_data: {}
+    grafana_storage: {}
 
+services:
   visualizer:
     image: dockersamples/visualizer
     volumes:
-      - ${SC_PATH_SCRIPTS}:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
+      # - ${SC_PATH_SCRIPTS}:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       ${SC_NETWORK_NAME}:
         aliases:
           - visualizer
     ports:
-      - ${SC_METRICS_VISUALIZER}:8080
+      - ${SC_METRICS_VISUALIZER_PORT}:8080
     deploy:
       replicas: 1
       placement:
-        constraints: [ node.hostname == ${SC_ORG1_P1_WORKER} ]
+        constraints: [ node.hostname == ${SC_METRICS_VISUALIZER_HOST} ]
+
+  prometheus:
+    image: prom/prometheus:v2.32.1
+    networks:
+      ${SC_NETWORK_NAME}:
+        aliases:
+          - prometheus
+    volumes:
+      - ${SC_PATH_CONF}/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    ports:
+      - ${SC_METRICS_PROMETHEUS_PORT}:9090
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [ node.hostname == ${SC_METRICS_PROMETHEUS_HOST} ]
+  cadvisor:
+    # image: google/cadvisor:latest # gcr.io/cadvisor/cadvisor:latest for ios
+    image: gcr.io/cadvisor/cadvisor:latest
+    networks:
+      ${SC_NETWORK_NAME}:
+        aliases:
+          - cadvisor
+    # privileged: true
+    cap_add:
+      - ALL
+    volumes:
+      # - /cgroup:/cgroup:ro
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /var/run/docker.sock:/var/run/docker.sock:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    ports:
+      - ${SC_METRICS_CADVISOR_PORT}:8080
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [ node.hostname == ${SC_METRICS_CADVISOR_HOST} ]
+      restart_policy:
+        condition: any 
+        delay: ${SC_SWARM_DELAY}s
+  node-exporter:
+    image: prom/node-exporter:v1.3.1
+    networks:
+      ${SC_NETWORK_NAME}:
+        aliases:
+          - node-exporter
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - --collector.filesystem.ignored-mount-points
+      - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
+    ports:
+      - ${SC_METRICS_NEXPORTER_PORT}:9100
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [ node.hostname == ${SC_METRICS_NEXPORTER_HOST} ]
+      restart_policy:
+        condition: any 
+        delay: ${SC_SWARM_DELAY}s
