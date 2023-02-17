@@ -27,7 +27,8 @@ services:
         constraints: [ node.hostname == ${SC_METRICS_VISUALIZER_HOST} ]
 
   prometheus:
-    image: prom/prometheus:v2.32.1
+    # image: prom/prometheus:v2.32.1
+    image: prom/prometheus:latest
     networks:
       ${SC_NETWORK_NAME}:
         aliases:
@@ -58,6 +59,7 @@ services:
       - ALL
     volumes:
       # - /cgroup:/cgroup:ro
+      - /sys/fs/cgroup:/cgroup:ro
       - /:/rootfs:ro
       - /var/run:/var/run:rw
       - /var/run/docker.sock:/var/run/docker.sock:rw
@@ -96,3 +98,25 @@ services:
       restart_policy:
         condition: any 
         delay: ${SC_SWARM_DELAY}s
+
+  grafana:
+    #image: grafana/grafana:8.3.4
+    image: grafana/grafana:latest
+    networks:
+      ${SC_NETWORK_NAME}:
+        aliases:
+          - grafana
+    user: "104"
+    depends_on:
+      - prometheus
+    ports:
+      - ${SC_METRICS_GRAFANA_PORT}:3000
+    volumes:
+      - grafana_storage:/var/lib/grafana
+      - ${SC_PATH_CONF}/grafana/provisioning/:/etc/grafana/provisioning/
+    env_file:
+      - ${SC_PATH_CONF}/grafana/config.monitoring
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [ node.hostname == ${SC_METRICS_GRAFANA_HOST} ]
