@@ -10,3 +10,4 @@
 3. swarm worker setup (over ssh, w/ nfs)
 4. dedicated mgmt/metrics network?
 5. grafana and portainer passwords in docker secrets?
+6. syslog (w/ logspout)?

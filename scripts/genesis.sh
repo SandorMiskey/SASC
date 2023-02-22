@@ -185,7 +185,7 @@ _SwarmBootstrap() {
 		local out
 		stack=$( printf $cfg | sed "s/.*_//" | sed "s/.yaml//" | sed "s/^/${SC_NETWORK_NAME}_/" )
 		TExPrintf "deploying $cfg as ${stack}"
-		out=$( docker stack deploy -c $cfg $stack 2>&1 )
+		out=$( docker stack deploy -c $cfg $stack --with-registry-auth 2>&1 )
 		TExVerify $? "failed to deploy $stack: `echo $out`" "stack deploy msg: `echo $out`"
 		TExSleep $SC_SWARM_DELAY
 	done
