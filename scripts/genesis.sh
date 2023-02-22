@@ -121,17 +121,6 @@ _Crypto() {
 TExYN "regenerate certificates and reprocess config files?" _Crypto
 
 # endregion: org certs
-# region: genesis block
-
-_GenesisBlock() {
-	configtxgen -profile $SC_CHANNEL_PROFILE -outputBlock "${SC_PATH_ARTIFACTS}/${SC_CHANNEL_NAME}-genesis.block" -configPath "$SC_PATH_CONF" -channelID $SC_CHANNEL_NAME
-	TExVerify $? "failed to generate orderer genesis block..."
-
-}
-
-TExYN "create genesis block?" _GenesisBlock
-
-# endregion: genesis block
 # region: swarm init and bootstrap stacks
 
 _SwarmLeave() {
@@ -221,3 +210,14 @@ TExYN "bootstrap stacks?" _SwarmBootstrap
 TExYN "prune networks/volumes/containers/images?" _SwarmPrune
 
 # endregion: swarm init and bootstrap stacks
+# region: genesis block
+
+_GenesisBlock() {
+	configtxgen -profile $SC_CHANNEL_PROFILE -outputBlock "${SC_PATH_ARTIFACTS}/${SC_CHANNEL_NAME}-genesis.block" -configPath "$SC_PATH_CONF" -channelID $SC_CHANNEL_NAME
+	TExVerify $? "failed to generate orderer genesis block..."
+
+}
+
+TExYN "create genesis block?" _GenesisBlock
+
+# endregion: genesis block

@@ -9,9 +9,9 @@
 # region: paths
 
 export SC_PATH_BASE=$SC_PATH_BASE
+export SC_PATH_COMMON=$SC_PATH_COMMON
 export SC_PATH_TEMPLATES=${SC_PATH_BASE}/templates
 export SC_PATH_SCRIPTS=${SC_PATH_BASE}/scripts
-export SC_PATH_COMMON=${SC_PATH_SCRIPTS}/common.sh
 export SC_PATH_DATA=${SC_PATH_BASE}/data
 export SC_PATH_ARTIFACTS=${SC_PATH_DATA}/artifacts
 export SC_PATH_CHAINS=${SC_PATH_DATA}/storage
