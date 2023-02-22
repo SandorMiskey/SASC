@@ -1,0 +1,66 @@
+version: "3.7"
+
+networks:
+  ${SC_NETWORK_NAME}:
+    name: ${SC_NETWORK_NAME}
+    external: true
+
+services:
+  busybox:
+    image: busybox
+    volumes:
+      - ${SC_PATH_SCRIPTS}:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
+    networks:
+      ${SC_NETWORK_NAME}:
+        aliases:
+          - busybox
+    command: top -d 5 -H
+    deploy:
+      replicas: 0
+      placement:
+        constraints: [ node.hostname == ${SC_MGMT_HOST} ]
+  netshoot:
+    image: nicolaka/netshoot
+    volumes:
+      - ${SC_PATH_SCRIPTS}:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
+    networks:
+      ${SC_NETWORK_NAME}:
+        aliases:
+          - netshoot
+    command: top
+    deploy:
+      replicas: 0
+      placement:
+        constraints: [ node.hostname == ${SC_MGMT_HOST} ]
+
+  portainer-agent:
+    image: portainer/agent:2.17.0
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/volumes:/var/lib/docker/volumes
+    networks:
+      ${SC_NETWORK_NAME}:
+        aliases:
+          - portainer-agent
+    deploy:
+      mode: global
+      placement:
+        constraints: [node.platform.os == linux]
+  portainer:
+    image: portainer/portainer-ce:2.17.0
+    command: -H tcp://tasks.portainer-agent:9001 --tlsskipverify --admin-password-file /data/portainer_password
+    ports:
+      - "${SC_MGMT_PORTAINER_PORT}:9443"
+      # - "9000:9000"   # ?
+      # - "8000:8000"   # TCP tunnel server over port, only required if you plan to use the Edge compute features with Edge agents.
+    volumes:
+      - ${SC_PATH_CHAINS}/portainer:/data
+    networks:
+      ${SC_NETWORK_NAME}:
+        aliases:
+          - portainer
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]

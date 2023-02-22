@@ -14,7 +14,7 @@ export SC_PATH_SCRIPTS=${SC_PATH_BASE}/scripts
 export SC_PATH_COMMON=${SC_PATH_SCRIPTS}/common.sh
 export SC_PATH_DATA=${SC_PATH_BASE}/data
 export SC_PATH_ARTIFACTS=${SC_PATH_DATA}/artifacts
-export SC_PATH_CHAINS=${SC_PATH_DATA}/chains
+export SC_PATH_CHAINS=${SC_PATH_DATA}/storage
 export SC_PATH_CONF=${SC_PATH_DATA}/conf
 export SC_PATH_ORGS=${SC_PATH_DATA}/orgs
 export SC_PATH_SWARM=${SC_PATH_DATA}/swarm
@@ -42,6 +42,14 @@ export SC_CHANNEL_PROFILE=TwoOrgsApplicationGenesis
 export SC_CHANNEL_NAME=${SC_NETWORK_NAME}-default
 
 # endregion: network and channel
+# region: swarm
+
+export SC_SWARM_MANAGER=ip-10-97-85-63
+export SC_SWARM_NETWORK="--attachable --driver overlay --subnet 10.96.0.0/24 $SC_NETWORK_NAME"
+export SC_SWARM_INIT="--advertise-addr 35.158.186.93:2377 --listen-addr 0.0.0.0:2377 --cert-expiry 1000000h0m0s"
+export SC_SWARM_DELAY=1
+
+# endregion: swarm
 # region: orgs
 
 # region: ORG1
@@ -132,34 +140,26 @@ declare -a SC_CRYPTO_CONFIG=("${SC_PATH_CONF}/crypto-config/${SC_ORDERER1_NAME}.
 # endregion: crypto config
 
 # endregion: orgs
-# region: interfaces and metrics
+# region: interfaces, metrics and management
 
-export SC_INTERFACES_CLI=$SC_SWARM_MANAGER
-export SC_INTERFACES_BBOX=$SC_SWARM_MANAGER
-export SC_INTERFACES_NETSHOOT=$SC_SWARM_MANAGER
+export SC_UID=$SC_UID
+export SC_GID=$SC_GID
+
+export SC_INTERFACES_CLI_HOST=$SC_SWARM_MANAGER
 
 export SC_METRICS_HOST=$SC_SWARM_MANAGER
 export SC_METRICS_VISUALIZER_PORT=5050
-export SC_METRICS_VISUALIZER_HOST=$SC_METRICS_HOST
 export SC_METRICS_PROMETHEUS_PORT=5051
-export SC_METRICS_PROMETHEUS_HOST=$SC_METRICS_HOST
 export SC_METRICS_CADVISOR_PORT=5052
-export SC_METRICS_CADVISOR_HOST=$SC_METRICS_HOST
 export SC_METRICS_NEXPORTER_PORT=5053
-export SC_METRICS_NEXPORTER_HOST=$SC_METRICS_HOST
 export SC_METRICS_GRAFANA_PORT=5054
-export SC_METRICS_GRAFANA_HOST=$SC_METRICS_HOST
 export SC_METRICS_GRAFANA_PASSWORD=$SC_METRICS_GRAFANA_PASSWORD
 
+export SC_MGMT_HOST=$SC_SWARM_MANAGER
+export SC_MGMT_PORTAINER_PASSWORD=$SC_MGMT_PORTAINER_PASSWORD
+export SC_MGMT_PORTAINER_PORT=5070
+
 # endregion: interfaces
-# region: swarm
-
-export SC_SWARM_MANAGER=ip-10-97-85-63
-export SC_SWARM_NETWORK="--attachable --driver overlay --subnet 10.96.0.0/24 $SC_NETWORK_NAME"
-export SC_SWARM_INIT="--advertise-addr 35.158.186.93:2377 --listen-addr 0.0.0.0:2377 --cert-expiry 1000000h0m0s"
-export SC_SWARM_DELAY=10
-
-# endregion: swarm
 # region: funcs' params
 
 TExFORCE=true

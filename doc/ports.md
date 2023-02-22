@@ -1,58 +1,68 @@
 # Ports
 
-## metrics and interfaces: 5000 -> 5049
+## interfaces, metrics and management: 5000 -> 5099
+
+### interfaces: 5000 -> 5049
 
 * api/swagger/ui TBD
 
-### metrics: 5050 -> 5099
+### metrics: 5050 -> 5069
 
 * [SC_METRICS_VISUALIZER_PORT=5050 (->8080)](http://35.158.186.93:5050)
 * [SC_METRICS_PROMETHEUS_PORT=5051 (->9090)](http://35.158.186.93:5051)
 * [SC_METRICS_CADVISOR_PORT=5052 (->8080)](http://35.158.186.93:5052)
 * [SC_METRICS_NEXPORTER_PORT=5053 (->9100)](http://35.158.186.93:5053)
-* [SC_METRICS_GRAFANA_PORT=5054 (->9090)](http://35.158.186.93:5054)
+* [SC_METRICS_GRAFANA_PORT=5054 (->3000)](http://35.158.186.93:5054)
 
-## ORG1: 5100 -> 5199
+### management: 5070 -> 5090
+
+* [SC_MGMT_PORTAINER_PORT=5070 (->9443)](http://35.158.186.93:5054)
+
+## peer orgs: 5100 -> 5299
+
+### ORG1: 5100 -> 5199
 
 * SC_ORG1_CA_PORT=5100
 
-### org1 peer1/couchdb1: 5110 -> 5119
+#### ORG1 P1/C1: 5110 -> 5119
 
 * [SC_ORG1_C1_PORT=5110 (-> 5984)](http://35.158.186.93:5110/_utils/#login)
 * SC_ORG1_P1_PORT=5111
 * SC_ORG1_P1_CHAINPORT=5112
 * SC_ORG1_P1_OPPORT=5113
 
-### org1 peer2/couchdb2: 5120 -> 5129
+#### ORG1 P2/C2: 5120 -> 5129
 
 * [SC_ORG1_C1_PORT=5120 (-> 5984)](http://35.158.186.93:5120/_utils/#login)
 * SC_ORG1_P1_PORT=5121
 * SC_ORG1_P1_CHAINPORT=5122
 * SC_ORG1_P1_OPPORT=5123
 
-## ORG2: 5200 -> 5299
+### ORG2: 5200 -> 5299
 
 * SC_ORG1_CA_PORT=5200
 
-### org2 peer1/couchdb1: 5210 -> 5219
+#### ORG2 P1/C1: 5210 -> 5219
 
 * [SC_ORG1_C1_PORT=5210 (-> 5984)](http://35.158.186.93:5210/_utils/#login)
 * SC_ORG1_P1_PORT=5211
 * SC_ORG1_P1_CHAINPORT=5212
 * SC_ORG1_P1_OPPORT=5213
 
-### org2 peer2/couchdb2: 5220 -> 5229
+#### ORG2 P2/C2: 5220 -> 5229
 
 * [SC_ORG1_C1_PORT=5220 (-> 5984)](http://35.158.186.93:5220/_utils/#login)
 * SC_ORG1_P1_PORT=5221
 * SC_ORG1_P1_CHAINPORT=5222
 * SC_ORG1_P1_OPPORT=5223
 
-## ORDERER1: 5900 -> 5999
+## orderer orgs: 5900 -> 5999
 
 * SC_ORDERER1_CA_PORT=5900
 
-### orderer1
+### ORDERER1: 5900 -> 5999
+
+#### ORDERER1 O1: 5910 -> 5919
 
 * SC_ORDERER1_O1_PORT=5910
 * SC_ORDERER1_O1_ADMINPORT=5911

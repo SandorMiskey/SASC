@@ -132,7 +132,7 @@ _GenesisBlock() {
 TExYN "create genesis block?" _GenesisBlock
 
 # endregion: genesis block
-# region: swarm init
+# region: swarm init and bootstrap stacks
 
 _SwarmLeave() {
 	_leave() {
@@ -168,12 +168,6 @@ _SwarmInit() {
 	unset file
 }
 
-TExYN "leave docker swarm?" _SwarmLeave
-TExYN "init docker swarm?" _SwarmInit
-
-# endregion: swarm init
-# region: bootstrap stacks
-
 _SwarmBootstrap() {
 	# network
 	local out
@@ -199,6 +193,31 @@ _SwarmBootstrap() {
 	unset cfg
 }
 
-TExYN "bootstrap stacks?" _SwarmBootstrap
+_SwarmPrune() {
+	_prune() {
+		local status
+		status=$( docker network prune -f 2>&1 )
+		TExVerify $? "$status" "network prune: `echo $status`"
+		status=$( docker volume prune -f 2>&1 )
+		TExVerify $? "$status" "volume prune: `echo $status`"
+		status=$( docker container prune -f 2>&1 )
+		TExVerify $? "$status" "container prune: `echo $status`"
+		status=$( docker image prune -f 2>&1 )
+		TExVerify $? "$status" "image prune: `echo $status`"
+	}
 
-# endregion: bootstrap stacks
+	local force=$TExFORCE
+	TExFORCE=false
+	TExYN "This will remove all local stuff not used by at least one container. Are you sure?" _prune
+	TExFORCE=$force
+
+	unset status
+	unset force
+}
+
+TExYN "leave docker swarm?" _SwarmLeave
+TExYN "init docker swarm?" _SwarmInit
+TExYN "bootstrap stacks?" _SwarmBootstrap
+TExYN "prune networks/volumes/containers/images?" _SwarmPrune
+
+# endregion: swarm init and bootstrap stacks

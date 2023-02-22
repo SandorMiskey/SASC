@@ -47,35 +47,7 @@ services:
     deploy:
       replicas: 1
       placement:
-        constraints: [ node.hostname == ${SC_INTERFACES_CLI} ]
+        constraints: [ node.hostname == ${SC_INTERFACES_CLI_HOST} ]
       restart_policy:
         condition: any 
         delay: ${SC_SWARM_DELAY}s
-
-  busybox:
-    image: busybox
-    volumes:
-      - ${SC_PATH_SCRIPTS}:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
-    networks:
-      ${SC_NETWORK_NAME}:
-        aliases:
-          - busybox
-    command: top
-    deploy:
-      replicas: 0
-      placement:
-        constraints: [ node.hostname == ${SC_INTERFACES_BBOX} ]
-
-  netshoot:
-    image: nicolaka/netshoot
-    volumes:
-      - ${SC_PATH_SCRIPTS}:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
-    networks:
-      ${SC_NETWORK_NAME}:
-        aliases:
-          - netshoot
-    command: top
-    deploy:
-      replicas: 0
-      placement:
-        constraints: [ node.hostname == ${SC_INTERFACES_NETSHOOT} ]
