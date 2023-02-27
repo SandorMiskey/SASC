@@ -161,17 +161,17 @@ export SC_MGMT_PORTAINER_PASSWORD=$SC_MGMT_PORTAINER_PASSWORD
 export SC_MGMT_PORTAINER_PORT=5070
 
 # endregion: interfaces
-# region: funcs' params
+# region: framework params
 
 TExFORCE=true
 TExPANIC=true
 TExPREREQS=('awk' 'bash' 'curl' 'git' 'go' 'jq' 'cryptogen' 'configtxgen')
 TExSILENT=false
 
-# endregion: funcs
+# endregion: framework params
 
 # endregion: variables
-# region: functions
+# region: framework functions
 
 TExCheckBase() {
 	if [[ ${SC_PATH_BASE:-"unset"} == "unset" ]]; then
@@ -335,6 +335,12 @@ TExYN() {
 			TExYN "$question" "$@"
 			;;
 	esac
+}
+
+TExPP() {
+	pushd ${PWD} > /dev/null
+	trap "popd > /dev/null" EXIT
+	cd $1
 }
 
 # endregion: functions

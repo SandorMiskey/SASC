@@ -16,7 +16,7 @@ source $SC_PATH_COMMON
 if [[ ${SC_PATH_BASE:-"unset"} == "unset" ]]; then
 	TExVerify 1 "SC_PATH_BASE is unset"
 fi
-cd $SC_PATH_SCRIPTS
+TExPP $SC_PATH_SCRIPTS
 
 # endregion: load common.sh
 # region: check for dependencies and versions
@@ -157,31 +157,6 @@ _SwarmInit() {
 	unset file
 }
 
-_SwarmBootstrap() {
-	# network
-	local out
-	out=$( docker network create $SC_SWARM_NETWORK 2>&1 )
-	TExVerify $? "failed to create network: `echo $out`" "network $SC_NETWORK_NAME is up"
-
-	# config files
-	local cfg
-	cfg=$( find $SC_PATH_SWARM/*yaml ! -name '.*' -print 2>&1 )
-	TExVerify $? "$cfg"
-
-	# deploy
-	for cfg in $cfg; do
-		local stack
-		local out
-		stack=$( printf $cfg | sed "s/.*_//" | sed "s/.yaml//" | sed "s/^/${SC_NETWORK_NAME}_/" )
-		TExPrintf "deploying $cfg as ${stack}"
-		out=$( docker stack deploy -c $cfg $stack --with-registry-auth 2>&1 )
-		TExVerify $? "failed to deploy $stack: `echo $out`" "stack deploy msg: `echo $out`"
-		TExSleep $SC_SWARM_DELAY
-	done
-	unset out
-	unset cfg
-}
-
 _SwarmPrune() {
 	_prune() {
 		local status
@@ -189,10 +164,10 @@ _SwarmPrune() {
 		TExVerify $? "$status" "network prune: `echo $status`"
 		status=$( docker volume prune -f 2>&1 )
 		TExVerify $? "$status" "volume prune: `echo $status`"
-		status=$( docker container prune -f 2>&1 )
-		TExVerify $? "$status" "container prune: `echo $status`"
-		status=$( docker image prune -f 2>&1 )
-		TExVerify $? "$status" "image prune: `echo $status`"
+		# status=$( docker container prune -f 2>&1 )
+		# TExVerify $? "$status" "container prune: `echo $status`"
+		# status=$( docker image prune -f 2>&1 )
+		# TExVerify $? "$status" "image prune: `echo $status`"
 	}
 
 	local force=$TExFORCE
@@ -206,7 +181,7 @@ _SwarmPrune() {
 
 TExYN "leave docker swarm?" _SwarmLeave
 TExYN "init docker swarm?" _SwarmInit
-TExYN "bootstrap stacks?" _SwarmBootstrap
+TExYN "bootstrap stacks?" ${SC_PATH_SCRIPTS}/bootstrap.sh -m up
 TExYN "prune networks/volumes/containers/images?" _SwarmPrune
 
 # endregion: swarm init and bootstrap stacks
