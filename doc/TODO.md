@@ -1,6 +1,6 @@
 # next todos
 
-1. test-network/CHAINCODE_AS_A_SERVICE_TUTORIAL.md
+1. create channel retry #
 2. join peers, deploy chaincode
    1. foodchain
       1. channel configuration transactions and anchor peer update transactions
@@ -18,7 +18,8 @@
    [4.](https://hub.docker.com/r/itsthenetwork/nfs-server-alpine)
    [5.](https://blog.ruanbekker.com/blog/2020/09/20/setup-a-nfs-server-with-docker/)
 4. swarm worker setup (over ssh, w/ nfs)
-5. CA
-6. syslog (w/ logspout)?
-7. dedicated mgmt/metrics network?
-8. grafana and portainer passwords in docker secrets?
+5. split framwork and SC_* in common.sh
+6. CA
+7. syslog (w/ logspout)?
+8. dedicated mgmt/metrics network?
+9. grafana and portainer passwords in docker secrets?

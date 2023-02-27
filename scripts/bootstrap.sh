@@ -13,19 +13,19 @@ if [ ! -f  $SC_PATH_COMMON ]; then
 fi
 source $SC_PATH_COMMON
 
-TExPP $SC_PATH_SCRIPTS
+TEx_PP $SC_PATH_SCRIPTS
 
 # endregion: common
 # region: functions
 
 printHelp() {
-	TExPrintf "usage:"
-	TExPrintf "	$0 [up|down] [flags|stack]"
-	TExPrintf ""
-	TExPrintf "flags:"
-	TExPrintf "	-h - print this message "
-	TExPrintf "	-m <up|done> - start or stop stacks"
-	TExPrintf "	-s name - stack (name must be alphanumeric) to bring in the direction of -m"
+	TEx_Printf "usage:"
+	TEx_Printf "	$0 [up|down] [flags|stack]"
+	TEx_Printf ""
+	TEx_Printf "flags:"
+	TEx_Printf "	-h - print this message "
+	TEx_Printf "	-m <up|done> - start or stop stacks"
+	TEx_Printf "	-s name - stack (name must be alphanumeric) to bring in the direction of -m"
 	exit 1
 }
 
@@ -109,7 +109,7 @@ else
 	verb=are
 	(( ${#stacks[@]} == 1 )) && verb=is
 	(( ${#stacks[@]} <  1 )) && joined="all ${SC_NETWORK_NAME} services" || printf -v joined '%s & ' "${stacks[@]}"
-	! [[ $mode == dummy ]] && TExPrintf "${joined% & } $verb going $mode"
+	! [[ $mode == dummy ]] && TEx_Printf "${joined% & } $verb going $mode"
 fi
 
 case $mode in
@@ -117,26 +117,27 @@ case $mode in
 		# network
 		if [ ! "$(docker network ls --format "{{.Name}}" --filter "name=${SC_NETWORK_NAME}" | grep -w ${SC_NETWORK_NAME})" ]; then
 			out=$( docker network create $SC_SWARM_NETWORK 2>&1 )
-			TExVerify $? "failed to create network: `echo $out`" "$SC_NETWORK_NAME network is up"
+			TEx_Verify $? "failed to create network: $out" "$SC_NETWORK_NAME network is up"
 			unset out
 		else
-			TExPrintf "${SC_NETWORK_NAME} network already exists"
+			TEx_Printf "${SC_NETWORK_NAME} network already exists"
 		fi
 
 		# empty list of stacks
 		if (( ${#stacks[@]} <  1 )); then
 			# config files
 			cfg=$( find $SC_PATH_SWARM/*yaml ! -name '.*' -print 2>&1 )
-			TExVerify $? "$cfg"
+			TEx_Verify $? "$cfg"
 			cfg=$(echo $cfg | sort)
 
 			# deploy
 			for cfg in $cfg; do
 				stack=$( printf $cfg | sed "s/.*_//" | sed "s/.yaml//" | sed "s/^/${SC_NETWORK_NAME}_/" )
-				TExPrintf "deploying $cfg as ${stack}"
+				TEx_Printf "deploying $cfg as ${stack}"
 				out=$( docker stack deploy -c $cfg $stack --with-registry-auth 2>&1 )
-				TExVerify $? "failed to deploy $stack: `echo $out`" "$stack is deployed"
-				TExSleep $SC_SWARM_DELAY
+				# TEx_Verify $? "failed to deploy $stack: `echo $out`" "$stack is deployed"
+				TEx_Verify $? "failed to deploy $stack: $out" "$stack is deployed: $out"
+				TEx_Sleep $SC_SWARM_DELAY "waiting ${SC_SWARM_DELAY}s for the startup to finish"
 				unset out
 				unset stack
 			done
@@ -146,11 +147,11 @@ case $mode in
 			for stack in "${stacks[@]}"; do
 				cfg=$( echo "${stack}" | sed "s/^${SC_NETWORK_NAME}//")
 				cfg=$( find $SC_PATH_SWARM/*${cfg}.yaml ! -name '.*' -print 2>&1 )
-				TExVerify $? "no config found for $stack $cfg"
-				TExPrintf "deploying $cfg as ${stack}"
+				TEx_Verify $? "no config found for $stack $cfg"
+				TEx_Printf "deploying $cfg as ${stack}"
 				out=$( docker stack deploy -c $cfg $stack --with-registry-auth 2>&1 )
-				TExVerify $? "failed to deploy $stack: `echo $out`" "$stack is deployed"
-				TExSleep $SC_SWARM_DELAY
+				TEx_Verify $? "failed to deploy $stack: $out" "$stack is deployed: out"
+				TEx_Sleep $SC_SWARM_DELAY "waiting ${SC_SWARM_DELAY}s for the startup to finish"
 				unset out
 				unset cfg
 			done
@@ -160,18 +161,17 @@ case $mode in
 	"down" )
 		(( ${#stacks[@]} <  1 )) && readarray -t stacks <<<$(docker stack ls --format "{{.Name}}")
 		for stack in "${stacks[@]}"; do
-			[[ $stack == ${SC_NETWORK_NAME}_* ]] && TExPrintf "$stack is being terminated" || break
+			[[ $stack == ${SC_NETWORK_NAME}_* ]] && TEx_Printf "$stack is being terminated" || break
 			out=$( docker stack rm $stack 2>&1 )
-			TExVerify $? "failed to remove $stack: `echo $out`" "$stack services are removed"
+			TEx_Verify $? "failed to remove $stack: $out" "$stack services are removed: $out"
 		done
 		;;
 	"dummy" )
-		TExPrintf "$0 is in dummy mode"
+		TEx_Printf "$0 is in dummy mode"
 		;;
 	* )
 		printHelp
 		;;
 esac
-
 
 # endregion: execute

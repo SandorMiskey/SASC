@@ -25,6 +25,6 @@ _logspout() {
 
 	sleep 3
 }
-TExYN "spin up logspout?" _logspout
+TEx_YN "spin up logspout?" _logspout
 
 curl http://127.0.0.1:${SC_METRICS_LOGSPOUT_PORT}/logs

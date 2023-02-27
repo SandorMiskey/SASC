@@ -4,7 +4,214 @@
 # Copyright TE-FOOD International GmbH., All Rights Reserved
 #
 
-# region: variables
+# region: framework params
+
+TEx_FORCE=true
+TEx_PANIC=true
+TEx_PREREQS=('awk' 'bash' 'curl' 'git' 'go' 'jq' 'cryptogen' 'configtxgen')
+TEx_SILENT=false
+
+# endregion: framework params
+# region: framework functions
+
+function TEx_CheckBase() {
+	if [[ ${SC_PATH_BASE:-"unset"} == "unset" ]]; then
+		false
+	else
+		true
+	fi
+}
+
+function TEx_Defaults() {
+	#
+	# sets default values where applicable
+	#
+
+	[[ ${TEx_BLUE:-"unset"} == "unset" ]] && TEx_BLUE='\033[0;34m'
+	[[ ${TEx_BOLD:-"unset"} == "unset" ]] && TEx_BOLD=$(tput bold)
+	[[ ${TEx_GREEN:-"unset"} == "unset" ]] && TEx_GREEN='\033[0;32m'
+	[[ ${TEx_NORM:-"unset"} == "unset" ]] && TEx_NORM=$(tput sgr0)
+	# [[ ${TEx_NORM:-"unset"} == "unset" ]] && TEx_NORM='\033[0m'
+	[[ ${TEx_RED:-"unset"} == "unset" ]] && TEx_RED='\033[0;31m'
+	[[ ${TEx_YELLOW:-"unset"} == "unset" ]] && TEx_YELLOW='\033[1;33m'
+
+	[[ ${TEx_PREFIX:-"unset"} == "unset" ]] && TEx_PREFIX="==> "
+	[[ ${TEx_SUBPREFIX:-"unset"} == "unset" ]] && TEx_SUBPREFIX="    -> "
+
+	[[ ${TEx_FORCE:-"unset"} == "unset" ]] && TEx_FORCE=false
+	[[ ${TEx_PANIC:-"unset"} == "unset" ]] && TEx_PANIC=false
+	[[ ${TEx_SILENT:-"unset"} == "unset" ]] && TEx_SILENT=false	
+
+	[[ ${TEx_PREREQS:-"unset"} == "unset" ]] && TEx_PREREQS=('sh')
+}
+TEx_Defaults
+
+TEx_Printf() {
+	#
+	# fancy echo
+	#
+	# usage:
+	# -> TEx_Printf "stuff to print" <printf format string>
+	#
+	# possible conf variables:
+	# -> TEx_SILENT=false
+	# -> TEx_PREFIX="===> "
+	# -> TEx_BOLD=$(tput bold)
+	# -> TEx_NORM=$(tput sgr0)
+
+	TEx_Defaults
+	[[ "$TEx_SILENT" == true ]] && return
+	[[ ${2:-"unset"} == "unset" ]] && format="%s\n" || format=$2
+	printf $format "${TEx_PREFIX}$( printf "%s\n" "$1" | head -n 1 )" 
+	# printf $format "${TExPREFIX}$1"
+
+	local lines=$( printf "%s\n" "$1" | wc -l )
+	local cnt=2
+	if [ $lines -gt 1 ]; then
+		while [ $cnt -le $lines ] ; do
+			printf $format "${TEx_SUBPREFIX}$( printf "%s\n" "$1" | tail -n +$cnt | head -n 1 )" 
+			cnt=$(expr $cnt + 1)
+		done
+	fi
+}
+
+function TEx_PrintfBold() {
+	TEx_Printf "$1" "\b${TEx_BOLD}%s${TEx_NORM}\n"
+}
+
+function TEx_Setvar() {
+	target=$1
+	while [[ $target =~ ^(.*)(\{[a-zA-Z0-9_]+\})(.*)$ ]] ; do
+		varname=${BASH_REMATCH[2]}
+		varname=${varname#"{"}
+		varname=${varname%\}}
+		printf -v target "%s%s%s" "${BASH_REMATCH[1]}" "${!varname}" "${BASH_REMATCH[3]}"
+	done
+	printf "%s" $target
+}
+
+function TEx_Sleep() {
+	#
+	# sleep w/ ticker
+	#
+	# usage:
+	# -> TEx_Sleep <secs to sleep> [msg]
+
+	local delay
+	local msg
+	[[ ${1:-"unset"} == "unset" ]] && delay=3 || delay=$1
+	[[ ${2:-"unset"} == "unset" ]] && msg="sleeping for ${delay}s" || msg=$2
+
+	TEx_Printf "$msg" "%s"
+	local cnt
+	for cnt in `seq 1 $delay`; do
+		printf '%s' "."
+		sleep 1
+	done
+	echo
+}
+
+function TEx_Verify() {
+	#
+	# dumps $2 if $1 -ne 0, exits if necessary
+	#
+	# typical usage:
+	# -> TEx_Verify $? "error message"
+	#
+	# possible conf variables:
+	# -> TE_PANIC=false
+
+	TEx_Defaults
+	if [ $1 -ne 0 ]
+	then
+		# >&2 TEx_Printf "$2" "\b${TEx_BOLD}%s${TEx_NORM}\n"
+		>&2 TEx_PrintfBold "$2"
+		if [[ "$TEx_PANIC" == true ]]; then
+			TEx_Printf "TEx_Verify(): TEx_PANIC set to 'true', leaving..." "\b%s\n"
+			exit 1
+		fi
+	else
+		if [ -z ${3+x} ]; then echo -n ""; else TEx_Printf "$3"; fi
+	fi
+}
+
+function TEx_Deps() {
+	#
+	# check if prerequisites are available
+	#
+	# possible conf variables:
+	# -> declare -a TEx_PREREQS=("curl" "git" "etc")
+
+	prereqs=("$@")
+	if [ 1 -gt ${#prereqs[@]} ]; then
+		TEx_Printf "TEx_Deps(): no \$@ passed, using defaults"
+		TEx_Defaults
+		prereqs=("${TEx_PREREQS[@]}")
+		if [ 1 -gt ${#prereqs[@]} ]; then
+			declare -a prereqs=('sh')
+		fi
+	fi
+	TEx_Printf "TEx_Deps(): checking for ${#prereqs[@]} dependencies"
+	
+	for i in "${prereqs[@]}" ; do
+		TEx_Printf "TEx_Deps(): checking for $i and got " "%s"
+		out=$( which $i )
+		
+		if [ $? -ne 0 ]
+		then
+			TEx_Printf nothing
+			TEx_Verify 1 "$i is missing!"
+		else
+			TEx_Printf $out
+		fi
+	done
+
+}
+
+function TEx_YN() {
+	local question=$1
+	shift
+
+	if [ "$TEx_FORCE" == "true" ]; then
+		# TEx_Printf "forced Y for '$question'" "${TEx_BOLD}${TEx_PREFIX}%s${TEx_NORM} \n"
+		# TEx_Printf "TEx_YN(): forced Y for '$question'" "${TEx_BOLD}%s${TEx_NORM}\n"
+		TEx_PrintfBold "TEx_YN(): forced Y for '$question'" 
+		ans="Y"
+	else
+		read -p "${TEx_BOLD}${TEx_PREFIX}$question [Y/n]${TEx_NORM} " ans
+	fi
+	case "$ans" in
+		y | Y | "")
+			"$@"
+			;;
+		n | N)
+			TEx_Printf "skipping"
+			;;
+		*)
+			TEx_Printf "'y' or 'n'"
+			TEx_YN "$question" "$@"
+			;;
+	esac
+}
+
+function TEx_PP() {
+	pushd ${PWD} > /dev/null
+	trap "popd > /dev/null" EXIT
+	cd $1
+}
+
+# export -f TEx_CheckBase
+# export -f TEx_Defaults
+# export -f TEx_Printf
+# export -f TEx_PrintfBold
+# export -f TEx_Setvar
+# export -f TEx_Sleep
+# export -f TEx_Verify
+# export -f TEx_Deps
+# export -f TEx_YN
+# export -f TEx_PP
+
+# endregion: functions
 
 # region: paths
 
@@ -39,7 +246,9 @@ export SC_FABRIC_LOGLEVEL=DEBUG		# FATAL | PANIC | ERROR | WARNING | INFO | DEBU
 export SC_NETWORK_NAME=SASC
 export SC_NETWORK_DOMAIN=${SC_NETWORK_NAME}.te-food.com
 export SC_CHANNEL_PROFILE=TwoOrgsApplicationGenesis
-export SC_CHANNEL_NAME=${SC_NETWORK_NAME}-default
+export SC_CHANNEL_NAME=default
+export SC_CHANNEL_DELAY=3
+export SC_CHANNEL_RETRY=3
 
 # endregion: network and channel
 # region: swarm
@@ -161,186 +370,32 @@ export SC_MGMT_PORTAINER_PASSWORD=$SC_MGMT_PORTAINER_PASSWORD
 export SC_MGMT_PORTAINER_PORT=5070
 
 # endregion: interfaces
-# region: framework params
+# region: workflow and functions
 
-TExFORCE=true
-TExPANIC=true
-TExPREREQS=('awk' 'bash' 'curl' 'git' 'go' 'jq' 'cryptogen' 'configtxgen')
-TExSILENT=false
+export SC_SURE=false
 
-# endregion: framework params
+SC_SetGlobals() {
+	local org=""
+	[[ -z "$1" ]] && org=ORG1 || org=$1
+	org_name="SC_${org^^}_NAME"
+	org_domain="SC_${org^^}_DOMAIN"
+	org_port="SC_${org^^}_P1_PORT"
+	[[ -z "${!org_name}" ]] && TEx_Verify 1 "invalid org ${org} "
+	TEx_Printf "setting globals for ${!org_name}"
 
-# endregion: variables
-# region: framework functions
+	export ORDERER_CA=${SC_PATH_ORGS}/ordererOrganizations/${SC_ORDERER1_DOMAIN}/tlsca/tlsca.${SC_ORDERER1_DOMAIN}-cert.pem
+	export ORDERER_ADMIN_TLS_SIGN_CERT=${SC_PATH_ORGS}/ordererOrganizations/${SC_ORDERER1_DOMAIN}/orderers/${SC_ORDERER1_O1_FQDN}/tls/server.crt
+	export ORDERER_ADMIN_TLS_PRIVATE_KEY=${SC_PATH_ORGS}/ordererOrganizations/${SC_ORDERER1_DOMAIN}/orderers/${SC_ORDERER1_O1_FQDN}/tls/server.key
 
-TExCheckBase() {
-	if [[ ${SC_PATH_BASE:-"unset"} == "unset" ]]; then
-		false
-	else
-		true
-	fi
+	export CORE_PEER_TLS_ENABLED=true
+	export CORE_PEER_LOCALMSPID="${!org_name}MSP"
+	export CORE_PEER_TLS_ROOTCERT_FILE=${SC_PATH_ORGS}/peerOrganizations/${!org_domain}/tlsca/tlsca.${!org_domain}-cert.pem
+	export CORE_PEER_MSPCONFIGPATH=${SC_PATH_ORGS}/peerOrganizations/${!org_domain}/users/Admin@${!org_domain}/msp
+	export CORE_PEER_ADDRESS=localhost:${!org_port}
+
+	TEx_Printf "set orderer variables: $( env | grep ORDERER_ )"
+	TEx_Printf "set org variables: $( env | grep CORE )"
 }
-
-TExDefaults() {
-	#
-	# sets default values where applicable
-	#
-
-	[[ ${TExBLUE:-"unset"} == "unset" ]] && TExBLUE='\033[0;34m'
-	[[ ${TExBOLD:-"unset"} == "unset" ]] && TExBOLD=$(tput bold)
-	[[ ${TExGREEN:-"unset"} == "unset" ]] && TExGREEN='\033[0;32m'
-	[[ ${TExNORM:-"unset"} == "unset" ]] && TExNORM=$(tput sgr0)
-	# [[ ${TExNORM:-"unset"} == "unset" ]] && TExNORM='\033[0m'
-	[[ ${TExRED:-"unset"} == "unset" ]] && TExRED='\033[0;31m'
-	[[ ${TExYELLOW:-"unset"} == "unset" ]] && TExYELLOW='\033[1;33m'
-
-	[[ ${TExPREFIX:-"unset"} == "unset" ]] && TExPREFIX="==> "
-
-	[[ ${TExFORCE:-"unset"} == "unset" ]] && TExFORCE=false
-	[[ ${TExPANIC:-"unset"} == "unset" ]] && TExPANIC=false
-	[[ ${TExSILENT:-"unset"} == "unset" ]] && TExSILENT=false	
-
-	[[ ${TExPREREQS:-"unset"} == "unset" ]] && TExPREREQS=('sh')
-}
-TExDefaults
-
-TExPrintf() {
-	#
-	# fancy echo
-	#
-	# usage:
-	# -> cPrint "stuff to echo" <printf format string>
-	#
-	# possible conf variables:
-	# -> TExSILENT=false
-	# -> TExPREFIX="===> "
-	# -> TExBOLD=$(tput bold)
-	# -> TExNORM=$(tput sgr0)
-
-	TExDefaults
-	[[ "$TExSILENT" == true ]] && return
-	[[ ${2:-"unset"} == "unset" ]] && format="%s\n" || format=$2
-
-	printf $format "${TExPREFIX}$1" 
-}
-
-TExPrintfBold() {
-	TExPrintf "$1" "\b${TExBOLD}%s${TExNORM}\n"
-}
-
-TExSetvar() {
-	target=$1
-	while [[ $target =~ ^(.*)(\{[a-zA-Z0-9_]+\})(.*)$ ]] ; do
-		varname=${BASH_REMATCH[2]}
-		varname=${varname#"{"}
-		varname=${varname%\}}
-		printf -v target "%s%s%s" "${BASH_REMATCH[1]}" "${!varname}" "${BASH_REMATCH[3]}"
-	done
-	printf "%s" $target
-}
-
-TExSleep() {
-	#
-	# sleep w/ ticker
-	#
-	# usage:
-	# -> setSleep <secs to sleep>
-
-	TExPrintf "sleeping for $1" "%s"
-	for cnt in `seq 1 $1`; do
-		printf '%s' "."
-		sleep 1
-	done
-	echo
-}
-
-TExVerify() {
-	#
-	# dumps $2 if $1 -ne 0, exits if necessary
-	#
-	# typical usage:
-	# -> TExVerify $? "error message"
-	#
-	# possible conf variables:
-	# -> TE_PANIC=false
-
-	TExDefaults
-	if [ $1 -ne 0 ]
-	then
-		# >&2 TExPrintf "$2" "\b${TExBOLD}%s${TExNORM}\n"
-		>&2 TExPrintfBold "$2"
-		if [[ "$TExPANIC" == true ]]; then
-			TExPrintf "TExVerify(): TExPANIC set to 'true', leaving..." "\b%s\n"
-			exit 1
-		fi
-	else
-		if [ -z ${3+x} ]; then echo -n ""; else TExPrintf "$3"; fi
-	fi
-}
-
-TExDeps() {
-	#
-	# check if prerequisites are available
-	#
-	# possible conf variables:
-	# -> declare -a TExPREREQS=("curl" "git" "etc")
-
-	prereqs=("$@")
-	if [ 1 -gt ${#prereqs[@]} ]; then
-		TExPrintf "TExDeps(): no \$@ passed, using defaults"
-		TExDefaults
-		prereqs=("${TExPREREQS[@]}")
-		if [ 1 -gt ${#prereqs[@]} ]; then
-			declare -a prereqs=('sh')
-		fi
-	fi
-	TExPrintf "TExDeps(): checking for ${#prereqs[@]} dependencies"
-	
-	for i in "${prereqs[@]}" ; do
-		TExPrintf "TExDeps(): checking for $i and got " "%s"
-		out=$( which $i )
-		
-		if [ $? -ne 0 ]
-		then
-			TExPrintf nothing
-			TExVerify 1 "$i is missing!"
-		else
-			TExPrintf $out
-		fi
-	done
-
-}
-
-TExYN() {
-	local question=$1
-	shift
-
-	if [ "$TExFORCE" == "true" ]; then
-		# TExPrintf "forced Y for '$question'" "${TExBOLD}${TExPREFIX}%s${TExNORM} \n"
-		# TExPrintf "TExYN(): forced Y for '$question'" "${TExBOLD}%s${TExNORM}\n"
-		TExPrintfBold "TExYN(): forced Y for '$question'" 
-		ans="Y"
-	else
-		read -p "${TExBOLD}${TExPREFIX}$question [Y/n]${TExNORM} " ans
-	fi
-	case "$ans" in
-		y | Y | "")
-			"$@"
-			;;
-		n | N)
-			TExPrintf "skipping"
-			;;
-		*)
-			TExPrintf "'y' or 'n'"
-			TExYN "$question" "$@"
-			;;
-	esac
-}
-
-TExPP() {
-	pushd ${PWD} > /dev/null
-	trap "popd > /dev/null" EXIT
-	cd $1
-}
+# [[ -z $BASH ]] || SC_SetGlobals
 
 # endregion: functions
