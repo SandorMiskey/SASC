@@ -12,13 +12,12 @@ if [ ! -f  $SC_PATH_COMMON ]; then
 	exit 1
 fi
 source $SC_PATH_COMMON
-
 TEx_PP $SC_PATH_SCRIPTS
 
 # endregion: common
 # region: functions
 
-printHelp() {
+_printHelp() {
 	TEx_Printf "usage:"
 	TEx_Printf "	$0 [up|down] [flags|stack]"
 	TEx_Printf ""
@@ -29,7 +28,7 @@ printHelp() {
 	exit 1
 }
 
-checkMode() {
+_checkMode() {
 	local mode=$1
 	if [[ "$mode" =~ ^(up|down|dummy)$ ]]; then
 		return 0
@@ -37,7 +36,7 @@ checkMode() {
 	return 1
 }
 
-checkStack() {
+_checkStack() {
 	local stack=$1
 	if [[ "$stack" =~ [^a-zA-Z0-9]  ]]; then
 		return 1
@@ -50,14 +49,15 @@ checkStack() {
 
 mode=""
 if [[ $# -lt 1 ]] ; then
-	printHelp
+	_printHelp
 	exit 0
 else
 	mode=$1
-	checkMode $mode
-	if [ $? -eq 0 ]; then
-		shift
-	fi
+	_checkMode $mode
+	[[ $? -eq 0 ]] && shift
+	# if [ $? -eq 0 ]; then
+	# 	shift
+	# fi
 fi
 
 # endregion: mode
@@ -68,48 +68,52 @@ while [[ $# -ge 1 ]]; do
 	key="$1"
 	case $key in
 	-h )
-		printHelp
+		_printHelp
 		exit 0
 		;;
 	-m )
 		mode=$2
-		checkMode $mode
+		_checkMode $mode
 		if [ $? -ne 0 ]; then
-			printHelp
+			_printHelp
 		fi
 		shift
 		;;
 	-s )
 		stack=$2
-		checkStack $stack
+		_checkStack $stack
 		if [ $? -ne 0 ]; then
-			printHelp
+			_printHelp
 		fi
 		stacks+=("${SC_NETWORK_NAME}_$stack")
+		unset stack
 		shift
 		;;
 	* )
-		checkStack $key
+		_checkStack $key
 		if [ $? -ne 0 ]; then
-			printHelp
+			_printHelp
 		fi
 		stacks+=("${SC_NETWORK_NAME}_$key")
 		;;
 	esac
 	shift
+	unset key
 done
 
 # endregion: glags
 # region: execute
 
-checkMode $mode
+_checkMode $mode
 if [ $? -ne 0 ]; then
-	printHelp
+	_printHelp
 else
 	verb=are
 	(( ${#stacks[@]} == 1 )) && verb=is
 	(( ${#stacks[@]} <  1 )) && joined="all ${SC_NETWORK_NAME} services" || printf -v joined '%s & ' "${stacks[@]}"
 	! [[ $mode == dummy ]] && TEx_Printf "${joined% & } $verb going $mode"
+	unset verb
+	unset joined
 fi
 
 case $mode in
@@ -150,7 +154,7 @@ case $mode in
 				TEx_Verify $? "no config found for $stack $cfg"
 				TEx_Printf "deploying $cfg as ${stack}"
 				out=$( docker stack deploy -c $cfg $stack --with-registry-auth 2>&1 )
-				TEx_Verify $? "failed to deploy $stack: $out" "$stack is deployed: out"
+				TEx_Verify $? "failed to deploy $stack: $out" "$stack is deployed: $out"
 				TEx_Sleep $SC_SWARM_DELAY "waiting ${SC_SWARM_DELAY}s for the startup to finish"
 				unset out
 				unset cfg
@@ -164,14 +168,22 @@ case $mode in
 			[[ $stack == ${SC_NETWORK_NAME}_* ]] && TEx_Printf "$stack is being terminated" || break
 			out=$( docker stack rm $stack 2>&1 )
 			TEx_Verify $? "failed to remove $stack: $out" "$stack services are removed: $out"
+			unset out
 		done
+		unset stack
 		;;
 	"dummy" )
 		TEx_Printf "$0 is in dummy mode"
 		;;
 	* )
-		printHelp
+		_printHelp
 		;;
 esac
+
+unset mode
+unset stacks
+unset _printHelp
+unset _checkMode
+unset _checkStacks
 
 # endregion: execute

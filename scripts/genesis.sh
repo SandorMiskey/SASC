@@ -61,7 +61,7 @@ _WipePersistent() {
 	TEx_Verify $? $err
 }
 
-TEx_YN "wipe persistent data?" _WipePersistent
+[[ "$SC_DRY" == false ]] && TEx_YN "wipe persistent data?" _WipePersistent
 
 # endregion: remove config and persistent data
 # region: process config templates
@@ -87,7 +87,7 @@ _Config() {
 	done
 }
 
-TEx_YN "process templates?" _Config
+[[ "$SC_DRY" == false ]] && TEx_YN "process templates?" _Config
 
 # endregion: process config templates
 # region: org certs w/ cryptogen tool
@@ -118,7 +118,7 @@ _Crypto() {
 	_Config
 }
 
-TEx_YN "regenerate certificates and reprocess config files?" _Crypto
+[[ "$SC_DRY" == false ]] && TEx_YN "regenerate certificates and reprocess config files?" _Crypto
 
 # endregion: org certs
 # region: swarm init and bootstrap stacks
@@ -179,39 +179,76 @@ _SwarmPrune() {
 	unset force
 }
 
-TEx_YN "leave docker swarm?" _SwarmLeave
-TEx_YN "init docker swarm?" _SwarmInit
-TEx_YN "bootstrap stacks?" ${SC_PATH_SCRIPTS}/bootstrap.sh -m up
-TEx_YN "prune networks/volumes/containers/images?" _SwarmPrune
+if [ "$SC_DRY" == false ]; then
+	TEx_YN "leave docker swarm?" _SwarmLeave
+	TEx_YN "init docker swarm?" _SwarmInit
+	TEx_YN "bootstrap stacks?" ${SC_PATH_SCRIPTS}/bootstrap.sh -m up
+	TEx_YN "prune networks/volumes/containers/images?" _SwarmPrune
+fi
 
 # endregion: swarm init and bootstrap stacks
 # region: create channel and join peers
 
 _GenesisBlock() {
 	# set -x
-	configtxgen -profile $SC_CHANNEL_PROFILE -outputBlock "${SC_PATH_ARTIFACTS}/${SC_CHANNEL_NAME}-genesis.block" -configPath "$SC_PATH_CONF" -channelID $SC_CHANNEL_NAME
-	TEx_Verify $? "failed to generate orderer genesis block..."
+	local out=$( configtxgen -profile $SC_CHANNEL_PROFILE -outputBlock "${SC_PATH_ARTIFACTS}/${SC_CHANNEL_NAME}-genesis.block" -configPath "$SC_PATH_CONF" -channelID $SC_CHANNEL_NAME 2>&1 )
+	TEx_Verify $? "failed to generate orderer genesis block: $out" "$out"
 
 }
 
 _CreateChannel() {
-	local rc=1
 	local cnt=1
+	local res=1
 	local out=""
 	SC_SetGlobals org1
 
-	while [ $rc -ne 0 -a $cnt -le $SC_CHANNEL_RETRY ] ; do
+	TEx_Printf "$SC_CHANNEL_RETRY attempts with ${SC_CHANNEL_DELAY}s safety delay to create channel \"${SC_CHANNEL_NAME}\" is being carried out"
+	while [ $res -ne 0 -a $cnt -le $SC_CHANNEL_RETRY ] ; do
+		TEx_Printf "attempt #${cnt}"
 		TEx_Sleep $SC_CHANNEL_DELAY "${SC_CHANNEL_DELAY}s safety delay"
 		out=$( osnadmin channel join --channelID ${SC_CHANNEL_NAME} --config-block "${SC_PATH_ARTIFACTS}/${SC_CHANNEL_NAME}-genesis.block" -o localhost:${SC_ORDERER1_O1_ADMINPORT} --ca-file "$ORDERER_CA" --client-cert "$ORDERER_ADMIN_TLS_SIGN_CERT" --client-key "$ORDERER_ADMIN_TLS_PRIVATE_KEY" )
 		res=$?
-		let rc=$res
 		cnt=$(expr $cnt + 1)
+		TEx_Printf "osnadmin output ($res): $out"
 	done
-	TEx_Printf "osnadmin output: $out"
-	TEx_Verify $res "channel creation failed"
+	TEx_Verify $res "channel creation failed" "channel created successfully"
 }
 
-TEx_YN "create genesis block for $SC_CHANNEL_NAME?" _GenesisBlock
-TEx_YN "create channel $SC_CHANNEL_NAME?" _CreateChannel
+# _JoinPeer() {
+# 	local cnt=1
+# 	local res=1
+# 	SC_SetGlobals $1 $2
+
+# 	TEx_Printf "$SC_CHANNEL_RETRY attempts with ${SC_CHANNEL_DELAY}s safety delay to join $SC_SG_PEER_FQDN to channel \"${SC_CHANNEL_NAME}\" is being carried out"
+# 	while [ $res -ne 0 -a $cnt -le $SC_CHANNEL_RETRY ] ; do
+# 		TEx_Printf "attempt #${cnt}"
+# 		TEx_Sleep $SC_CHANNEL_DELAY "${SC_CHANNEL_DELAY}s safety delay before try #${cnt}"
+# 		export FABRIC_CFG_PATH=${SC_PATH_CONF}/peercfg
+# 		local out=$( peer channel join -b "${SC_PATH_ARTIFACTS}/${SC_CHANNEL_NAME}-genesis.block"  2>&1 )
+# 		res=$?
+# 		cnt=$(expr $cnt + 1)
+# 		TEx_Printf "join output ($res): $out"
+# 	done
+# 	TEx_Verify $res "after $SC_CHANNEL_RETRY attempts, ${SC_SG_PEER_FQDN} has failed to join channel '$SC_CHANNEL_NAME'" "${SC_SG_PEER_FQDN} was successfully joined to channel '$SC_CHANNEL_NAME'"
+# }
+
+# _JoinPeers() {
+# 	_JoinPeer org1 p1
+# 	_JoinPeer org1 p2
+# 	_JoinPeer org2 p1
+# 	_JoinPeer org2 p2
+# }
+
+# _AnchorPeers() {
+# 	docker exec $(docker ps -q -f name=SASC_Interfaces_cli ) ${SC_INTERFACES_CLI_SCRIPTS}/anchor.sh org2 p1 $SC_CHANNEL_NAME
+
+# }
+
+if [ "$SC_DRY" == false ]; then
+	TEx_YN "create genesis block for \"$SC_CHANNEL_NAME\"?" _GenesisBlock
+	TEx_YN "create channel \"$SC_CHANNEL_NAME\"?" _CreateChannel
+	# TEx_YN "join all the peers to \"$SC_CHANNEL_NAME\"?" _JoinPeers
+fi
+# TEx_YN "anchor org to \"$SC_CHANNEL_NAME\"?" _AnchorPeers
 
 # endregion: create channel

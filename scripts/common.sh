@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 #
 # Copyright TE-FOOD International GmbH., All Rights Reserved
@@ -10,6 +10,7 @@ TEx_FORCE=true
 TEx_PANIC=true
 TEx_PREREQS=('awk' 'bash' 'curl' 'git' 'go' 'jq' 'cryptogen' 'configtxgen')
 TEx_SILENT=false
+TEx_VERBOSE=true
 
 # endregion: framework params
 # region: framework functions
@@ -27,26 +28,38 @@ function TEx_Defaults() {
 	# sets default values where applicable
 	#
 
+	# [[ ${TEx_BOLD:-"unset"} == "unset" ]] && TEx_BOLD=$(tput bold)
+	# [[ ${TEx_NORM:-"unset"} == "unset" ]] && TEx_NORM=$(tput sgr0)
 	[[ ${TEx_BLUE:-"unset"} == "unset" ]] && TEx_BLUE='\033[0;34m'
-	[[ ${TEx_BOLD:-"unset"} == "unset" ]] && TEx_BOLD=$(tput bold)
 	[[ ${TEx_GREEN:-"unset"} == "unset" ]] && TEx_GREEN='\033[0;32m'
-	[[ ${TEx_NORM:-"unset"} == "unset" ]] && TEx_NORM=$(tput sgr0)
-	# [[ ${TEx_NORM:-"unset"} == "unset" ]] && TEx_NORM='\033[0m'
+	[[ ${TEx_NORM:-"unset"} == "unset" ]] && TEx_NORM='\033[0m'
 	[[ ${TEx_RED:-"unset"} == "unset" ]] && TEx_RED='\033[0;31m'
 	[[ ${TEx_YELLOW:-"unset"} == "unset" ]] && TEx_YELLOW='\033[1;33m'
+	[[ ${TEx_BOLD:-"unset"} == "unset" ]] && TEx_BOLD=$TEx_YELLOW
 
 	[[ ${TEx_PREFIX:-"unset"} == "unset" ]] && TEx_PREFIX="==> "
 	[[ ${TEx_SUBPREFIX:-"unset"} == "unset" ]] && TEx_SUBPREFIX="    -> "
 
 	[[ ${TEx_FORCE:-"unset"} == "unset" ]] && TEx_FORCE=false
 	[[ ${TEx_PANIC:-"unset"} == "unset" ]] && TEx_PANIC=false
-	[[ ${TEx_SILENT:-"unset"} == "unset" ]] && TEx_SILENT=false	
+	[[ ${TEx_SILENT:-"unset"} == "unset" ]] && TEx_SILENT=false
+	[[ ${TEx_VERBOSE:-"unset"} == "unset" ]] && TEx_VERBOSE=true
 
 	[[ ${TEx_PREREQS:-"unset"} == "unset" ]] && TEx_PREREQS=('sh')
 }
 TEx_Defaults
 
-TEx_Printf() {
+function TEx_JoinArray() {
+	local -n arr=$1
+	[[ ${2:-"unset"} == "unset" ]] && local form="%s\n" || local form="$2"
+	[[ ${3:-"unset"} == "unset" ]] && local cut="" || local cut="$3"
+	local out
+	printf -v out "$form" "${arr[@]}"
+	# printf "${out%$cut}"
+	echo "${out%$cut}"
+}
+
+function TEx_Printf() {
 	#
 	# fancy echo
 	#
@@ -61,6 +74,7 @@ TEx_Printf() {
 
 	TEx_Defaults
 	[[ "$TEx_SILENT" == true ]] && return
+	[[ "$TEx_VERBOSE" == true ]] || return
 	[[ ${2:-"unset"} == "unset" ]] && format="%s\n" || format=$2
 	printf $format "${TEx_PREFIX}$( printf "%s\n" "$1" | head -n 1 )" 
 	# printf $format "${TExPREFIX}$1"
@@ -76,7 +90,11 @@ TEx_Printf() {
 }
 
 function TEx_PrintfBold() {
-	TEx_Printf "$1" "\b${TEx_BOLD}%s${TEx_NORM}\n"
+	[[ ${2:-"unset"} == "unset" ]] && format="%s\n" || format=$2
+	local verbose=$TEx_VERBOSE
+	TEx_VERBOSE=true
+	TEx_Printf "$1" "\b${TEx_BOLD}$format${TEx_NORM}"
+	TEx_VERBOSE=$verbose
 }
 
 function TEx_Setvar() {
@@ -105,10 +123,14 @@ function TEx_Sleep() {
 	TEx_Printf "$msg" "%s"
 	local cnt
 	for cnt in `seq 1 $delay`; do
-		printf '%s' "."
+		TEx_Printf '%s' "."
 		sleep 1
 	done
-	echo
+
+	local prefix=$TEx_PREFIX
+	export TEx_PREFIX=" "
+	TEx_Printf '\n' " "
+	export TEx_PREFIX=$prefix
 }
 
 function TEx_Verify() {
@@ -127,7 +149,7 @@ function TEx_Verify() {
 		# >&2 TEx_Printf "$2" "\b${TEx_BOLD}%s${TEx_NORM}\n"
 		>&2 TEx_PrintfBold "$2"
 		if [[ "$TEx_PANIC" == true ]]; then
-			TEx_Printf "TEx_Verify(): TEx_PANIC set to 'true', leaving..." "\b%s\n"
+			TEx_PrintfBold "TEx_Verify(): TEx_PANIC set to 'true', leaving..."
 			exit 1
 		fi
 	else
@@ -178,7 +200,9 @@ function TEx_YN() {
 		TEx_PrintfBold "TEx_YN(): forced Y for '$question'" 
 		ans="Y"
 	else
-		read -p "${TEx_BOLD}${TEx_PREFIX}$question [Y/n]${TEx_NORM} " ans
+		TEx_PrintfBold "$question [Y/n] " "%s"
+		read ans
+		# read -p "${TEx_BOLD}${TEx_PREFIX}$question [Y/n]${TEx_NORM} " ans
 	fi
 	case "$ans" in
 		y | Y | "")
@@ -213,6 +237,12 @@ function TEx_PP() {
 
 # endregion: functions
 
+# region: workflow
+
+export SC_SURE=false
+export SC_DRY=false
+
+# endregion: workflow
 # region: paths
 
 export SC_PATH_BASE=$SC_PATH_BASE
@@ -256,7 +286,7 @@ export SC_CHANNEL_RETRY=3
 export SC_SWARM_MANAGER=ip-10-97-85-63
 export SC_SWARM_NETWORK="--attachable --driver overlay --subnet 10.96.0.0/24 $SC_NETWORK_NAME"
 export SC_SWARM_INIT="--advertise-addr 35.158.186.93:2377 --listen-addr 0.0.0.0:2377 --cert-expiry 1000000h0m0s"
-export SC_SWARM_DELAY=1
+export SC_SWARM_DELAY=2
 
 # endregion: swarm
 # region: orgs
@@ -355,6 +385,8 @@ export SC_UID=$SC_UID
 export SC_GID=$SC_GID
 
 export SC_INTERFACES_CLI_HOST=$SC_SWARM_MANAGER
+export SC_INTERFACES_CLI_WD=/opt/gopath/src/github.com/hyperledger/fabric/peer
+export SC_INTERFACES_CLI_SCRIPTS=${SC_INTERFACES_CLI_WD}/scripts
 
 export SC_METRICS_HOST=$SC_SWARM_MANAGER
 export SC_METRICS_VISUALIZER_PORT=5050
@@ -370,18 +402,26 @@ export SC_MGMT_PORTAINER_PASSWORD=$SC_MGMT_PORTAINER_PASSWORD
 export SC_MGMT_PORTAINER_PORT=5070
 
 # endregion: interfaces
-# region: workflow and functions
-
-export SC_SURE=false
+# region: functions
 
 SC_SetGlobals() {
 	local org=""
+	local peer=""
 	[[ -z "$1" ]] && org=ORG1 || org=$1
-	org_name="SC_${org^^}_NAME"
-	org_domain="SC_${org^^}_DOMAIN"
-	org_port="SC_${org^^}_P1_PORT"
-	[[ -z "${!org_name}" ]] && TEx_Verify 1 "invalid org ${org} "
-	TEx_Printf "setting globals for ${!org_name}"
+	[[ -z "$2" ]] && peer=P1 || peer=$2
+	local org_name="SC_${org^^}_NAME"
+	local org_domain="SC_${org^^}_DOMAIN"
+	local peer_name="SC_${org^^}_${peer^^}_NAME"
+	local peer_port="SC_${org^^}_${peer^^}_PORT"
+	[[ -z "${!org_name}" ]] && TEx_Verify 1 "invalid org ${org}"
+	[[ -z "${!peer_name}" ]] && TEx_Verify 1 "invalid peer ${peer}"
+	TEx_Printf "setting globals for ${!peer_name}.${!org_domain}"
+
+	export SC_SG_ORG_NAME=${!org_name}
+	export SC_SG_ORG_DOMAIN=${!org_name}.${SC_NETWORK_DOMAIN}
+	export SC_SG_PEER_NAME=${!peer_name}
+	export SC_SG_PEER_FQDN=${!peer_name}.${!org_name}.${SC_NETWORK_DOMAIN}
+	export SC_SG_PEER_PORT=${!peer_port}
 
 	export ORDERER_CA=${SC_PATH_ORGS}/ordererOrganizations/${SC_ORDERER1_DOMAIN}/tlsca/tlsca.${SC_ORDERER1_DOMAIN}-cert.pem
 	export ORDERER_ADMIN_TLS_SIGN_CERT=${SC_PATH_ORGS}/ordererOrganizations/${SC_ORDERER1_DOMAIN}/orderers/${SC_ORDERER1_O1_FQDN}/tls/server.crt
@@ -391,11 +431,41 @@ SC_SetGlobals() {
 	export CORE_PEER_LOCALMSPID="${!org_name}MSP"
 	export CORE_PEER_TLS_ROOTCERT_FILE=${SC_PATH_ORGS}/peerOrganizations/${!org_domain}/tlsca/tlsca.${!org_domain}-cert.pem
 	export CORE_PEER_MSPCONFIGPATH=${SC_PATH_ORGS}/peerOrganizations/${!org_domain}/users/Admin@${!org_domain}/msp
-	export CORE_PEER_ADDRESS=localhost:${!org_port}
-
-	TEx_Printf "set orderer variables: $( env | grep ORDERER_ )"
-	TEx_Printf "set org variables: $( env | grep CORE )"
+	export CORE_PEER_ADDRESS=localhost:${!peer_port}
 }
 # [[ -z $BASH ]] || SC_SetGlobals
+
+SC_SetGlobalsCLI() {
+	SC_SetGlobals $1 $2
+	export CORE_PEER_ADDRESS=${SC_SG_PEER_FQDN}:${SC_SG_PEER_PORT} 
+}
+
+# SC_FetchChannelConfig() {
+# 	[[ -z "$1" ]] && local output=$( mktemp "${TMPDIR:-/tmp/}$(basename "$0").XXXXXX" ) || local output=$1
+# 	[[ -z "$2" ]] && local ch=$SC_CHANNEL_NAME || local ch=$2
+# 	[[ -z "$3" ]] && local org=ORG1 || local org=$3
+# 	local raw=$( mktemp "${TMPDIR:-/tmp/}$(basename "$0").XXXXXX" )
+# 	local decoded=$( mktemp "${TMPDIR:-/tmp/}$(basename "$0").XXXXXX" )
+# 	local out="-"
+
+# 	SC_SetGlobalsCLI $org
+
+# 	TEx_Printf "fetching the most recent configuration block for channel \"$ch\""
+# 	# out=$( peer channel fetch config "$raw" -o ${SC_ORDERER1_O1_FQDN}:${SC_ORDERER1_O1_PORT} --ordererTLSHostnameOverride ${SC_ORDERER1_O1_FQDN} -c $ch --tls --cafile "$ORDERER_CA" 2>&1 )
+# 	out=$( peer channel fetch config "$raw" -o localhost:${SC_ORDERER1_O1_PORT} --ordererTLSHostnameOverride localhost -c $ch --tls --cafile "$ORDERER_CA" 2>&1 )
+# 	TEx_Verify $? "unable to fetch confguration: $out" "raw data writen to \"${raw}\": $out"
+
+# 	TEx_Printf "decoding config block to JSON"
+# 	out=$( configtxlator proto_decode --input "$raw" --type common.Block --output "$decoded" 2>&1 )
+# 	out=${out:--}
+# 	TEx_Verify $? "unable to decode raw data: $out" "decoded data writen to \"$decoded\": $out"
+
+# 	TEx_Printf "isolating config to $output"
+# 	out=$( jq .data.data[0].payload.data.config $decoded > $output )
+# 	TEx_Verify $? "unable to isolate config: $out" "config isolated to $output"
+
+# 	# rm "$raw"
+# 	# rm "$decoded"
+# }
 
 # endregion: functions

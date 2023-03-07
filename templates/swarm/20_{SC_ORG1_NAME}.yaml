@@ -148,8 +148,8 @@ services:
       ${SC_NETWORK_NAME}:
         aliases:
           - ${SC_ORG1_P2_FQDN}
-    # ports:
-    #   - ${SC_ORG1_P2_PORT}:${SC_ORG1_P2_PORT}
+    ports:
+      - ${SC_ORG1_P2_PORT}:${SC_ORG1_P2_PORT}
     #   - ${SC_ORG1_P2_OPPORT}:${SC_ORG1_P2_OPPORT}
     volumes:
         - ${SC_PATH_ORGS}/peerOrganizations/${SC_ORG1_DOMAIN}/peers/${SC_ORG1_P2_FQDN}:/etc/hyperledger/fabric

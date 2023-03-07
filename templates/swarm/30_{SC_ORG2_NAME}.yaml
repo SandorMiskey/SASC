@@ -13,7 +13,7 @@ services:
     command: peer node start
     depends_on:
       - ${SC_ORG2_C1_FQDN}
-    deploy:                                                                                                                                                                                                
+    deploy:
       placement:
         constraints: [ node.hostname == ${SC_ORG2_P1_WORKER} ]
       replicas: 1
@@ -60,8 +60,8 @@ services:
       ${SC_NETWORK_NAME}:
         aliases:
           - ${SC_ORG2_P1_FQDN}
-    # ports:
-    #   - ${SC_ORG2_P1_PORT}:${SC_ORG2_P1_PORT}
+    ports:
+      - ${SC_ORG2_P1_PORT}:${SC_ORG2_P1_PORT}
     #   - ${SC_ORG2_P1_OPPORT}:${SC_ORG2_P1_OPPORT}
     volumes:
         - ${SC_PATH_ORGS}/peerOrganizations/${SC_ORG2_DOMAIN}/peers/${SC_ORG2_P1_FQDN}:/etc/hyperledger/fabric
@@ -101,7 +101,7 @@ services:
     command: peer node start
     depends_on:
       - ${SC_ORG2_C2_FQDN}
-    deploy:                                                                                                                                                                                                
+    deploy:
       placement:
         constraints: [ node.hostname == ${SC_ORG2_P2_WORKER} ]
       replicas: 1
@@ -148,8 +148,8 @@ services:
       ${SC_NETWORK_NAME}:
         aliases:
           - ${SC_ORG2_P2_FQDN}
-    # ports:
-    #   - ${SC_ORG2_P2_PORT}:${SC_ORG2_P2_PORT}
+    ports:
+      - ${SC_ORG2_P2_PORT}:${SC_ORG2_P2_PORT}
     #   - ${SC_ORG2_P2_OPPORT}:${SC_ORG2_P2_OPPORT}
     volumes:
         - ${SC_PATH_ORGS}/peerOrganizations/${SC_ORG2_DOMAIN}/peers/${SC_ORG2_P2_FQDN}:/etc/hyperledger/fabric

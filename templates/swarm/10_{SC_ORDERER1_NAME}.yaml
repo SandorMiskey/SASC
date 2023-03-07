@@ -44,7 +44,7 @@ services:
       - ${SC_PATH_CHAINS}/${SC_ORDERER1_NAME}/${SC_ORDERER1_O1_NAME}:/var/hyperledger/production/orderer
       - ${SC_PATH_ARTIFACTS}/${SC_CHANNEL_NAME}-genesis.block:/var/hyperledger/orderer/${SC_CHANNEL_NAME}-genesis.block
     ports:
-    #   - ${SC_ORDERER1_O1_PORT}:${SC_ORDERER1_O1_PORT}
+      - ${SC_ORDERER1_O1_PORT}:${SC_ORDERER1_O1_PORT}
       - ${SC_ORDERER1_O1_ADMINPORT}:${SC_ORDERER1_O1_ADMINPORT}
     #   - ${SC_ORDERER1_O1_OPPORT}:${SC_ORDERER1_O1_OPPORT}
     deploy:                                                                                                                                                                                                

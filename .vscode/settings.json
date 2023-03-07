@@ -1,5 +1,6 @@
 {
   "cSpell.words": [
+    "CCAAS",
     "configtxgen",
     "erba",
     "fasthttprouter",
@@ -7,6 +8,7 @@
     "instanceregister",
     "instanceroot",
     "Loglevel",
+    "logspout",
     "mgmt",
     "multierr",
     "Rasa",
