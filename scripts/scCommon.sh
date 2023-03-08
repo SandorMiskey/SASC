@@ -4,15 +4,6 @@
 # Copyright TE-FOOD International GmbH., All Rights Reserved
 #
 
-# region: framework params
-
-TEx_FORCE=true
-TEx_PANIC=true
-TEx_PREREQS=('awk' 'bash' 'curl' 'git' 'go' 'jq' 'cryptogen' 'configtxgen')
-TEx_SILENT=false
-TEx_VERBOSE=true
-
-# endregion: framework params
 # region: framework functions
 
 function TEx_CheckBase() {
@@ -254,7 +245,15 @@ function TEx_PP() {
 
 # endregion: functions
 
-# region: workflow
+# region: framework and sworkflow
+
+export TEx_FORCE=true
+export TEx_PANIC=true
+export TEx_PREREQS=('awk' 'bash' 'curl' 'git' 'go' 'jq' 'cryptogen' 'configtxgen')
+export TEx_SILENT=false
+export TEx_VERBOSE=true
+# export TEx_COMMON=$SC_PATH_COMMON
+# export TEx_BASE=$SC_PATH_BASE
 
 export SC_SURE=false
 export SC_DRY=false
@@ -266,9 +265,9 @@ export SC_PATH_BASE=$SC_PATH_BASE
 export SC_PATH_COMMON=$SC_PATH_COMMON
 export SC_PATH_TEMPLATES=${SC_PATH_BASE}/templates
 export SC_PATH_SCRIPTS=${SC_PATH_BASE}/scripts
-export SC_PATH_DATA=${SC_PATH_BASE}/data
+export SC_PATH_DATA=${SC_PATH_BASE}/storage
 export SC_PATH_ARTIFACTS=${SC_PATH_DATA}/artifacts
-export SC_PATH_CHAINS=${SC_PATH_DATA}/storage
+export SC_PATH_CHAINS=${SC_PATH_DATA}/data
 export SC_PATH_CONF=${SC_PATH_DATA}/conf
 export SC_PATH_ORGS=${SC_PATH_DATA}/orgs
 export SC_PATH_SWARM=${SC_PATH_DATA}/swarm
