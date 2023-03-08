@@ -24,10 +24,8 @@
    [4.](https://hub.docker.com/r/itsthenetwork/nfs-server-alpine)
    [5.](https://blog.ruanbekker.com/blog/2020/09/20/setup-a-nfs-server-with-docker/)
 7. swarm worker setup (over ssh, w/ nfs)
-8. genesis.sh functions into independent scripts or functions
-   1. GenesisBlock() and CreateChannel() -> createChannel.sh
-   2. JoinPeer() -> joinPeer.sh
-9. split framework functions (goes to dedicated repo, will be used as a submodule), SC_* functions and variables in common.sh
+8. split framework functions/variables (move them to dedicated repo, will be used as a submodule), SC_* functions/variables in common.sh
+9. make sc*.sh (bootstrap, genesis...) scripts source-able (dummy mode, rename functions)s
 10. CA
 11. syslog (w/ logspout)?
 12. dedicated mgmt/metrics network?

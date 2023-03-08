@@ -182,7 +182,7 @@ _SwarmPrune() {
 if [ "$SC_DRY" == false ]; then
 	TEx_YN "leave docker swarm?" _SwarmLeave
 	TEx_YN "init docker swarm?" _SwarmInit
-	TEx_YN "bootstrap stacks?" ${SC_PATH_SCRIPTS}/bootstrap.sh -m up
+	TEx_YN "bootstrap stacks?" ${SC_PATH_SCRIPTS}/scBootstrap.sh -m up
 	TEx_YN "prune networks/volumes/containers/images?" _SwarmPrune
 fi
 
