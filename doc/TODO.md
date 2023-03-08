@@ -25,7 +25,7 @@
    [5.](https://blog.ruanbekker.com/blog/2020/09/20/setup-a-nfs-server-with-docker/)
 7. swarm worker setup (over ssh, w/ nfs)
 8. split framework functions/variables (move them to dedicated repo, will be used as a submodule), SC_* functions/variables in common.sh
-9. make sc*.sh (bootstrap, genesis...) scripts source-able (dummy mode, rename functions)s
+9. make sc*.sh (bootstrap, genesis...) scripts source-able and generic: dummy mode, rename functions, eliminate SC_* variables
 10. CA
 11. syslog (w/ logspout)?
 12. dedicated mgmt/metrics network?

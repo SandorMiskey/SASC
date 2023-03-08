@@ -28,24 +28,41 @@ function TEx_Defaults() {
 	# sets default values where applicable
 	#
 
-	# [[ ${TEx_BOLD:-"unset"} == "unset" ]] && TEx_BOLD=$(tput bold)
-	# [[ ${TEx_NORM:-"unset"} == "unset" ]] && TEx_NORM=$(tput sgr0)
-	[[ ${TEx_BLUE:-"unset"} == "unset" ]] && TEx_BLUE='\033[0;34m'
-	[[ ${TEx_GREEN:-"unset"} == "unset" ]] && TEx_GREEN='\033[0;32m'
-	[[ ${TEx_NORM:-"unset"} == "unset" ]] && TEx_NORM='\033[0m'
-	[[ ${TEx_RED:-"unset"} == "unset" ]] && TEx_RED='\033[0;31m'
-	[[ ${TEx_YELLOW:-"unset"} == "unset" ]] && TEx_YELLOW='\033[1;33m'
-	[[ ${TEx_BOLD:-"unset"} == "unset" ]] && TEx_BOLD=$TEx_YELLOW
+	# [[ ${TEx_BOLD:-"unset"} == "unset" ]]		&& TEx_BOLD=$(tput bold)
+	# [[ ${TEx_NORM:-"unset"} == "unset" ]]		&& TEx_NORM=$(tput sgr0)
+	[[ ${TEx_BLUE:-"unset"} == "unset" ]]		&& TEx_BLUE='\033[0;34m'
+	[[ ${TEx_GREEN:-"unset"} == "unset" ]]		&& TEx_GREEN='\033[0;32m'
+	[[ ${TEx_NORM:-"unset"} == "unset" ]]		&& TEx_NORM='\033[0m'
+	[[ ${TEx_RED:-"unset"} == "unset" ]]		&& TEx_RED='\033[0;31m'
+	[[ ${TEx_YELLOW:-"unset"} == "unset" ]]		&& TEx_YELLOW='\033[1;33m'
+	[[ ${TEx_BOLD:-"unset"} == "unset" ]]		&& TEx_BOLD=$TEx_YELLOW
 
-	[[ ${TEx_PREFIX:-"unset"} == "unset" ]] && TEx_PREFIX="==> "
-	[[ ${TEx_SUBPREFIX:-"unset"} == "unset" ]] && TEx_SUBPREFIX="    -> "
+	[[ ${TEx_PREFIX:-"unset"} == "unset" ]]		&& TEx_PREFIX="==> "
+	[[ ${TEx_SUBPREFIX:-"unset"} == "unset" ]]	&& TEx_SUBPREFIX="    -> "
 
-	[[ ${TEx_FORCE:-"unset"} == "unset" ]] && TEx_FORCE=false
-	[[ ${TEx_PANIC:-"unset"} == "unset" ]] && TEx_PANIC=false
-	[[ ${TEx_SILENT:-"unset"} == "unset" ]] && TEx_SILENT=false
-	[[ ${TEx_VERBOSE:-"unset"} == "unset" ]] && TEx_VERBOSE=true
+	[[ ${TEx_FORCE:-"unset"} == "unset" ]]		&& TEx_FORCE=false
+	[[ ${TEx_PANIC:-"unset"} == "unset" ]]		&& TEx_PANIC=false
+	[[ ${TEx_SILENT:-"unset"} == "unset" ]]		&& TEx_SILENT=false
+	[[ ${TEx_VERBOSE:-"unset"} == "unset" ]]	&& TEx_VERBOSE=true
 
-	[[ ${TEx_PREREQS:-"unset"} == "unset" ]] && TEx_PREREQS=('sh')
+	[[ ${TEx_PREREQS:-"unset"} == "unset" ]]	&& TEx_PREREQS=('sh')
+
+	if [[ -z $BASH ]]; then
+		[[ ${TEx_COMMON:-"unset"} == "unset" ]]	&& TEx_COMMON=$funcstack[-1]
+		[[ ${TEx_BASE:-"unset"} == "unset" ]]	&& TEx_BASE=$(dirname "$TEx_COMMON")
+	else
+		_common=${BASH_SOURCE[0]}
+		while [ -L "$_common" ]; do
+			_base=$( cd -P "$( dirname "$_common" )" >/dev/null 2>&1 && pwd )
+			_common=$(readlink "$_common")
+			[[ $_common != /* ]] && _common=$_base/$_common
+		done
+		_base=$( cd -P "$( dirname "$_common" )" >/dev/null 2>&1 && pwd )
+
+		[[ ${TEx_BASE:-"unset"} == "unset" ]]	&& TEx_BASE=$_base
+		[[ ${TEx_COMMON:-"unset"} == "unset" ]]	&& TEx_COMMON=$_common
+		unset _base _common
+	fi
 }
 TEx_Defaults
 
