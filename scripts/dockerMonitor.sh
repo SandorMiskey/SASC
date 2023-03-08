@@ -12,6 +12,15 @@ fi
 source $TEx_COMMON
 TEx_PP $TEx_BASE
 
+#
+
+re='^[0-9]+$'
+port="$1"
+[[ -z $port ]] && port=5055
+[[ $port =~ $re ]] || TEx_Verify 1 "usage: $0 [optional port, must be a number]"
+
+#
+
 _logspout() {
 	docker kill logspout 2> /dev/null 1>&2 || true
 	docker rm logspout 2> /dev/null 1>&2 || true
@@ -20,12 +29,14 @@ _logspout() {
 
 	docker run -d --rm --name="logspout"					\
 		--volume=/var/run/docker.sock:/var/run/docker.sock	\
- 		--publish=127.0.0.1:${SC_METRICS_LOGSPOUT_PORT}:80	\
- 		--network  ${SC_NETWORK_NAME}						\
+ 		--publish=127.0.0.1:${port}:80						\
 	 	gliderlabs/logspout
 
-	sleep 3
+	TEx_Sleep 3
 }
 TEx_YN "spin up logspout?" _logspout
 
-curl http://127.0.0.1:${SC_METRICS_LOGSPOUT_PORT}/logs
+curl http://127.0.0.1:${port}/logs
+
+unset re
+unset port
