@@ -16,7 +16,7 @@ services:
     stdin_open: true
     environment:
       - SC_PATH_BASE=${SC_INTERFACES_CLI_WD}
-      - SC_PATH_COMMON=${SC_INTERFACES_CLI_SCRIPTS}/common.sh
+      - TEx_COMMON=${SC_INTERFACES_CLI_SCRIPTS}/common.sh
       - GOPATH=/opt/gopath
       - FABRIC_LOGGING_SPEC=${SC_FABRIC_LOGLEVEL}
       - FABRIC_CFG_PATH=/etc/hyperledger/peercfg

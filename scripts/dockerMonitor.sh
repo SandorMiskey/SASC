@@ -4,12 +4,13 @@
 # Copyright TE-FOOD International GmbH., All Rights Reserved
 #
 
-[[ ${SC_PATH_COMMON:-"unset"} == "unset" ]] && SC_PATH_COMMON="./common.sh"
-if [ ! -f  $SC_PATH_COMMON ]; then
-	echo "=> ./common.sh not found, make sure SC_PATH_COMMON is set or you execute this from the repo's 'scrips' directory!"
+[[ ${TEx_COMMON:-"unset"} == "unset" ]] && TEx_COMMON="./common.sh"
+if [ ! -f  $TEx_COMMON ]; then
+	echo "=> $TEx_COMMON not found, make sure proper path is set or you execute this from the repo's 'scrips' directory!"
 	exit 1
 fi
-source $SC_PATH_COMMON
+source $TEx_COMMON
+TEx_PP $TEx_BASE
 
 _logspout() {
 	docker kill logspout 2> /dev/null 1>&2 || true

@@ -252,8 +252,7 @@ export TEx_PANIC=true
 export TEx_PREREQS=('awk' 'bash' 'curl' 'git' 'go' 'jq' 'cryptogen' 'configtxgen')
 export TEx_SILENT=false
 export TEx_VERBOSE=true
-# export TEx_COMMON=$SC_PATH_COMMON
-# export TEx_BASE=$SC_PATH_BASE
+export TEx_COMMON=$TEx_COMMON
 
 export SC_SURE=false
 export SC_DRY=false
@@ -262,7 +261,6 @@ export SC_DRY=false
 # region: paths
 
 export SC_PATH_BASE=$SC_PATH_BASE
-export SC_PATH_COMMON=$SC_PATH_COMMON
 export SC_PATH_TEMPLATES=${SC_PATH_BASE}/templates
 export SC_PATH_SCRIPTS=${SC_PATH_BASE}/scripts
 export SC_PATH_DATA=${SC_PATH_BASE}/storage
