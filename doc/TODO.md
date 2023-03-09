@@ -1,11 +1,11 @@
 # todo
 
-1. genesis: gen env files
-2. create channel sh (1. generic SC_createChannel func 2. wrap it around with sh)
+1. create channel sh (1. generic SC_createChannel func 2. wrap it around with sh)
    1. source "-f env file"
    2. _GenesisBlock & _CreateChannel -> SC_CreateChannel()
    3. shell script wrapper for SC_CreateChannel()
    4. from swarm host and from cli container
+2. dockerExec, scBootstrap long options
 3. join peer sh
 4. fetch config sh
 5. anchor.sh

@@ -23,7 +23,7 @@ _printHelp() {
 	TEx_Printf ""
 	TEx_Printf "flags:"
 	TEx_Printf "	-h - print this message "
-	TEx_Printf "	-m <up|done> - start or stop stacks"
+	TEx_Printf "	-m <up|down> - start or stop stacks"
 	TEx_Printf "	-s name - stack (name must be alphanumeric) to bring in the direction of -m"
 	exit 1
 }
@@ -65,8 +65,7 @@ fi
 
 declare -a stacks=()
 while [[ $# -ge 1 ]]; do
-	key="$1"
-	case $key in
+	case $1 in
 	-h )
 		_printHelp
 		exit 0
