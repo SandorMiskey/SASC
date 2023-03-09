@@ -54,10 +54,10 @@ TEx_YN "validate ca binary versions?" _CAVersions
 # region: remove config and persistent data
 
 _WipePersistent() {
-	TEx_Printf "removing $SC_PATH_DATA"
-	err=$( sudo rm -Rf "$SC_PATH_DATA" )
+	TEx_Printf "removing $SC_PATH_STORAGE"
+	err=$( sudo rm -Rf "$SC_PATH_STORAGE" )
 	TEx_Verify $? $err
-	err=$( mkdir "$SC_PATH_DATA" )
+	err=$( mkdir "$SC_PATH_STORAGE" )
 	TEx_Verify $? $err
 }
 
@@ -73,7 +73,7 @@ _Config() {
 	TEx_Printf "processing templates:"
 	for template in $( find $SC_PATH_TEMPLATES/* ! -name '.*' -print ); do
 		target=$( TEx_Setvar $template )
-		target=$( echo $target | sed s+$SC_PATH_TEMPLATES+$SC_PATH_DATA+ )
+		target=$( echo $target | sed s+$SC_PATH_TEMPLATES+$SC_PATH_STORAGE+ )
 		TEx_Printf "$template -> $target"
 		if [[ -d $template ]]; then
 			err=$( mkdir -p "$target" )

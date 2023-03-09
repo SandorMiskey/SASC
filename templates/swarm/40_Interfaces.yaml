@@ -15,8 +15,8 @@ services:
     tty: true
     stdin_open: true
     environment:
-      - SC_PATH_BASE=${SC_INTERFACES_CLI_WD}
-      - TEx_COMMON=${SC_INTERFACES_CLI_SCRIPTS}/common.sh
+      - SC_PATH_BASE=${SC_INTERFACES_CLI_BASE}
+      - TEx_COMMON=${SC_INTERFACES_CLI_COMMON}
       - GOPATH=/opt/gopath
       - FABRIC_LOGGING_SPEC=${SC_FABRIC_LOGLEVEL}
       - FABRIC_CFG_PATH=/etc/hyperledger/peercfg
@@ -27,15 +27,15 @@ services:
       - CORE_PEER_ADDRESS=${SC_ORG1_P1_FQDN}:${SC_ORG1_P1_PORT}
       - CORE_PEER_LOCALMSPID=${SC_ORG1_NAME}MSP
       - CORE_PEER_TLS_ENABLED=true
-      - CORE_PEER_TLS_CERT_FILE=${SC_INTERFACES_CLI_WD}/orgs/peerOrganizations/${SC_ORG1_DOMAIN}/peers/${SC_ORG1_P1_FQDN}/tls/server.crt
-      - CORE_PEER_TLS_KEY_FILE=${SC_INTERFACES_CLI_WD}/orgs/peerOrganizations/${SC_ORG1_DOMAIN}/peers/${SC_ORG1_P1_FQDN}/tls/server.key
-      - CORE_PEER_TLS_ROOTCERT_FILE=${SC_INTERFACES_CLI_WD}/orgs/peerOrganizations/${SC_ORG1_DOMAIN}/peers/${SC_ORG1_P1_FQDN}/tls/ca.crt
-      - CORE_PEER_MSPCONFIGPATH=${SC_INTERFACES_CLI_WD}/orgs/peerOrganizations/${SC_ORG1_DOMAIN}/users/Admin@${SC_ORG1_DOMAIN}/msp
-    working_dir: ${SC_INTERFACES_CLI_WD}
+      - CORE_PEER_TLS_CERT_FILE=${SC_INTERFACES_CLI_ORGS}/peerOrganizations/${SC_ORG1_DOMAIN}/peers/${SC_ORG1_P1_FQDN}/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=${SC_INTERFACES_CLI_ORGS}/peerOrganizations/${SC_ORG1_DOMAIN}/peers/${SC_ORG1_P1_FQDN}/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=${SC_INTERFACES_CLI_ORGS}/peerOrganizations/${SC_ORG1_DOMAIN}/peers/${SC_ORG1_P1_FQDN}/tls/ca.crt
+      - CORE_PEER_MSPCONFIGPATH=${SC_INTERFACES_CLI_ORGS}/peerOrganizations/${SC_ORG1_DOMAIN}/users/Admin@${SC_ORG1_DOMAIN}/msp
+    working_dir: ${SC_INTERFACES_CLI_BASE}
     command: /bin/bash
     volumes:
-      # - ${SC_PATH_ORGS}:${SC_INTERFACES_CLI_WD}/orgs
-      - ${SC_PATH_DATA}:${SC_INTERFACES_CLI_WD}/data
+      # - ${SC_PATH_ORGS}:${SC_INTERFACES_CLI_BASE}/orgs
+      - ${SC_PATH_STORAGE}:${SC_INTERFACES_CLI_STORAGE}
       - ${SC_PATH_SCRIPTS}:${SC_INTERFACES_CLI_SCRIPTS}
       - ${SC_PATH_CONF}/peercfg:/etc/hyperledger/peercfg
       # - ${CHAINCODE}:/opt/gopath/src/github.com/chaincode

@@ -54,7 +54,7 @@ services:
       # - "9000:9000"   # ?
       # - "8000:8000"   # TCP tunnel server over port, only required if you plan to use the Edge compute features with Edge agents.
     volumes:
-      - ${SC_PATH_CHAINS}/portainer:/data
+      - ${SC_PATH_DATA}/portainer:/data
     networks:
       ${SC_NETWORK_NAME}:
         aliases:

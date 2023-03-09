@@ -65,7 +65,7 @@ services:
     #   - ${SC_ORG1_P1_OPPORT}:${SC_ORG1_P1_OPPORT}
     volumes:
         - ${SC_PATH_ORGS}/peerOrganizations/${SC_ORG1_DOMAIN}/peers/${SC_ORG1_P1_FQDN}:/etc/hyperledger/fabric
-        - ${SC_PATH_CHAINS}/${SC_ORG1_NAME}/${SC_ORG1_P1_NAME}:/var/hyperledger/production
+        - ${SC_PATH_DATA}/${SC_ORG1_NAME}/${SC_ORG1_P1_NAME}:/var/hyperledger/production
         - ${SC_PATH_CONF}/peercfg:/etc/hyperledger/peercfg
         # - ${DOCKER_SOCK}:/host/var/run/docker.sock
         # - /var/run/:/host/var/run/
@@ -153,7 +153,7 @@ services:
     #   - ${SC_ORG1_P2_OPPORT}:${SC_ORG1_P2_OPPORT}
     volumes:
         - ${SC_PATH_ORGS}/peerOrganizations/${SC_ORG1_DOMAIN}/peers/${SC_ORG1_P2_FQDN}:/etc/hyperledger/fabric
-        - ${SC_PATH_CHAINS}/${SC_ORG1_NAME}/${SC_ORG1_P2_NAME}:/var/hyperledger/production
+        - ${SC_PATH_DATA}/${SC_ORG1_NAME}/${SC_ORG1_P2_NAME}:/var/hyperledger/production
         - ${SC_PATH_CONF}/peercfg:/etc/hyperledger/peercfg
         # - ${DOCKER_SOCK}:/host/var/run/docker.sock
         # - /var/run/:/host/var/run/

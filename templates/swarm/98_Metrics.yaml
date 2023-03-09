@@ -51,7 +51,7 @@ services:
           - prometheus
     volumes:
       - ${SC_PATH_CONF}/prometheus.yml:/etc/prometheus/prometheus.yml
-      - ${SC_PATH_CHAINS}/prometheus:/prometheus:rw
+      - ${SC_PATH_DATA}/prometheus:/prometheus:rw
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
@@ -127,7 +127,7 @@ services:
     ports:
       - ${SC_METRICS_GRAFANA_PORT}:3000
     volumes:
-      - ${SC_PATH_CHAINS}/grafana:/var/lib/grafana:rw
+      - ${SC_PATH_DATA}/grafana:/var/lib/grafana:rw
       - ${SC_PATH_CONF}/grafana/provisioning/:/etc/grafana/provisioning/
     env_file:
       - ${SC_PATH_CONF}/grafana/config.monitoring

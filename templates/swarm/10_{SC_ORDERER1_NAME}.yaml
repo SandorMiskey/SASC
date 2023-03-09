@@ -41,7 +41,7 @@ services:
     volumes:
       - ${SC_PATH_ORGS}/ordererOrganizations/${SC_ORDERER1_DOMAIN}/orderers/${SC_ORDERER1_O1_FQDN}/msp:/var/hyperledger/orderer/msp
       - ${SC_PATH_ORGS}/ordererOrganizations/${SC_ORDERER1_DOMAIN}/orderers/${SC_ORDERER1_O1_FQDN}/tls/:/var/hyperledger/orderer/tls
-      - ${SC_PATH_CHAINS}/${SC_ORDERER1_NAME}/${SC_ORDERER1_O1_NAME}:/var/hyperledger/production/orderer
+      - ${SC_PATH_DATA}/${SC_ORDERER1_NAME}/${SC_ORDERER1_O1_NAME}:/var/hyperledger/production/orderer
       - ${SC_PATH_ARTIFACTS}/${SC_CHANNEL_NAME}-genesis.block:/var/hyperledger/orderer/${SC_CHANNEL_NAME}-genesis.block
     ports:
       - ${SC_ORDERER1_O1_PORT}:${SC_ORDERER1_O1_PORT}

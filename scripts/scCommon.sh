@@ -263,12 +263,12 @@ export SC_DRY=false
 export SC_PATH_BASE=$SC_PATH_BASE
 export SC_PATH_TEMPLATES=${SC_PATH_BASE}/templates
 export SC_PATH_SCRIPTS=${SC_PATH_BASE}/scripts
-export SC_PATH_DATA=${SC_PATH_BASE}/storage
-export SC_PATH_ARTIFACTS=${SC_PATH_DATA}/artifacts
-export SC_PATH_CHAINS=${SC_PATH_DATA}/data
-export SC_PATH_CONF=${SC_PATH_DATA}/conf
-export SC_PATH_ORGS=${SC_PATH_DATA}/orgs
-export SC_PATH_SWARM=${SC_PATH_DATA}/swarm
+export SC_PATH_STORAGE=${SC_PATH_BASE}/storage
+export SC_PATH_ARTIFACTS=${SC_PATH_STORAGE}/artifacts
+export SC_PATH_DATA=${SC_PATH_STORAGE}/data
+export SC_PATH_CONF=${SC_PATH_STORAGE}/conf
+export SC_PATH_ORGS=${SC_PATH_STORAGE}/orgs
+export SC_PATH_SWARM=${SC_PATH_STORAGE}/swarm
 
 export PATH=${SC_PATH_BASE}/bin:${SC_PATH_SCRIPTS}:$PATH
 
@@ -300,7 +300,7 @@ export SC_CHANNEL_RETRY=3
 export SC_SWARM_MANAGER=ip-10-97-85-63
 export SC_SWARM_NETWORK="--attachable --driver overlay --subnet 10.96.0.0/24 $SC_NETWORK_NAME"
 export SC_SWARM_INIT="--advertise-addr 35.158.186.93:2377 --listen-addr 0.0.0.0:2377 --cert-expiry 1000000h0m0s"
-export SC_SWARM_DELAY=2
+export SC_SWARM_DELAY=1
 
 # endregion: swarm
 # region: orgs
@@ -399,8 +399,11 @@ export SC_UID=$SC_UID
 export SC_GID=$SC_GID
 
 export SC_INTERFACES_CLI_HOST=$SC_SWARM_MANAGER
-export SC_INTERFACES_CLI_WD=/opt/gopath/src/github.com/hyperledger/fabric/peer
-export SC_INTERFACES_CLI_SCRIPTS=${SC_INTERFACES_CLI_WD}/scripts
+export SC_INTERFACES_CLI_BASE=/opt/gopath/src/github.com/hyperledger/fabric/peer
+export SC_INTERFACES_CLI_SCRIPTS=$( echo $SC_PATH_SCRIPTS | sed s+${SC_PATH_BASE}+${SC_INTERFACES_CLI_BASE}+ )
+export SC_INTERFACES_CLI_ORGS=$( echo $SC_PATH_ORGS | sed s+${SC_PATH_BASE}+${SC_INTERFACES_CLI_BASE}+ )
+export SC_INTERFACES_CLI_STORAGE=$( echo $SC_PATH_STORAGE | sed s+${SC_PATH_BASE}+${SC_INTERFACES_CLI_BASE}+ )
+export SC_INTERFACES_CLI_COMMON=$( echo $TEx_COMMON | sed s+${SC_PATH_BASE}+${SC_INTERFACES_CLI_BASE}+ )
 
 export SC_METRICS_HOST=$SC_SWARM_MANAGER
 export SC_METRICS_VISUALIZER_PORT=5050
