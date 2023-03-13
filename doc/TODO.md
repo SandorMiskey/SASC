@@ -28,8 +28,9 @@
 8. swarm worker setup (over ssh, w/ nfs)
 9. split framework functions/variables (move them to dedicated repo, will be used as a submodule), SC_* functions/variables in common.sh
 10. make sc*.sh (bootstrap, genesis...) scripts source-able and generic: dummy mode, rename functions, eliminate SC_* variables
-11. CA
-12. syslog (w/ logspout)?
-13. dedicated mgmt/metrics network?
-14. grafana and portainer passwords in docker secrets?
-15. zsh/sh port?
+11. TEx_DOCKEREXEC_DUMMY -> TEx_DUMMY
+12. CA
+13. syslog (w/ logspout)?
+14. dedicated mgmt/metrics network?
+15. grafana and portainer passwords in docker secrets?
+16. zsh/sh port?

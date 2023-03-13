@@ -141,7 +141,7 @@ TEx_DockerExec() {
 		if [[ $res -eq 0 ]]; then
 			[[ "$TEx_DOCKEREXEC_IACTIVE" == true ]] || echo "$out"
 		else
-			TEx_Verify $res "$out"
+			[[ "$TEx_DOCKEREXEC_IACTIVE" == true ]] || TEx_Verify $res "$out"
 		fi
 	fi
 	unset res out

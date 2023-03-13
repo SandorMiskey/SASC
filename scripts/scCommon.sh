@@ -6,14 +6,6 @@
 
 # region: framework functions
 
-function TEx_CheckBase() {
-	if [[ ${SC_PATH_BASE:-"unset"} == "unset" ]]; then
-		false
-	else
-		true
-	fi
-}
-
 function TEx_Defaults() {
 	#
 	# sets default values where applicable
@@ -31,6 +23,7 @@ function TEx_Defaults() {
 	[[ ${TEx_PREFIX:-"unset"} == "unset" ]]		&& TEx_PREFIX="==> "
 	[[ ${TEx_SUBPREFIX:-"unset"} == "unset" ]]	&& TEx_SUBPREFIX="    -> "
 
+	[[ ${TEx_DUMMY:-"unset"} == "unset" ]]		&& TEx_DUMMY=false
 	[[ ${TEx_FORCE:-"unset"} == "unset" ]]		&& TEx_FORCE=false
 	[[ ${TEx_PANIC:-"unset"} == "unset" ]]		&& TEx_PANIC=false
 	[[ ${TEx_SILENT:-"unset"} == "unset" ]]		&& TEx_SILENT=false
@@ -155,7 +148,7 @@ function TEx_Verify() {
 	if [ $1 -ne 0 ]
 	then
 		# >&2 TEx_Printf "$2" "\b${TEx_BOLD}%s${TEx_NORM}\n"
-		>&2 TEx_PrintfBold "$2"
+		[[ -z "$2" ]] || >&2 TEx_PrintfBold "$2"
 		if [[ "$TEx_PANIC" == true ]]; then
 			TEx_PrintfBold "TEx_Verify(): TEx_PANIC set to 'true', leaving..."
 			exit 1
